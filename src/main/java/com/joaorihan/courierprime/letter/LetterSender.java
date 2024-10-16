@@ -36,8 +36,8 @@ public class LetterSender implements Listener {
      */
     @SuppressWarnings("deprecation")
     public static void send(Player sender, String recipient) {
-        if (LetterChecker.isHoldingOwnLetter(sender) &&
-                !LetterChecker.wasSent(sender.getInventory().getItemInMainHand())) {
+        if (LetterUtil.isHoldingOwnLetter(sender) &&
+                !LetterUtil.wasAlreadySent(sender.getInventory().getItemInMainHand())) {
 
             ItemStack letter = new ItemStack(Material.WRITTEN_BOOK, 1);
             BookMeta letterMeta = (BookMeta) letter.getItemMeta();
@@ -150,9 +150,9 @@ public class LetterSender implements Listener {
                 sender.getInventory().getItemInMainHand().setAmount(0);
             }
             
-        } else if (LetterChecker.isHoldingOwnLetter(sender)) {
+        } else if (LetterUtil.isHoldingOwnLetter(sender)) {
             sender.sendMessage(Message.ERROR_SENT_BEFORE);
-        } else if (LetterChecker.isHoldingLetter(sender)) {
+        } else if (LetterUtil.isHoldingLetter(sender)) {
             sender.sendMessage(Message.ERROR_NOT_YOUR_LETTER);
         } else
             sender.sendMessage(Message.ERROR_NO_LETTER);

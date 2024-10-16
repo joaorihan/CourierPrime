@@ -1,9 +1,9 @@
-name: CourierNew
-version: 1.3.7
+name: CourierPrime
+version: 1.0.0
 description: A unique mail system
-author: Jeremaster101
-main: com.joaorihan.courierprime.CourierNew
-api-version: 1.14
+authors: [Jeremaster101, Sentimentos]
+main: com.joaorihan.courierprime.CourierPrime
+api-version: 1.21
 commands:
   letter:
     description: Create a one-page letter or add pages to an existing letter

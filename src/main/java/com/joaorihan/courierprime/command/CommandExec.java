@@ -1,6 +1,6 @@
 package com.joaorihan.courierprime.command;
 
-import com.joaorihan.courierprime.letter.LetterCreation;
+import com.joaorihan.courierprime.letter.LetterManager;
 import com.joaorihan.courierprime.letter.LetterSender;
 import com.joaorihan.courierprime.letter.Outgoing;
 import com.joaorihan.courierprime.Config;
@@ -8,7 +8,7 @@ import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.Message;
 import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.courier.CourierOptions;
-import com.joaorihan.courierprime.letter.LetterChecker;
+import com.joaorihan.courierprime.letter.LetterUtil;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -46,10 +46,10 @@ public class CommandExec implements CommandExecutor {
                                 for (String arg : args) {
                                     sb.append(arg).append(" ");
                                 }
-                                if (LetterChecker.isHoldingOwnLetter(player) &&
-                                        !LetterChecker.wasSent(player.getInventory().getItemInMainHand()))
-                                    LetterCreation.editBook(player, sb.toString());
-                                else LetterCreation.writeBook(player, sb.toString());
+                                if (LetterUtil.isHoldingOwnLetter(player) &&
+                                        !LetterUtil.wasAlreadySent(player.getInventory().getItemInMainHand()))
+                                    LetterManager.editBook(player, sb.toString());
+                                else LetterManager.writeBook(player, sb.toString());
                             } else
                                 player.sendMessage(Message.ERROR_NO_MSG);
                         } else
@@ -71,14 +71,14 @@ public class CommandExec implements CommandExecutor {
 
                     case "shred":
                         if (player.hasPermission("couriernew.shred")) {
-                            LetterCreation.delete(player);
+                            LetterManager.delete(player);
                         } else
                             player.sendMessage(Message.ERROR_NO_PERMS);
                         break;
 
                     case "shredall":
                         if (player.hasPermission("couriernew.shredall")) {
-                            LetterCreation.deleteAll(player);
+                            LetterManager.deleteAll(player);
                         } else
                             player.sendMessage(Message.ERROR_NO_PERMS);
                         break;

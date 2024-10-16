@@ -6,6 +6,7 @@ import com.joaorihan.courierprime.letter.Outgoing;
 import com.joaorihan.courierprime.command.CommandTabComplete;
 import com.joaorihan.courierprime.courier.CourierOptions;
 import com.joaorihan.courierprime.courier.Courier;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
@@ -22,6 +23,7 @@ public class CourierPrime extends JavaPlugin {
     /**
      * plugin instance
      */
+    @Getter
     public static CourierPrime plugin;
     
     /**

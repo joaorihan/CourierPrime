@@ -1,6 +1,7 @@
 package com.joaorihan.courierprime.letter;
 
 import com.joaorihan.courierprime.Config;
+import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
@@ -15,9 +16,7 @@ import java.util.UUID;
  */
 public class Outgoing {
 
-    /**
-     * hashmap of outgoing letters for players
-     */
+    @Getter
     private static HashMap<UUID, LinkedList<ItemStack>> outgoing = new HashMap<>();
 
     /**
@@ -67,12 +66,4 @@ public class Outgoing {
         }
     }
 
-    /**
-     * get the hashmap of outgoing letters
-     *
-     * @return outgoing letter hashmap
-     */
-    public static HashMap<UUID, LinkedList<ItemStack>> getOutgoing() {
-        return outgoing;
-    }
 }

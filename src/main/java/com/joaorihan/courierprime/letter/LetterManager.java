@@ -1,24 +1,38 @@
 package com.joaorihan.courierprime.letter;
 
+import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.Message;
 
+import lombok.Getter;
 import org.apache.commons.text.WordUtils;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Methods to create, edit, and delete letters
  *
  * @author Jeremy Noesen
  */
-public class LetterCreation {
-    
+public class LetterManager {
+
+    @Getter
+    private static NamespacedKey key = new NamespacedKey(CourierPrime.getPlugin(), "playerName");
+
+    //private List<Player> playersInBlockedMode = new ArrayList<>();
+    //public void removeBlockedPlayer(Player player){ playersInBlockedMode.remove(player); }
+    //public boolean isInBlockedMode(Player player) { return playersInBlockedMode.contains(player); }
+
+
     /**
      * Create a new letter with a specified message and places it in the player's inventory. Also set's the lore of the
      * item to a preview of the message
@@ -31,7 +45,10 @@ public class LetterCreation {
         
         ItemStack book = new ItemStack(Material.WRITTEN_BOOK, 1);
         BookMeta bm = (BookMeta) book.getItemMeta();
-        
+
+        PersistentDataContainer pdc = bm.getPersistentDataContainer();
+        pdc.set(key, PersistentDataType.STRING, player.getName());
+
         bm.setAuthor(player.getName());
         bm.setTitle(Message.LETTER_FROM.replace("$PLAYER$", player.getName()));
         ArrayList<String> pages = new ArrayList<>();
@@ -116,7 +133,7 @@ public class LetterCreation {
      * @param player player deleting the letter in their hand
      */
     public static void delete(Player player) {
-        if (LetterChecker.isHoldingLetter(player)) {
+        if (LetterUtil.isHoldingLetter(player)) {
             player.getInventory().getItemInMainHand().setAmount(0);
             player.sendMessage(Message.SUCCESS_DELETED);
         } else
@@ -130,7 +147,7 @@ public class LetterCreation {
      */
     public static void deleteAll(Player player) {
         for (ItemStack item : player.getInventory().getContents()) {
-            if (LetterChecker.isLetter(item)) item.setAmount(0);
+            if (LetterUtil.isValidLetter(item)) item.setAmount(0);
         }
         player.sendMessage(Message.SUCCESS_DELETED_ALL);
     }
