@@ -1,4 +1,4 @@
-package xyz.jeremynoesen.couriernew.command;
+package com.joaorihan.courierprime.command;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

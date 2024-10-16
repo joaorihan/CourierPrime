@@ -1,11 +1,11 @@
-package xyz.jeremynoesen.couriernew;
+package com.joaorihan.courierprime;
 
-import xyz.jeremynoesen.couriernew.command.CommandExec;
-import xyz.jeremynoesen.couriernew.command.CommandTabComplete;
-import xyz.jeremynoesen.couriernew.courier.CourierOptions;
-import xyz.jeremynoesen.couriernew.courier.Courier;
-import xyz.jeremynoesen.couriernew.letter.LetterSender;
-import xyz.jeremynoesen.couriernew.letter.Outgoing;
+import com.joaorihan.courierprime.command.CommandExec;
+import com.joaorihan.courierprime.letter.LetterSender;
+import com.joaorihan.courierprime.letter.Outgoing;
+import com.joaorihan.courierprime.command.CommandTabComplete;
+import com.joaorihan.courierprime.courier.CourierOptions;
+import com.joaorihan.courierprime.courier.Courier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
@@ -17,19 +17,19 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * @author Jeremy Noesen
  */
-public class CourierNew extends JavaPlugin {
+public class CourierPrime extends JavaPlugin {
     
     /**
      * plugin instance
      */
-    public static CourierNew plugin;
+    public static CourierPrime plugin;
     
     /**
      * get the plugin instance
      *
      * @return plugin instance
      */
-    public static CourierNew getInstance() {
+    public static CourierPrime getInstance() {
         return plugin;
     }
     

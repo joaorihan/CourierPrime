@@ -1,4 +1,4 @@
-package xyz.jeremynoesen.couriernew;
+package com.joaorihan.courierprime;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -53,7 +53,7 @@ public class Config {
      */
     public Config(String filename) {
         this.filename = filename;
-        configFile = new File(CourierNew.getInstance().getDataFolder(), filename);
+        configFile = new File(CourierPrime.getInstance().getDataFolder(), filename);
     }
     
     /**
@@ -88,13 +88,13 @@ public class Config {
      */
     public void reloadConfig() {
         if (configFile == null) {
-            configFile = new File(CourierNew.getInstance().getDataFolder(), filename);
+            configFile = new File(CourierPrime.getInstance().getDataFolder(), filename);
         }
         
         YMLConfig = YamlConfiguration.loadConfiguration(configFile);
         
         Reader defConfigStream = new InputStreamReader(
-                CourierNew.getInstance().getResource(filename), StandardCharsets.UTF_8);
+                CourierPrime.getInstance().getResource(filename), StandardCharsets.UTF_8);
         YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
         YMLConfig.setDefaults(defConfig);
         YMLConfig.options().copyDefaults(true);
@@ -125,7 +125,7 @@ public class Config {
         try {
             getConfig().save(configFile);
         } catch (IOException ex) {
-            CourierNew.getInstance().getLogger().log(Level.SEVERE, "A config file failed to save!", ex);
+            CourierPrime.getInstance().getLogger().log(Level.SEVERE, "A config file failed to save!", ex);
         }
     }
     
@@ -134,10 +134,10 @@ public class Config {
      */
     public void saveDefaultConfig() {
         if (configFile == null) {
-            configFile = new File(CourierNew.getInstance().getDataFolder(), filename);
+            configFile = new File(CourierPrime.getInstance().getDataFolder(), filename);
         }
         if (!configFile.exists()) {
-            CourierNew.getInstance().saveResource(filename, false);
+            CourierPrime.getInstance().saveResource(filename, false);
             YMLConfig = YamlConfiguration.loadConfiguration(configFile);
         }
     }

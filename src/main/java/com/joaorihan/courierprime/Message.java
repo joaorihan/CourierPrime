@@ -1,4 +1,4 @@
-package xyz.jeremynoesen.couriernew;
+package com.joaorihan.courierprime;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

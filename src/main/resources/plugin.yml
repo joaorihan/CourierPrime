@@ -2,7 +2,7 @@ name: CourierNew
 version: 1.3.7
 description: A unique mail system
 author: Jeremaster101
-main: xyz.jeremynoesen.couriernew.CourierNew
+main: com.joaorihan.courierprime.CourierNew
 api-version: 1.14
 commands:
   letter:

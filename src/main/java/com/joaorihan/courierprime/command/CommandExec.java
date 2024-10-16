@@ -1,14 +1,14 @@
-package xyz.jeremynoesen.couriernew.command;
+package com.joaorihan.courierprime.command;
 
-import xyz.jeremynoesen.couriernew.Config;
-import xyz.jeremynoesen.couriernew.CourierNew;
-import xyz.jeremynoesen.couriernew.Message;
-import xyz.jeremynoesen.couriernew.courier.Courier;
-import xyz.jeremynoesen.couriernew.courier.CourierOptions;
-import xyz.jeremynoesen.couriernew.letter.LetterChecker;
-import xyz.jeremynoesen.couriernew.letter.LetterCreation;
-import xyz.jeremynoesen.couriernew.letter.LetterSender;
-import xyz.jeremynoesen.couriernew.letter.Outgoing;
+import com.joaorihan.courierprime.letter.LetterCreation;
+import com.joaorihan.courierprime.letter.LetterSender;
+import com.joaorihan.courierprime.letter.Outgoing;
+import com.joaorihan.courierprime.Config;
+import com.joaorihan.courierprime.CourierPrime;
+import com.joaorihan.courierprime.Message;
+import com.joaorihan.courierprime.courier.Courier;
+import com.joaorihan.courierprime.courier.CourierOptions;
+import com.joaorihan.courierprime.letter.LetterChecker;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -93,7 +93,7 @@ public class CommandExec implements CommandExecutor {
                                     public void run() {
                                         Courier.spawn(player);
                                     }
-                                }.runTaskLater(CourierNew.getInstance(), CourierOptions.RECEIVE_DELAY);
+                                }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RECEIVE_DELAY);
                             } else {
                                 player.sendMessage(Message.ERROR_NO_MAIL);
                             }

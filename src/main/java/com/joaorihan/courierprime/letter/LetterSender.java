@@ -1,11 +1,11 @@
-package xyz.jeremynoesen.couriernew.letter;
+package com.joaorihan.courierprime.letter;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.inventory.meta.BookMeta;
-import xyz.jeremynoesen.couriernew.CourierNew;
-import xyz.jeremynoesen.couriernew.Message;
-import xyz.jeremynoesen.couriernew.courier.Courier;
-import xyz.jeremynoesen.couriernew.courier.CourierOptions;
+import com.joaorihan.courierprime.CourierPrime;
+import com.joaorihan.courierprime.Message;
+import com.joaorihan.courierprime.courier.Courier;
+import com.joaorihan.courierprime.courier.CourierOptions;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -144,7 +144,7 @@ public class LetterSender implements Listener {
                         public void run() {
                             Courier.spawn((Player) op);
                         }
-                    }.runTaskLater(CourierNew.getInstance(), CourierOptions.RECEIVE_DELAY);
+                    }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RECEIVE_DELAY);
                 }
                 
                 sender.getInventory().getItemInMainHand().setAmount(0);
@@ -218,7 +218,7 @@ public class LetterSender implements Listener {
             public void run() {
                 Courier.spawn(player);
             }
-        }.runTaskLater(CourierNew.getInstance(), CourierOptions.RECEIVE_DELAY);
+        }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RECEIVE_DELAY);
     }
     
     /**
@@ -237,7 +237,7 @@ public class LetterSender implements Listener {
                 public void run() {
                     Courier.spawn(recipient);
                 }
-            }.runTaskLater(CourierNew.getInstance(), CourierOptions.RECEIVE_DELAY);
+            }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RECEIVE_DELAY);
         }
     }
     
@@ -256,7 +256,7 @@ public class LetterSender implements Listener {
                 public void run() {
                     Courier.spawn(recipient);
                 }
-            }.runTaskLater(CourierNew.getInstance(), CourierOptions.RECEIVE_DELAY);
+            }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RECEIVE_DELAY);
         }
     }
     

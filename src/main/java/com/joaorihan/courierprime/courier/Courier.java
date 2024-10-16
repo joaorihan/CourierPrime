@@ -1,8 +1,8 @@
-package xyz.jeremynoesen.couriernew.courier;
+package com.joaorihan.courierprime.courier;
 
-import xyz.jeremynoesen.couriernew.CourierNew;
-import xyz.jeremynoesen.couriernew.Message;
-import xyz.jeremynoesen.couriernew.letter.Outgoing;
+import com.joaorihan.courierprime.CourierPrime;
+import com.joaorihan.courierprime.Message;
+import com.joaorihan.courierprime.letter.Outgoing;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -84,7 +84,7 @@ public class Courier {
                 }
                 if (courier.isDead()) this.cancel();
             }
-        }.runTaskTimer(CourierNew.getInstance(), 0, 1);
+        }.runTaskTimer(CourierPrime.getInstance(), 0, 1);
 
         new BukkitRunnable() {
             @Override
@@ -100,10 +100,10 @@ public class Courier {
                         public void run() {
                             spawn(recipient);
                         }
-                    }.runTaskLater(CourierNew.getInstance(), CourierOptions.RESEND_DELAY);
+                    }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RESEND_DELAY);
                 }
             }
-        }.runTaskLater(CourierNew.getInstance(), CourierOptions.REMOVE_DELAY);
+        }.runTaskLater(CourierPrime.getInstance(), CourierOptions.REMOVE_DELAY);
     }
 
     /**

@@ -1,6 +1,6 @@
-package xyz.jeremynoesen.couriernew.letter;
+package com.joaorihan.courierprime.letter;
 
-import xyz.jeremynoesen.couriernew.Message;
+import com.joaorihan.courierprime.Message;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

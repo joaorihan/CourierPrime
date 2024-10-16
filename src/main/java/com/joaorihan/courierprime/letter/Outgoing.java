@@ -1,6 +1,6 @@
-package xyz.jeremynoesen.couriernew.letter;
+package com.joaorihan.courierprime.letter;
 
-import xyz.jeremynoesen.couriernew.Config;
+import com.joaorihan.courierprime.Config;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
