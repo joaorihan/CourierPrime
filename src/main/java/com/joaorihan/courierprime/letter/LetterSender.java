@@ -1,6 +1,6 @@
 package com.joaorihan.courierprime.letter;
 
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.bukkit.inventory.meta.BookMeta;
 import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.Message;
@@ -185,7 +185,7 @@ public class LetterSender implements Listener {
     }
     
     /**
-     * Check when a player right clicks their courier entity
+     * Check when a player right-clicks their courier entity
      */
     @EventHandler
     public void onEntityInteract(PlayerInteractEntityEvent e) {
@@ -197,7 +197,7 @@ public class LetterSender implements Listener {
                 e.setCancelled(true);
                 receive(e.getPlayer());
                 en.getWorld().playSound(en.getLocation(), Sound.BLOCK_WOOL_BREAK, 1, 1);
-                en.getWorld().spawnParticle(Particle.VILLAGER_HAPPY,
+                en.getWorld().spawnParticle(Particle.HAPPY_VILLAGER,
                         en.getLocation().add(0, en.getHeight() / 2, 0), 20,
                         en.getWidth() / 2, en.getHeight() / 2, en.getWidth() / 2);
             } else if (!Courier.getCouriers().get(en).getRecipient().equals(e.getPlayer())) {

@@ -1,7 +1,8 @@
 package com.joaorihan.courierprime.letter;
 
 import com.joaorihan.courierprime.Message;
-import org.apache.commons.lang.WordUtils;
+
+import org.apache.commons.text.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
