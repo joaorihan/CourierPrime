@@ -3,6 +3,7 @@ package com.joaorihan.courierprime.courier;
 import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.Message;
 import com.joaorihan.courierprime.letter.Outgoing;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -22,7 +23,13 @@ public class Courier {
 
     /**
      * set of all alive courier entities
+     * -- GETTER --
+     *  get a set of all alive courier entities
+     *
+     * @return set of all alive courier entities
+
      */
+    @Getter
     private static HashMap<Entity, Courier> couriers = new HashMap<>();
 
     /**
@@ -48,15 +55,6 @@ public class Courier {
     public Courier(Player recipient) {
         this.recipient = recipient;
         this.delivered = false;
-    }
-
-    /**
-     * get a set of all alive courier entities
-     *
-     * @return set of all alive courier entities
-     */
-    public static HashMap<Entity, Courier> getCouriers() {
-        return couriers;
     }
 
     /**
