@@ -6,6 +6,8 @@ import com.joaorihan.courierprime.letter.Outgoing;
 import com.joaorihan.courierprime.command.CommandTabComplete;
 import com.joaorihan.courierprime.courier.CourierOptions;
 import com.joaorihan.courierprime.courier.Courier;
+import com.joaorihan.courierprime.listener.LetterListener;
+import com.joaorihan.courierprime.listener.PlayerListener;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -50,8 +52,10 @@ public class CourierPrime extends JavaPlugin {
         Message.reloadMessages();
         
         PluginManager pm = Bukkit.getPluginManager();
-        
-        pm.registerEvents(new LetterSender(), plugin);
+
+        // Register Listeners
+        new LetterListener(plugin);
+        new PlayerListener(plugin);
 
         pm.addPermission(new Permission("couriernew.letter"));
         pm.addPermission(new Permission("couriernew.post.one"));
