@@ -1,18 +1,17 @@
-<img src="img/Logo.svg" align="right" alt="Logo" title="Logo" width="72" height="72" />
-
-# CourierNew
+# CourierPrime
 
 ## About
 
-CourierNew is a physical mail system for Spigot Minecraft servers that allows users to send letters in the form of books
+CourierPrime is a physical mail system for Spigot/Paper Minecraft servers that allows users to send letters in the form of books
 and receive them through couriers. Admins can use this to send letters to all players at once as a way of sending a
 message that people will be sure to see.
 
 ## Purpose
 
-CourierNew is a built-from-scratch partial remake of an abandoned Bukkit plugin
-called [Courier](https://dev.bukkit.org/projects/courier). This was written as a means to bring similar functionality of
-the original plugin to more modern versions of Minecraft, as well as improve on the logic behind it.
+CourierPrime is maintaining fork of a Spigot plugin
+called [CourierNew](https://github.com/jeremynoesen/CourierNew). Many projects nowadays rely on this plugin,
+and recend Minecraft updates, broke some mechanics of the plugin. This fork is made with this in mind, with the intention
+of keeping the plugin accessible for free, forever.
 
 ## Usage
 
@@ -30,8 +29,8 @@ the original plugin to more modern versions of Minecraft, as well as improve on 
 
 ## Requirements
 
-- Spigot or Paper 1.14 - 1.18
-- Java 8 or higher
+- Spigot or Paper 1.21
+- Java 21 or higher
 
 ## Installation
 
@@ -87,11 +86,7 @@ what you are doing!
 
 ## Building
 
-1. Clone or download this repository.
-2. Run `./gradlew shadowJar` in the directory of the project.
-3. `/build/libs/CourierNew.jar` should have been generated.
 
-You can also grab `CourierNew.jar` from the latest releases.
 
 ## Troubleshooting
 
