@@ -39,7 +39,6 @@ public class LetterUtil {
      * @return {@code boolean} item in main hand is a Letter
      */
     public boolean isHoldingLetter(@NonNull Player player) {
-        player.sendMessage(String.valueOf(isValidLetter(player.getInventory().getItemInMainHand())));
         return isValidLetter(player.getInventory().getItemInMainHand());
     }
 
