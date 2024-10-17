@@ -29,9 +29,7 @@ public class CommandTabComplete implements TabCompleter {
 
         ArrayList<String> tabList = new ArrayList<>();
 
-        if (sender instanceof Player && (label.equalsIgnoreCase("couriernew") || label.equalsIgnoreCase("cn"))) {
-
-            Player player = (Player) sender;
+        if (sender instanceof Player player && (label.equalsIgnoreCase("couriernew") || label.equalsIgnoreCase("cn"))) {
 
             if (args.length == 1) {
 

@@ -48,7 +48,7 @@ public class LetterListener implements Listener {
      */
     @EventHandler
     public void onVillagerProfession(VillagerCareerChangeEvent e) {
-        if (Courier.getCouriers().keySet().contains(e.getEntity())) e.setCancelled(true);
+        if (Courier.getCouriers().containsKey(e.getEntity())) e.setCancelled(true);
     }
 
 

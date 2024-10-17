@@ -97,10 +97,9 @@ public class LetterManager {
         
         ArrayList<String> pages = new ArrayList<>(wbm.getPages());
         if (pages.get(pages.size() - 1).length() < 256 && pages.get(pages.size() - 1).length() > 0) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(pages.get(pages.size() - 1));
-            sb.append(finalMessage);
-            pages.set(pages.size() - 1, sb.toString());
+            String sb = pages.get(pages.size() - 1) +
+                    finalMessage;
+            pages.set(pages.size() - 1, sb);
             player.sendMessage(Message.SUCCESS_PAGE_EDITED);
         } else {
             pages.add(finalMessage);

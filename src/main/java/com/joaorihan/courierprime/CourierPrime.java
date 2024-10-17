@@ -1,7 +1,6 @@
 package com.joaorihan.courierprime;
 
 import com.joaorihan.courierprime.command.CommandExec;
-import com.joaorihan.courierprime.letter.LetterSender;
 import com.joaorihan.courierprime.letter.Outgoing;
 import com.joaorihan.courierprime.command.CommandTabComplete;
 import com.joaorihan.courierprime.courier.CourierOptions;

@@ -29,9 +29,8 @@ public class CommandExec implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
+        if (sender instanceof Player player) {
 
-            Player player = (Player) sender;
             Set<GameMode> modes = CourierOptions.BLOCKED_GAMEMODES;
             Set<World> worlds = CourierOptions.BLOCKED_WORLDS;
 

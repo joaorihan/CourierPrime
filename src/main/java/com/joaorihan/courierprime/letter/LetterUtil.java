@@ -1,6 +1,6 @@
 package com.joaorihan.courierprime.letter;
 
-import com.joaorihan.courierprime.CourierPrime;
+
 import com.joaorihan.courierprime.Message;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;

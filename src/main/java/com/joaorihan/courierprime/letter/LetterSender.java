@@ -7,12 +7,8 @@ import com.joaorihan.courierprime.Message;
 import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.courier.CourierOptions;
 import org.bukkit.*;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.VillagerCareerChangeEvent;
-import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -34,13 +30,12 @@ public class LetterSender implements Listener {
      * @param sender    player sending the letter
      * @param recipient player(s) to receive the letter
      */
-    @SuppressWarnings("deprecation")
     public static void send(Player sender, String recipient) {
         if (LetterUtil.isHoldingOwnLetter(sender) &&
                 !LetterUtil.wasAlreadySent(sender.getInventory().getItemInMainHand())) {
 
             ItemStack letter = createLetterItem(sender);
-            List<String> lore = createLetterLore(sender, letter);
+            List<String> lore = createLetterLore(letter);
 
             Collection<OfflinePlayer> offlinePlayers = null;
 
@@ -80,7 +75,7 @@ public class LetterSender implements Listener {
         return letter;
     }
 
-    private static List<String> createLetterLore(Player sender, ItemStack letter) {
+    private static List<String> createLetterLore(ItemStack letter) {
         List<String> lore = new ArrayList<>();
         Calendar currentDate = Calendar.getInstance();
         SimpleDateFormat formatter = new SimpleDateFormat(Message.DATE_TIME_FORMAT);
