@@ -30,7 +30,8 @@ public class LetterUtil {
         if (!item.getType().equals(Material.WRITTEN_BOOK))
             return false;
 
-        return ((BookMeta) item.getItemMeta()).getTitle().startsWith(Message.LETTER_FROM);
+        return ((BookMeta) item.getItemMeta()).getTitle().contains(Message.LETTER_FROM
+                .replace("$PLAYER$", ""));
     }
 
     /**

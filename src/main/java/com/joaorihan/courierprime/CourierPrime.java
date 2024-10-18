@@ -1,6 +1,7 @@
 package com.joaorihan.courierprime;
 
 import com.joaorihan.courierprime.command.CommandExec;
+import com.joaorihan.courierprime.command.CommandManager;
 import com.joaorihan.courierprime.letter.Outgoing;
 import com.joaorihan.courierprime.command.CommandTabComplete;
 import com.joaorihan.courierprime.courier.CourierOptions;
@@ -56,6 +57,9 @@ public class CourierPrime extends JavaPlugin {
         new LetterListener(plugin);
         new PlayerListener(plugin);
 
+        // Register Commands
+        new CommandManager();
+
         pm.addPermission(new Permission("couriernew.letter"));
         pm.addPermission(new Permission("couriernew.post.one"));
         pm.addPermission(new Permission("couriernew.post.multiple"));
@@ -66,11 +70,10 @@ public class CourierPrime extends JavaPlugin {
         pm.addPermission(new Permission("couriernew.shredall"));
         pm.addPermission(new Permission("couriernew.help"));
         pm.addPermission(new Permission("couriernew.reload"));
-        
+
+        // todo: remove
         CommandExec commandExec = new CommandExec();
-        
-        getCommand("letter").setExecutor(commandExec);
-        getCommand("post").setExecutor(commandExec);
+
         getCommand("shred").setExecutor(commandExec);
         getCommand("shredall").setExecutor(commandExec);
         getCommand("unread").setExecutor(commandExec);

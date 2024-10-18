@@ -16,6 +16,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Set;
 
+
+/**
+ * Listens to player related events
+ *
+ * @author João Rihan
+ */
 public class PlayerListener implements Listener {
 
 

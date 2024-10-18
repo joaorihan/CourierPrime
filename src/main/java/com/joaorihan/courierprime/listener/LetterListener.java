@@ -10,7 +10,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.VillagerCareerChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-
+/**
+ * Listens to letter related events
+ *
+ * @author João Rihan
+ */
 public class LetterListener implements Listener {
 
 

@@ -1,16 +1,10 @@
 name: CourierPrime
-version: 1.0.0
+version: '${project.version}'
 description: A unique mail system
 authors: [Jeremaster101, Sentimentos]
 main: com.joaorihan.courierprime.CourierPrime
 api-version: 1.21
 commands:
-  letter:
-    description: Create a one-page letter or add pages to an existing letter
-    usage: /<command>
-  post:
-    description: Send a letter to a player(s)
-    usage: /<command>
   shred:
     description: Delete a letter you are holding
     usage: /<command>

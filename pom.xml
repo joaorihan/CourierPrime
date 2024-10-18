@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.joaorihan</groupId>
-    <artifactId>courierprime</artifactId>
-    <version>0.1.0-TEST</version>
+    <artifactId>CourierPrime</artifactId>
+    <version>0.1.1-TEST</version>
     <packaging>jar</packaging>
 
-    <name>courierprime</name>
+    <name>CourierPrime</name>
 
     <properties>
         <java.version>21</java.version>
