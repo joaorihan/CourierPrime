@@ -26,8 +26,8 @@ public class LetterUtil {
      * @param item Item to be compared
      * @return if the item was a valid plugin Letter or not
      */
-    public boolean isValidLetter(@NonNull ItemStack item){
-        if (!item.getType().equals(Material.WRITTEN_BOOK))
+    public boolean isValidLetter(ItemStack item){
+        if (item == null || !item.getType().equals(Material.WRITTEN_BOOK))
             return false;
 
         return ((BookMeta) item.getItemMeta()).getTitle().contains(Message.LETTER_FROM
