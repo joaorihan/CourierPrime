@@ -1,9 +1,7 @@
 package com.joaorihan.courierprime;
 
-import com.joaorihan.courierprime.command.CommandExec;
 import com.joaorihan.courierprime.command.CommandManager;
 import com.joaorihan.courierprime.letter.Outgoing;
-import com.joaorihan.courierprime.command.CommandTabComplete;
 import com.joaorihan.courierprime.courier.CourierOptions;
 import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.listener.LetterListener;
@@ -60,26 +58,18 @@ public class CourierPrime extends JavaPlugin {
         // Register Commands
         new CommandManager();
 
-        pm.addPermission(new Permission("couriernew.letter"));
-        pm.addPermission(new Permission("couriernew.post.one"));
-        pm.addPermission(new Permission("couriernew.post.multiple"));
-        pm.addPermission(new Permission("couriernew.post.allonline"));
-        pm.addPermission(new Permission("couriernew.post.all"));
-        pm.addPermission(new Permission("couriernew.unread"));
-        pm.addPermission(new Permission("couriernew.shred"));
-        pm.addPermission(new Permission("couriernew.shredall"));
-        pm.addPermission(new Permission("couriernew.help"));
-        pm.addPermission(new Permission("couriernew.reload"));
+        pm.addPermission(new Permission("courierprime.letter"));
+        pm.addPermission(new Permission("courierprime.post.one"));
+        pm.addPermission(new Permission("courierprime.post.multiple"));
+        pm.addPermission(new Permission("courierprime.post.allonline"));
+        pm.addPermission(new Permission("courierprime.post.all"));
+        pm.addPermission(new Permission("courierprime.unread"));
+        pm.addPermission(new Permission("courierprime.shred"));
+        pm.addPermission(new Permission("courierprime.shredall"));
+        pm.addPermission(new Permission("courierprime.help"));
+        pm.addPermission(new Permission("courierprime.reload"));
 
-        // todo: remove
-        CommandExec commandExec = new CommandExec();
 
-        getCommand("shred").setExecutor(commandExec);
-        getCommand("shredall").setExecutor(commandExec);
-        getCommand("unread").setExecutor(commandExec);
-        getCommand("couriernew").setExecutor(commandExec);
-
-        getCommand("couriernew").setTabCompleter(new CommandTabComplete());
     }
     
     /**

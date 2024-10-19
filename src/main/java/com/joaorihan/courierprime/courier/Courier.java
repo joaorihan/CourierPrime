@@ -21,30 +21,16 @@ import java.util.HashMap;
  */
 public class Courier {
 
-    /**
-     * set of all alive courier entities
-     * -- GETTER --
-     *  get a set of all alive courier entities
-     *
-     * @return set of all alive courier entities
-
-     */
     @Getter
     private static HashMap<Entity, Courier> couriers = new HashMap<>();
 
-    /**
-     * courier entity
-     */
+    @Getter
     private Entity courier;
 
-    /**
-     * player receiving mail
-     */
+    @Getter
     private Player recipient;
 
-    /**
-     * whether the recipient has received their mail
-     */
+    @Getter
     private boolean delivered;
 
     /**
@@ -130,33 +116,6 @@ public class Courier {
     public void setDelivered() {
         delivered = true;
         courier.setCustomName(Message.COURIER_NAME_RECEIVED);
-    }
-
-    /**
-     * check if mail was delivered
-     *
-     * @return true if mail was delivered
-     */
-    public boolean isDelivered() {
-        return delivered;
-    }
-
-    /**
-     * get the recipient for the courier
-     *
-     * @return recipient for courier
-     */
-    public Player getRecipient() {
-        return recipient;
-    }
-
-    /**
-     * get the courier entity
-     *
-     * @return courier entity
-     */
-    public Entity getCourier() {
-        return courier;
     }
 
     /**

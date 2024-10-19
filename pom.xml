@@ -6,7 +6,7 @@
 
     <groupId>com.joaorihan</groupId>
     <artifactId>CourierPrime</artifactId>
-    <version>0.1.1-TEST</version>
+    <version>0.1.2-TEST</version>
     <packaging>jar</packaging>
 
     <name>CourierPrime</name>

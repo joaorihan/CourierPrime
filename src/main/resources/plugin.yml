@@ -4,17 +4,3 @@ description: A unique mail system
 authors: [Jeremaster101, Sentimentos]
 main: com.joaorihan.courierprime.CourierPrime
 api-version: 1.21
-commands:
-  shred:
-    description: Delete a letter you are holding
-    usage: /<command>
-  shredall:
-    description: Delete all letters in your inventory
-    usage: /<command>
-  unread:
-    description: Retreive unread mail
-    usage: /<command>
-  couriernew:
-    description: Help and reload commands
-    usage: /<command>
-    aliases: [cn]

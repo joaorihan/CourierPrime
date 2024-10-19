@@ -67,22 +67,23 @@ public class Message {
      * @param player player viewing help message
      * @return help message
      */
+    //todo: remake
     public static String[] getHelpMessage(Player player) {
         ArrayList<String> help = new ArrayList<>();
 
         help.add("");
         help.add(HELP_HEADER);
 
-        if (player.hasPermission("couriernew.letter")) help.add(HELP_LETTER);
-        if (player.hasPermission("couriernew.post.one") ||
-                player.hasPermission("couriernew.post.multiple") ||
-                player.hasPermission("couriernew.post.allonline") ||
-                player.hasPermission("couriernew.post.all")) help.add(HELP_POST);
-        if (player.hasPermission("couriernew.unread")) help.add(HELP_UNREAD);
-        if (player.hasPermission("couriernew.shred")) help.add(HELP_SHRED);
-        if (player.hasPermission("couriernew.shredall")) help.add(HELP_SHREDALL);
-        if (player.hasPermission("couriernew.help")) help.add(HELP_HELP);
-        if (player.hasPermission("couriernew.reload")) help.add(HELP_RELOAD);
+        if (player.hasPermission("courierprime.letter")) help.add(HELP_LETTER);
+        if (player.hasPermission("courierprime.post.one") ||
+                player.hasPermission("courierprime.post.multiple") ||
+                player.hasPermission("courierprime.post.allonline") ||
+                player.hasPermission("courierprime.post.all")) help.add(HELP_POST);
+        if (player.hasPermission("courierprime.unread")) help.add(HELP_UNREAD);
+        if (player.hasPermission("courierprime.shred")) help.add(HELP_SHRED);
+        if (player.hasPermission("courierprime.shredall")) help.add(HELP_SHREDALL);
+        if (player.hasPermission("courierprime.help")) help.add(HELP_HELP);
+        if (player.hasPermission("courierprime.reload")) help.add(HELP_RELOAD);
 
         help.add(HELP_FOOTER);
         help.add("");
