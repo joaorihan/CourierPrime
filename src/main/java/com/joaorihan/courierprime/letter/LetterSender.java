@@ -34,7 +34,7 @@ public class LetterSender implements Listener {
         if (LetterUtil.isHoldingOwnLetter(sender) &&
                 !LetterUtil.wasAlreadySent(sender.getInventory().getItemInMainHand())) {
 
-            ItemStack letter = createLetterItem(sender);
+            ItemStack letter = sender.getInventory().getItemInMainHand();
             List<String> lore = createLetterLore(letter);
 
             Collection<OfflinePlayer> offlinePlayers = null;
@@ -61,18 +61,6 @@ public class LetterSender implements Listener {
         } else {
             handleLetterErrors(sender);
         }
-    }
-
-    private static ItemStack createLetterItem(Player sender) {
-        ItemStack letter = new ItemStack(Material.WRITTEN_BOOK, 1);
-        BookMeta letterMeta = (BookMeta) letter.getItemMeta();
-
-        letterMeta.setAuthor(sender.getName());
-        letterMeta.setTitle(Message.LETTER_FROM.replace("$PLAYER$", sender.getName()));
-        letterMeta.setPages(((BookMeta) sender.getInventory().getItemInMainHand().getItemMeta()).getPages());
-
-        letter.setItemMeta(letterMeta);
-        return letter;
     }
 
     private static List<String> createLetterLore(ItemStack letter) {

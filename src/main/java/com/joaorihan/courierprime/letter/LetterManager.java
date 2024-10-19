@@ -40,7 +40,7 @@ public class LetterManager {
      * @param player  player writing the letter
      * @param message the message the player is writing to the letter
      */
-    public static void writeBook(Player player, String message) {
+    public static void writeBook(Player player, String message, boolean anonymous) {
         String finalMessage = Message.format(message);
         
         ItemStack book = new ItemStack(Material.WRITTEN_BOOK, 1);
@@ -49,8 +49,10 @@ public class LetterManager {
         PersistentDataContainer pdc = bm.getPersistentDataContainer();
         pdc.set(key, PersistentDataType.STRING, player.getName());
 
-        bm.setAuthor(player.getName());
-        bm.setTitle(Message.LETTER_FROM.replace("$PLAYER$", player.getName()));
+        String author = anonymous ? Message.ANONYMOUS : player.getName();
+        bm.setAuthor(author);
+        bm.setTitle(Message.LETTER_FROM.replace("$PLAYER$", author));
+
         ArrayList<String> pages = new ArrayList<>();
         pages.add(finalMessage);
         bm.setPages(pages);
@@ -72,6 +74,7 @@ public class LetterManager {
         book.setItemMeta(bm);
         
         if (player.getInventory().firstEmpty() < 0) {
+            //todo change
             player.getWorld().dropItemNaturally(player.getEyeLocation(), book);
             player.sendMessage(Message.SUCCESS_CREATED_DROPPED);
         } else if (player.getInventory().getItemInMainHand().getType() == Material.AIR) {

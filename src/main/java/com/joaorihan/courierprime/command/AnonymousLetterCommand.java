@@ -2,31 +2,29 @@ package com.joaorihan.courierprime.command;
 
 import com.joaorihan.courierprime.Message;
 import com.joaorihan.courierprime.letter.LetterManager;
-import com.joaorihan.courierprime.letter.LetterUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class LetterCommand extends AbstractCommand{
+public class AnonymousLetterCommand extends AbstractCommand{
 
 
-    public LetterCommand(){
-        super("letter",
-                new String[]{},
-                "Compose a new letter with the specified message.",
-                "courierprime.letter");
+    public AnonymousLetterCommand(){
+        super("anonymousletter",
+                new String[]{"anonletter"},
+                "Compose a new anonymous letter with the specified message.",
+                "courierprime.letter.anonymous");
     }
 
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-
         // Command checks
         if (!(sender instanceof Player player))
             return;
 
-        if (!player.hasPermission("courierprime.letter")) {
+        if (!player.hasPermission("courierprime.letter.anonymous")) {
             player.sendMessage(Message.ERROR_NO_PERMS);
             return;
         }
@@ -42,14 +40,7 @@ public class LetterCommand extends AbstractCommand{
             builder.append(arg).append(" ");
         }
 
-        // Checks if the command was used for a new letter or a letter edit
-        if (LetterUtil.isHoldingOwnLetter(player) && !LetterUtil.wasAlreadySent(player.getInventory().getItemInMainHand())){
-            LetterManager.editBook(player, builder.toString());
-            return;
-        }
-
-        // If not, writes a new letter
-        LetterManager.writeBook(player, builder.toString(), false);
+        LetterManager.writeBook(player, builder.toString(), true);
     }
 
     @Override

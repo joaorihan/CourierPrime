@@ -1,4 +1,5 @@
 PREFIX: "&8&l[&a&lC&2&lN&8&l] "
+ANONYMOUS: "Anonymous"
 SUCCESS_CREATED_HAND: "&7Letter created!"
 SUCCESS_CREATED_DROPPED: "&7Inventory full! Letter was dropped!"
 SUCCESS_CREATED_ADDED: "&7Letter added to inventory!"

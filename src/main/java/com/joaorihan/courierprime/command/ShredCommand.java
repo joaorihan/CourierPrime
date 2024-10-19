@@ -38,7 +38,6 @@ public class ShredCommand extends AbstractCommand{
         // Command exec
         if (args.length == 0){
             LetterManager.delete(player);
-            System.out.println("Letter deleted");
             return;
         }
 

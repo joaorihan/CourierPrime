@@ -15,6 +15,7 @@ public class Message {
     private static final Config config = Config.getMessageConfig();
 
     public static String PREFIX;
+    public static String ANONYMOUS;
     public static String SUCCESS_CREATED_HAND;
     public static String SUCCESS_CREATED_DROPPED;
     public static String SUCCESS_CREATED_ADDED;
@@ -97,6 +98,7 @@ public class Message {
      */
     public static void reloadMessages() {
         PREFIX = format(config.getConfig().getString("PREFIX"));
+        ANONYMOUS = format(config.getConfig().getString("ANONYMOUS"));
         SUCCESS_CREATED_HAND = PREFIX + format(config.getConfig().getString("SUCCESS_CREATED_HAND"));
         SUCCESS_CREATED_DROPPED = PREFIX + format(config.getConfig().getString("SUCCESS_CREATED_DROPPED"));
         SUCCESS_CREATED_ADDED = PREFIX + format(config.getConfig().getString("SUCCESS_CREATED_ADDED"));

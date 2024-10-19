@@ -5,3 +5,9 @@ spawn-distance: 5
 courier-entity-type: VILLAGER
 blocked-gamemodes: []
 blocked-worlds: []
+
+
+letter:
+  anonymous-letters-enabled: true
+
+  use-custom-model-data: false
