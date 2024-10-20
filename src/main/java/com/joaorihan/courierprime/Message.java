@@ -45,6 +45,7 @@ public class Message {
     public static String COURIER_NAME;
     public static String COURIER_NAME_RECEIVED;
     public static String LETTER_FROM;
+    public static String LETTER_BY;
     public static String PREVIEW_FORMAT;
     public static String PREVIEW_FOOTER;
     public static String DATE_TIME_FORMAT;
@@ -128,6 +129,7 @@ public class Message {
         COURIER_NAME = format(config.getConfig().getString("COURIER_NAME"));
         COURIER_NAME_RECEIVED = format(config.getConfig().getString("COURIER_NAME_RECEIVED"));
         LETTER_FROM = format(config.getConfig().getString("LETTER_FROM"));
+        LETTER_BY = PREFIX + format(config.getConfig().getString("LETTER_BY"));
         PREVIEW_FORMAT = format(config.getConfig().getString("PREVIEW_FORMAT"));
         PREVIEW_FOOTER = format(config.getConfig().getString("PREVIEW_FOOTER"));
         DATE_TIME_FORMAT = config.getConfig().getString("DATE_TIME_FORMAT");

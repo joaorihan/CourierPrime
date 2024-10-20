@@ -37,7 +37,7 @@ public class LetterSender implements Listener {
             ItemStack letter = sender.getInventory().getItemInMainHand();
             List<String> lore = createLetterLore(letter);
 
-            Collection<OfflinePlayer> offlinePlayers = null;
+            Collection<OfflinePlayer> offlinePlayers;
 
             switch (recipient) {
                 case "*":
