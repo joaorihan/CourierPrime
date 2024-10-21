@@ -1,5 +1,7 @@
-package com.joaorihan.courierprime;
+package com.joaorihan.courierprime.command.config;
 
+import com.joaorihan.courierprime.CourierPrime;
+import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -19,17 +21,20 @@ public class Config {
     /**
      * main config instance
      */
-    private static Config main = new Config("config.yml");
+    @Getter
+    private static Config mainConfig = new Config("config.yml");
     
     /**
      * outgoing config instance
      */
-    private static Config outgoing = new Config("outgoing.yml");
+    @Getter
+    private static Config outgoingConfig = new Config("outgoing.yml");
     
     /**
      * message config instance
      */
-    private static Config message = new Config("messages.yml");
+    @Getter
+    private static Config messageConfig = loadLanguageFile();
     
     /**
      * file used for the config
@@ -55,34 +60,28 @@ public class Config {
         this.filename = filename;
         configFile = new File(CourierPrime.getInstance().getDataFolder(), filename);
     }
-    
-    /**
-     * get the main config
-     *
-     * @return main config instance
-     */
-    public static Config getMainConfig() {
-        return main;
+
+
+    public static Config loadLanguageFile(){
+
+        String loadedLanguage = MainConfig.getLoadedLanguage();
+
+        // Lang file checks
+
+        if (loadedLanguage == null || loadedLanguage.isEmpty()){
+            CourierPrime.getInstance().getLogger().severe("Please setup the plugin language in the config.yml");
+            MainConfig.loadedLanguage = "en-us";
+            return new Config("en-us.yml");
+        }
+
+
+
+
+        return new Config(loadedLanguage.toLowerCase() + ".yml");
+
     }
-    
-    /**
-     * get the outgoing config
-     *
-     * @return outgoing config instance
-     */
-    public static Config getOutgoingConfig() {
-        return outgoing;
-    }
-    
-    /**
-     * get the message config
-     *
-     * @return message config instance
-     */
-    public static Config getMessageConfig() {
-        return message;
-    }
-    
+
+
     /**
      * reloads a configuration file, will load if the file is not loaded. Also saves defaults when they're missing
      */

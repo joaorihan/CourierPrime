@@ -1,6 +1,5 @@
-package com.joaorihan.courierprime.courier;
+package com.joaorihan.courierprime.command.config;
 
-import com.joaorihan.courierprime.Config;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -16,7 +15,7 @@ import java.util.Set;
  *
  * @author Jeremy Noesen
  */
-public class CourierOptions {
+public class MainConfig {
     
     /**
      * delay between sending a letter, joining the server, switching out of a blocked gamemode, or coming from a blocked
@@ -56,6 +55,9 @@ public class CourierOptions {
 
     @Getter
     public static boolean ANONYMOUS_LETTERS;
+
+    @Getter
+    public static String loadedLanguage;
     
     /**
      * load config options from the config file
@@ -73,6 +75,8 @@ public class CourierOptions {
         for(String s : config.getStringList("blocked-worlds")) BLOCKED_WORLDS.add(Bukkit.getWorld(s));
 
         ANONYMOUS_LETTERS = config.getBoolean("letter.anonymous-letters-enabled");
+
+        loadedLanguage = config.getString("lang");
     }
     
 }

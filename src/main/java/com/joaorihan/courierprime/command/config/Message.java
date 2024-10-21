@@ -1,4 +1,4 @@
-package com.joaorihan.courierprime;
+package com.joaorihan.courierprime.command.config;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
