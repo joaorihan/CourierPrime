@@ -44,13 +44,6 @@ public class UnreadCommand extends AbstractCommand{
         Bukkit.getScheduler().runTaskLater(getPlugin(), () -> Courier.spawn(player), CourierOptions.RECEIVE_DELAY);
 
 
-//        new BukkitRunnable() {
-//            @Override
-//            public void run() {
-//                Courier.spawn(player);
-//            }
-//        }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RECEIVE_DELAY);
-//
     }
 
     @Override

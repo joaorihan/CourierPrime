@@ -12,6 +12,7 @@ public class CommandManager {
 
     private void registerCommands(){
         new AdminCommand();
+        new BlockCommand();
         new HelpCommand();
         new InspectCommand();
         new LetterCommand();

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+
 /**
  * Methods to create, edit, and delete letters
  *
@@ -28,9 +29,19 @@ public class LetterManager {
     @Getter
     private static NamespacedKey key = new NamespacedKey(CourierPrime.getPlugin(), "playerName");
 
-    //private List<Player> playersInBlockedMode = new ArrayList<>();
-    //public void removeBlockedPlayer(Player player){ playersInBlockedMode.remove(player); }
-    //public boolean isInBlockedMode(Player player) { return playersInBlockedMode.contains(player); }
+    private static List<Player> playersInBlockedMode = new ArrayList<>();
+
+    public static void removeBlockedPlayer(Player player){ playersInBlockedMode.remove(player); }
+
+    public static boolean addBlockedPlayer(Player player){
+        if (isInBlockedMode(player))
+            return false;
+
+        playersInBlockedMode.add(player);
+        return true;
+    }
+
+    public static boolean isInBlockedMode(Player player) { return playersInBlockedMode.contains(player); }
 
 
     /**

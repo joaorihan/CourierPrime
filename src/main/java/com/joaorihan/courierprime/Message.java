@@ -53,6 +53,8 @@ public class Message {
     public static String LETTER_TO_MULTIPLE;
     public static String LETTER_TO_ALL;
     public static String LETTER_TO_ALLONLINE;
+    public static String ENABLE_LETTERS;
+    public static String DISABLE_LETTERS;
     public static String HELP_HEADER;
     public static String HELP_LETTER;
     public static String HELP_POST;
@@ -137,6 +139,8 @@ public class Message {
         LETTER_TO_MULTIPLE = format(config.getConfig().getString("LETTER_TO_MULTIPLE"));
         LETTER_TO_ALL = format(config.getConfig().getString("LETTER_TO_ALL"));
         LETTER_TO_ALLONLINE = format(config.getConfig().getString("LETTER_TO_ALLONLINE"));
+        ENABLE_LETTERS = PREFIX + format(config.getConfig().getString("ENABLE_LETTERS"));
+        DISABLE_LETTERS = PREFIX + format(config.getConfig().getString("DISABLE_LETTERS"));
         HELP_HEADER = format(config.getConfig().getString("HELP_HEADER"));
         HELP_LETTER = format(config.getConfig().getString("HELP_LETTER"));
         HELP_POST = format(config.getConfig().getString("HELP_POST"));
@@ -156,6 +160,7 @@ public class Message {
      * @return formatted message
      */
     public static String format(String msg) {
+        if (msg == null) return null;
         return ChatColor.translateAlternateColorCodes('&', msg.replace("\\n", "\n"));
     }
 
