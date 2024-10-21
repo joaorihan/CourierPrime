@@ -1,8 +1,9 @@
 package com.joaorihan.courierprime.courier;
 
 import com.joaorihan.courierprime.CourierPrime;
-import com.joaorihan.courierprime.Message;
-import com.joaorihan.courierprime.letter.Outgoing;
+import com.joaorihan.courierprime.command.config.Message;
+import com.joaorihan.courierprime.command.config.MainConfig;
+import com.joaorihan.courierprime.command.config.Outgoing;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -47,8 +48,8 @@ public class Courier {
      * spawn the courier entity
      */
     private void spawn() {
-        Location loc = recipient.getLocation().add(recipient.getLocation().getDirection().setY(0).multiply(CourierOptions.SPAWN_DISTANCE));
-        courier = recipient.getWorld().spawnEntity(loc, CourierOptions.COURIER_ENTITY_TYPE);
+        Location loc = recipient.getLocation().add(recipient.getLocation().getDirection().setY(0).multiply(MainConfig.SPAWN_DISTANCE));
+        courier = recipient.getWorld().spawnEntity(loc, MainConfig.COURIER_ENTITY_TYPE);
         couriers.put(courier, this);
 
         courier.setCustomName(Message.COURIER_NAME.replace("$PLAYER$", recipient.getName()));
@@ -84,10 +85,10 @@ public class Courier {
                         public void run() {
                             spawn(recipient);
                         }
-                    }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RESEND_DELAY);
+                    }.runTaskLater(CourierPrime.getInstance(), MainConfig.RESEND_DELAY);
                 }
             }
-        }.runTaskLater(CourierPrime.getInstance(), CourierOptions.REMOVE_DELAY);
+        }.runTaskLater(CourierPrime.getInstance(), MainConfig.REMOVE_DELAY);
     }
 
     /**
@@ -130,7 +131,7 @@ public class Courier {
             return false;
         }
 
-        double dist = CourierOptions.SPAWN_DISTANCE * 2;
+        double dist = MainConfig.SPAWN_DISTANCE * 2;
         for (Entity entity : recipient.getNearbyEntities(dist, dist, dist)) {
             if (couriers.containsKey(entity) &&
                     couriers.get(entity).getRecipient().equals(recipient)) {
@@ -145,8 +146,8 @@ public class Courier {
             }
         }
 
-        if (CourierOptions.BLOCKED_WORLDS.contains(recipient.getWorld()) ||
-                CourierOptions.BLOCKED_GAMEMODES.contains(recipient.getGameMode())) {
+        if (MainConfig.BLOCKED_WORLDS.contains(recipient.getWorld()) ||
+                MainConfig.BLOCKED_GAMEMODES.contains(recipient.getGameMode())) {
             recipient.sendMessage(Message.ERROR_WORLD);
             return false;
         }

@@ -1,8 +1,10 @@
 package com.joaorihan.courierprime;
 
 import com.joaorihan.courierprime.command.CommandManager;
-import com.joaorihan.courierprime.letter.Outgoing;
-import com.joaorihan.courierprime.courier.CourierOptions;
+import com.joaorihan.courierprime.command.config.Config;
+import com.joaorihan.courierprime.command.config.Message;
+import com.joaorihan.courierprime.command.config.Outgoing;
+import com.joaorihan.courierprime.command.config.MainConfig;
 import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.listener.LetterListener;
 import com.joaorihan.courierprime.listener.PlayerListener;
@@ -45,7 +47,7 @@ public class CourierPrime extends JavaPlugin {
         Config.getOutgoingConfig().saveDefaultConfig();
         Config.getMainConfig().saveDefaultConfig();
         
-        CourierOptions.load();
+        MainConfig.load();
         Outgoing.loadAll();
         Message.reloadMessages();
         

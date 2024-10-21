@@ -1,6 +1,5 @@
-package com.joaorihan.courierprime.letter;
+package com.joaorihan.courierprime.command.config;
 
-import com.joaorihan.courierprime.Config;
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 

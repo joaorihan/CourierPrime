@@ -1,11 +1,12 @@
 package com.joaorihan.courierprime.letter;
 
+import com.joaorihan.courierprime.command.config.Outgoing;
 import org.apache.commons.text.WordUtils;
 import org.bukkit.inventory.meta.BookMeta;
 import com.joaorihan.courierprime.CourierPrime;
-import com.joaorihan.courierprime.Message;
+import com.joaorihan.courierprime.command.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.courier.CourierOptions;
+import com.joaorihan.courierprime.command.config.MainConfig;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -158,7 +159,7 @@ public class LetterSender implements Listener {
                 public void run() {
                     Courier.spawn((Player) op);
                 }
-            }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RECEIVE_DELAY);
+            }.runTaskLater(CourierPrime.getInstance(), MainConfig.RECEIVE_DELAY);
         }
 
         sender.getInventory().getItemInMainHand().setAmount(0);
