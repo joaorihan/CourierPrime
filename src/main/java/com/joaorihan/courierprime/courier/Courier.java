@@ -1,9 +1,9 @@
 package com.joaorihan.courierprime.courier;
 
 import com.joaorihan.courierprime.CourierPrime;
-import com.joaorihan.courierprime.command.config.Message;
-import com.joaorihan.courierprime.command.config.MainConfig;
-import com.joaorihan.courierprime.command.config.Outgoing;
+import com.joaorihan.courierprime.config.Message;
+import com.joaorihan.courierprime.config.MainConfig;
+import com.joaorihan.courierprime.config.Outgoing;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Sound;

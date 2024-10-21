@@ -1,7 +1,7 @@
 package com.joaorihan.courierprime.letter;
 
 
-import com.joaorihan.courierprime.command.config.Message;
+import com.joaorihan.courierprime.config.Message;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;

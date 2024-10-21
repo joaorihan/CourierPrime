@@ -1,10 +1,10 @@
 package com.joaorihan.courierprime;
 
 import com.joaorihan.courierprime.command.CommandManager;
-import com.joaorihan.courierprime.command.config.Config;
-import com.joaorihan.courierprime.command.config.Message;
-import com.joaorihan.courierprime.command.config.Outgoing;
-import com.joaorihan.courierprime.command.config.MainConfig;
+import com.joaorihan.courierprime.config.Config;
+import com.joaorihan.courierprime.config.Message;
+import com.joaorihan.courierprime.config.Outgoing;
+import com.joaorihan.courierprime.config.MainConfig;
 import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.listener.LetterListener;
 import com.joaorihan.courierprime.listener.PlayerListener;

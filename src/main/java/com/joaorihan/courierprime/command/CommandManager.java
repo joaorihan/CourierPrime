@@ -1,6 +1,6 @@
 package com.joaorihan.courierprime.command;
 
-import com.joaorihan.courierprime.command.config.MainConfig;
+import com.joaorihan.courierprime.config.MainConfig;
 
 public class CommandManager {
 

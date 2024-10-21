@@ -1,4 +1,4 @@
-package com.joaorihan.courierprime.command.config;
+package com.joaorihan.courierprime.config;
 
 import com.joaorihan.courierprime.CourierPrime;
 import lombok.Getter;
@@ -67,14 +67,21 @@ public class Config {
         String loadedLanguage = MainConfig.getLoadedLanguage();
 
         // Lang file checks
-
         if (loadedLanguage == null || loadedLanguage.isEmpty()){
-            CourierPrime.getInstance().getLogger().severe("Please setup the plugin language in the config.yml");
+            CourierPrime.getInstance().getLogger().severe("Please setup the plugin language in the config.yml!");
             MainConfig.loadedLanguage = "en-us";
             return new Config("en-us.yml");
         }
 
+        // Path to the lang/ directory
+        File langFile = new File(CourierPrime.getInstance().getDataFolder(), "lang/" + loadedLanguage.toLowerCase() + ".yml");
 
+        // Check if the file exists
+        if (!langFile.exists()) {
+            CourierPrime.getInstance().getLogger().severe("Language file " + loadedLanguage + ".yml not found, defaulting to en-us.");
+            MainConfig.loadedLanguage = "en-us";
+            return new Config("en-us.yml");
+        }
 
 
         return new Config(loadedLanguage.toLowerCase() + ".yml");
@@ -99,7 +106,7 @@ public class Config {
         YMLConfig.options().copyDefaults(true);
         saveConfig();
         
-        if (filename.equals("messages.yml")) Message.reloadMessages();
+        if (filename.equals(MainConfig.loadedLanguage + ".yml")) Message.reloadMessages();
     }
     
     /**

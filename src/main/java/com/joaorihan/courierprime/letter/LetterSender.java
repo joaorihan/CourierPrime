@@ -1,12 +1,12 @@
 package com.joaorihan.courierprime.letter;
 
-import com.joaorihan.courierprime.command.config.Outgoing;
+import com.joaorihan.courierprime.config.Outgoing;
 import org.apache.commons.text.WordUtils;
 import org.bukkit.inventory.meta.BookMeta;
 import com.joaorihan.courierprime.CourierPrime;
-import com.joaorihan.courierprime.command.config.Message;
+import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.command.config.MainConfig;
+import com.joaorihan.courierprime.config.MainConfig;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;

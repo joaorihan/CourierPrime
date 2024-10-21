@@ -2,7 +2,7 @@ package com.joaorihan.courierprime.listener;
 
 import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.command.config.MainConfig;
+import com.joaorihan.courierprime.config.MainConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
