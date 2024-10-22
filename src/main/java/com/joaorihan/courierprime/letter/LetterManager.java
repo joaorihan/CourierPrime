@@ -27,16 +27,23 @@ import java.util.List;
  */
 public class LetterManager {
 
+    private final List<Player> playersInBlockedMode;
+    private final CourierPrime plugin;
+
     @Getter
-    private static NamespacedKey key = new NamespacedKey(CourierPrime.getPlugin(), "playerName");
+    private final NamespacedKey key;
 
-    private static List<Player> playersInBlockedMode = new ArrayList<>();
 
-    private static CourierPrime plugin = CourierPrime.getInstance();
+    public LetterManager(CourierPrime plugin){
+        this.plugin = plugin;
+        playersInBlockedMode = new ArrayList<>();
+        key =  new NamespacedKey(plugin, "playerName");
+    }
 
-    public static void removeBlockedPlayer(Player player){ playersInBlockedMode.remove(player); }
 
-    public static boolean addBlockedPlayer(Player player){
+    public void removeBlockedPlayer(Player player){ playersInBlockedMode.remove(player); }
+
+    public boolean addBlockedPlayer(Player player){
         if (isInBlockedMode(player))
             return false;
 
@@ -44,7 +51,7 @@ public class LetterManager {
         return true;
     }
 
-    public static boolean isInBlockedMode(Player player) { return playersInBlockedMode.contains(player); }
+    public boolean isInBlockedMode(Player player) { return playersInBlockedMode.contains(player); }
 
 
     /**
@@ -54,7 +61,7 @@ public class LetterManager {
      * @param player  player writing the letter
      * @param message the message the player is writing to the letter
      */
-    public static void writeBook(Player player, String message, boolean anonymous) {
+    public void writeBook(Player player, String message, boolean anonymous) {
         String finalMessage = MessageManager.format(message);
         
         ItemStack book = new ItemStack(Material.WRITTEN_BOOK, 1);
@@ -78,9 +85,9 @@ public class LetterManager {
         String wrapped = WordUtils.wrap(MessageManager.unformat(message), 30, "<split>", true);
         String[] lines = wrapped.split("<split>");
         lore.add("");
-        lore.add(Message.PREVIEW_FORMAT + lines[0]);
-        if (lines.length >= 2) lore.add(Message.PREVIEW_FORMAT + lines[1]);
-        if (lines.length >= 3) lore.add(Message.PREVIEW_FORMAT + lines[2]);
+        lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[0]);
+        if (lines.length >= 2) lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[1]);
+        if (lines.length >= 3) lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[2]);
         lore.add("");
         lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FOOTER).replace("$DATE$", dateNow)
                 .replace("$PAGES$", Integer.toString(bm.getPages().size())));
@@ -107,7 +114,7 @@ public class LetterManager {
      * @param player  player editing the letter
      * @param message message player is adding to the letter
      */
-    public static void editBook(Player player, String message) {
+    public void editBook(Player player, String message) {
         String finalMessage = MessageManager.format(message);
         
         ItemStack writtenBook = player.getInventory().getItemInMainHand();
@@ -132,9 +139,9 @@ public class LetterManager {
         String wrapped = WordUtils.wrap(MessageManager.unformat(wbm.getPage(1)), 30, "<split>", true);
         String[] lines = wrapped.split("<split>");
         lore.add("");
-        lore.add(Message.PREVIEW_FORMAT + lines[0]);
-        if (lines.length >= 2) lore.add(Message.PREVIEW_FORMAT + lines[1]);
-        if (lines.length >= 3) lore.add(Message.PREVIEW_FORMAT + lines[2]);
+        lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[0]);
+        if (lines.length >= 2) lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[1]);
+        if (lines.length >= 3) lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[2]);
         lore.add("");
         lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FOOTER).replace("$DATE$", dateNow)
                 .replace("$PAGES$", Integer.toString(wbm.getPages().size())));
@@ -149,7 +156,7 @@ public class LetterManager {
      *
      * @param player player deleting the letter in their hand
      */
-    public static void delete(Player player) {
+    public void delete(Player player) {
         if (LetterUtil.isHoldingLetter(player)) {
             player.getInventory().getItemInMainHand().setAmount(0);
             player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_DELETED, true));
@@ -162,7 +169,7 @@ public class LetterManager {
      *
      * @param player player deleting the letters in their inventory
      */
-    public static void deleteAll(Player player) {
+    public void deleteAll(Player player) {
         for (ItemStack item : player.getInventory().getContents()) {
             if (LetterUtil.isValidLetter(item)) item.setAmount(0);
         }

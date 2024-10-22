@@ -40,7 +40,7 @@ public class AnonymousLetterCommand extends AbstractCommand{
             builder.append(arg).append(" ");
         }
 
-        LetterManager.writeBook(player, builder.toString(), true);
+        getPlugin().getLetterManager().writeBook(player, builder.toString(), true);
     }
 
     @Override

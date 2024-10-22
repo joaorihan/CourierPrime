@@ -35,7 +35,7 @@ public class BlockCommand extends AbstractCommand{
 
 
         // Command exec
-        if (LetterManager.addBlockedPlayer(player)){
+        if (getPlugin().getLetterManager().addBlockedPlayer(player)){
             player.sendMessage(getMessageManager().getMessage(Message.DISABLE_LETTERS, true));
 
             // Checks if the player has any pending letters
@@ -50,7 +50,7 @@ public class BlockCommand extends AbstractCommand{
             }, CourierOptions.RECEIVE_DELAY);
 
         } else {
-            LetterManager.removeBlockedPlayer(player);
+            getPlugin().getLetterManager().removeBlockedPlayer(player);
             player.sendMessage(getMessageManager().getMessage(Message.ENABLE_LETTERS, true));
         }
 

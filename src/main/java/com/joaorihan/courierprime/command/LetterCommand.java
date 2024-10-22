@@ -44,12 +44,12 @@ public class LetterCommand extends AbstractCommand{
 
         // Checks if the command was used for a new letter or a letter edit
         if (LetterUtil.isHoldingOwnLetter(player) && !LetterUtil.wasAlreadySent(player.getInventory().getItemInMainHand())){
-            LetterManager.editBook(player, builder.toString());
+            getPlugin().getLetterManager().editBook(player, builder.toString());
             return;
         }
 
         // If not, writes a new letter
-        LetterManager.writeBook(player, builder.toString(), false);
+        getPlugin().getLetterManager().writeBook(player, builder.toString(), false);
     }
 
     @Override

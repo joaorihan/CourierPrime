@@ -37,7 +37,7 @@ public class ShredCommand extends AbstractCommand{
 
         // Command exec
         if (args.length == 0){
-            LetterManager.delete(player);
+            getPlugin().getLetterManager().delete(player);
             return;
         }
 
@@ -54,7 +54,7 @@ public class ShredCommand extends AbstractCommand{
         }
 
         // Shred all exec
-        LetterManager.deleteAll(player);
+        getPlugin().getLetterManager().deleteAll(player);
     }
 
     @Override

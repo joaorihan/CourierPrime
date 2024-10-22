@@ -2,6 +2,7 @@ package com.joaorihan.courierprime;
 
 import com.joaorihan.courierprime.command.CommandManager;
 import com.joaorihan.courierprime.config.*;
+import com.joaorihan.courierprime.letter.LetterManager;
 import com.joaorihan.courierprime.letter.Outgoing;
 import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.listener.LetterListener;
@@ -37,7 +38,8 @@ public class CourierPrime extends JavaPlugin {
     @Getter @Setter
     public MessageManager messageManager;
 
-
+    @Getter @Setter
+    public LetterManager letterManager;
     /**
      * initialize configurations, load messages, register commands and permissions
      */
@@ -45,9 +47,12 @@ public class CourierPrime extends JavaPlugin {
         plugin = this;
 
         setConfigManager(new ConfigManager(plugin));
-
         setMessageManager(new MessageManager(configManager));
-        
+
+        // refactor
+        setLetterManager(new LetterManager(plugin));
+
+
         CourierOptions.load();
         Outgoing.loadAll();
 
