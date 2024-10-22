@@ -1,9 +1,10 @@
 package com.joaorihan.courierprime.command;
 
-import com.joaorihan.courierprime.Config;
-import com.joaorihan.courierprime.Message;
+import com.joaorihan.courierprime.config.Config;
+import com.joaorihan.courierprime.config.ConfigManager;
+import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.courier.CourierOptions;
+import com.joaorihan.courierprime.config.CourierOptions;
 import com.joaorihan.courierprime.letter.Outgoing;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -44,9 +45,15 @@ public class AdminCommand extends AbstractCommand{
             Outgoing.saveAll();
             Courier.getCouriers().keySet().forEach(Entity::remove);
             Courier.getCouriers().clear();
-            Config.getMainConfig().reloadConfig();
-            Config.getOutgoingConfig().reloadConfig();
-            Config.getMessageConfig().reloadConfig();
+
+//            Config.getMainConfig().reloadConfig();
+//            Config.getOutgoingConfig().reloadConfig();
+//            Config.getMessageConfig().reloadConfig();
+
+            getPlugin().setConfigManager(new ConfigManager(getPlugin()));
+
+
+
             CourierOptions.load();
             Outgoing.loadAll();
             Message.reloadMessages();

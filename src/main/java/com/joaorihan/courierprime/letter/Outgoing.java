@@ -1,6 +1,7 @@
 package com.joaorihan.courierprime.letter;
 
-import com.joaorihan.courierprime.Config;
+import com.joaorihan.courierprime.CourierPrime;
+import com.joaorihan.courierprime.config.Config;
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 
@@ -45,7 +46,7 @@ public class Outgoing {
         for (UUID player : outgoing.keySet()) {
             savePlayer(player);
         }
-        outgoingConfig.saveConfig();
+        CourierPrime.getPlugin().getConfigManager().saveOutgoingConfig();
     }
 
     /**

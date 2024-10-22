@@ -1,3 +1,6 @@
+
+lang: "en-us"
+
 receive-delay: 100
 resend-delay: 2400
 remove-delay: 200

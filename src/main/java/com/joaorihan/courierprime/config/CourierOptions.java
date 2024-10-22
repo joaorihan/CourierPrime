@@ -1,6 +1,5 @@
-package com.joaorihan.courierprime.courier;
+package com.joaorihan.courierprime.config;
 
-import com.joaorihan.courierprime.Config;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;

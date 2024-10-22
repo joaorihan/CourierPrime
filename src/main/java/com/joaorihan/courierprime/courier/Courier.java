@@ -1,7 +1,8 @@
 package com.joaorihan.courierprime.courier;
 
 import com.joaorihan.courierprime.CourierPrime;
-import com.joaorihan.courierprime.Message;
+import com.joaorihan.courierprime.config.CourierOptions;
+import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.letter.Outgoing;
 import lombok.Getter;
 import org.bukkit.Location;

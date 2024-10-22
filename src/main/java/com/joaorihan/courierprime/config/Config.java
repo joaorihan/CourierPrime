@@ -1,5 +1,6 @@
-package com.joaorihan.courierprime;
+package com.joaorihan.courierprime.config;
 
+import com.joaorihan.courierprime.CourierPrime;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -15,7 +16,7 @@ import java.util.logging.Level;
  * @author Jeremy Noesen
  */
 public class Config {
-    
+
     /**
      * main config instance
      */

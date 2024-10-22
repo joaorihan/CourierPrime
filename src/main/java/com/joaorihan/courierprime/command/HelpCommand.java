@@ -1,6 +1,6 @@
 package com.joaorihan.courierprime.command;
 
-import com.joaorihan.courierprime.Message;
+import com.joaorihan.courierprime.config.Message;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -31,7 +31,7 @@ public class HelpCommand extends AbstractCommand{
 
         if (args[0].equalsIgnoreCase("help")) {
             if (player.hasPermission("courierprime.help")) {
-                player.sendMessage(Message.getHelpMessage(player));
+                player.sendMessage(getPlugin().getConfigManager().getHelpMessage());
             } else
                 player.sendMessage(Message.ERROR_NO_PERMS);
         } else {

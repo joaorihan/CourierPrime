@@ -1,12 +1,13 @@
 package com.joaorihan.courierprime;
 
 import com.joaorihan.courierprime.command.CommandManager;
+import com.joaorihan.courierprime.config.*;
 import com.joaorihan.courierprime.letter.Outgoing;
-import com.joaorihan.courierprime.courier.CourierOptions;
 import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.listener.LetterListener;
 import com.joaorihan.courierprime.listener.PlayerListener;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
@@ -25,30 +26,31 @@ public class CourierPrime extends JavaPlugin {
      */
     @Getter
     public static CourierPrime plugin;
-    
-    /**
-     * get the plugin instance
-     *
-     * @return plugin instance
-     */
+
     public static CourierPrime getInstance() {
         return plugin;
     }
-    
+
+    @Getter @Setter
+    public ConfigManager configManager;
+
+    @Getter @Setter
+    public MessageManager messageManager;
+
+
     /**
      * initialize configurations, load messages, register commands and permissions
      */
     public void onEnable() {
         plugin = this;
-        
-        Config.getMessageConfig().saveDefaultConfig();
-        Config.getOutgoingConfig().saveDefaultConfig();
-        Config.getMainConfig().saveDefaultConfig();
+
+        setConfigManager(new ConfigManager(plugin));
+
+        setMessageManager(new MessageManager(configManager));
         
         CourierOptions.load();
         Outgoing.loadAll();
-        Message.reloadMessages();
-        
+
         PluginManager pm = Bukkit.getPluginManager();
 
         // Register Listeners
