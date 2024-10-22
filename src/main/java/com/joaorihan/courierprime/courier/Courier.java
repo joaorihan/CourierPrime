@@ -3,7 +3,6 @@ package com.joaorihan.courierprime.courier;
 import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.config.CourierOptions;
 import com.joaorihan.courierprime.config.Message;
-import com.joaorihan.courierprime.letter.Outgoing;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -129,8 +128,8 @@ public class Courier {
      * @return true if the courier is allowed to spawn
      */
     private static boolean canSpawn(Player recipient) {
-        if (!recipient.isOnline() || !Outgoing.getOutgoing().containsKey(recipient.getUniqueId())
-                || Outgoing.getOutgoing().get(recipient.getUniqueId()).size() == 0) {
+        if (!recipient.isOnline() || !plugin.getOutgoingManager().getOutgoing().containsKey(recipient.getUniqueId())
+                || plugin.getOutgoingManager().getOutgoing().get(recipient.getUniqueId()).size() == 0) {
             return false;
         }
 

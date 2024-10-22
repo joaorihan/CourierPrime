@@ -3,7 +3,7 @@ package com.joaorihan.courierprime;
 import com.joaorihan.courierprime.command.CommandManager;
 import com.joaorihan.courierprime.config.*;
 import com.joaorihan.courierprime.letter.LetterManager;
-import com.joaorihan.courierprime.letter.Outgoing;
+import com.joaorihan.courierprime.letter.OutgoingManager;
 import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.listener.LetterListener;
 import com.joaorihan.courierprime.listener.PlayerListener;
@@ -33,14 +33,16 @@ public class CourierPrime extends JavaPlugin {
     }
 
     @Getter @Setter
-    public ConfigManager configManager;
+    private ConfigManager configManager;
 
     @Getter @Setter
-    public MessageManager messageManager;
+    private MessageManager messageManager;
 
     @Getter @Setter
-    public LetterManager letterManager;
+    private LetterManager letterManager;
 
+    @Getter @Setter
+    private OutgoingManager outgoingManager;
 
     /**
      * initialize configurations, load messages, register commands and permissions
@@ -53,10 +55,11 @@ public class CourierPrime extends JavaPlugin {
 
         // refactor
         setLetterManager(new LetterManager(plugin));
-
+        setOutgoingManager(new OutgoingManager(plugin));
 
         CourierOptions.load();
-        Outgoing.loadAll();
+
+        getOutgoingManager().loadAll();
 
         PluginManager pm = Bukkit.getPluginManager();
 
@@ -86,7 +89,8 @@ public class CourierPrime extends JavaPlugin {
      */
     public void onDisable() {
         Courier.getCouriers().keySet().forEach(Entity::remove);
-        Outgoing.saveAll();
+        getOutgoingManager().saveAll();
+
         plugin = null;
     }
 }

@@ -42,7 +42,7 @@ public class LetterManager {
         this.playersInBlockedMode = new ArrayList<>();
         this.key =  new NamespacedKey(plugin, "playerName");
 
-        this.letterSender = new LetterSender(plugin.getMessageManager());
+        this.letterSender = new LetterSender(plugin);
     }
 
 

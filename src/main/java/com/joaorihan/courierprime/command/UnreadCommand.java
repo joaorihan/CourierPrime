@@ -3,7 +3,6 @@ package com.joaorihan.courierprime.command;
 import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.config.CourierOptions;
-import com.joaorihan.courierprime.letter.Outgoing;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,7 +32,7 @@ public class UnreadCommand extends AbstractCommand{
             return;
         }
 
-        if (!(Outgoing.getOutgoing().containsKey(player.getUniqueId()) && Outgoing.getOutgoing().get(player.getUniqueId()).size() > 0)) {
+        if (!(getPlugin().getOutgoingManager().getOutgoing().containsKey(player.getUniqueId()) && getPlugin().getOutgoingManager().getOutgoing().get(player.getUniqueId()).size() > 0)) {
             player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_MAIL, true));
             return;
         }

@@ -22,11 +22,12 @@ import java.util.*;
  */
 public class LetterSender {
 
-    private MessageManager messageManager;
+    private final CourierPrime plugin;
+    private final MessageManager messageManager;
 
-
-    public LetterSender(MessageManager messageManager){
-         this.messageManager = messageManager;
+    public LetterSender(CourierPrime plugin){
+         this.plugin = plugin;
+         this.messageManager = plugin.getMessageManager();
     }
 
 
@@ -159,7 +160,7 @@ public class LetterSender {
         for (OfflinePlayer op : offlinePlayers) {
             if (offlinePlayers.size() > 1 && op.equals(sender)) continue;
 
-            Outgoing.getOutgoing().computeIfAbsent(op.getUniqueId(), k -> new LinkedList<>()).add(new ItemStack(letter));
+            plugin.getOutgoingManager().getOutgoing().computeIfAbsent(op.getUniqueId(), k -> new LinkedList<>()).add(new ItemStack(letter));
 
             new BukkitRunnable() {
                 @Override
@@ -191,8 +192,8 @@ public class LetterSender {
      * @param recipient player receiving the mail
      */
     public void receive(Player recipient) {
-        if (Outgoing.getOutgoing().containsKey(recipient.getUniqueId()) && Outgoing.getOutgoing().get(recipient.getUniqueId()).size() > 0) {
-            LinkedList<ItemStack> letters = Outgoing.getOutgoing().get(recipient.getUniqueId());
+        if (plugin.getOutgoingManager().hasPendingLetters(recipient)) {
+            LinkedList<ItemStack> letters = plugin.getOutgoingManager().getOutgoing().get(recipient.getUniqueId());
 
             while (!letters.isEmpty()) {
                 if (recipient.getInventory().firstEmpty() < 0) {
