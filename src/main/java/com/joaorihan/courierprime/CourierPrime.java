@@ -40,6 +40,8 @@ public class CourierPrime extends JavaPlugin {
 
     @Getter @Setter
     public LetterManager letterManager;
+
+
     /**
      * initialize configurations, load messages, register commands and permissions
      */

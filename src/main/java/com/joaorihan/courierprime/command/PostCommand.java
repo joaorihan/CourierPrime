@@ -39,7 +39,7 @@ public class PostCommand extends AbstractCommand{
         }
 
         // Command exec
-        LetterSender.send(player, args[0]);
+        getPlugin().getLetterManager().getLetterSender().send(player, args[0]);
 
     }
 

@@ -2,7 +2,6 @@ package com.joaorihan.courierprime.listener;
 
 import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.letter.LetterSender;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
@@ -17,9 +16,11 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
  */
 public class LetterListener implements Listener {
 
+    private CourierPrime plugin;
 
     public LetterListener(CourierPrime plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        this.plugin = plugin;
     }
 
 
@@ -34,7 +35,7 @@ public class LetterListener implements Listener {
                     && !Courier.getCouriers().get(en).isDelivered()) {
                 Courier.getCouriers().get(en).setDelivered();
                 e.setCancelled(true);
-                LetterSender.receive(e.getPlayer());
+                plugin.getLetterManager().getLetterSender().receive(e.getPlayer());
                 en.getWorld().playSound(en.getLocation(), Sound.BLOCK_WOOL_BREAK, 1, 1);
                 en.getWorld().spawnParticle(Particle.HAPPY_VILLAGER,
                         en.getLocation().add(0, en.getHeight() / 2, 0), 20,

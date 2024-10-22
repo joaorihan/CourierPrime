@@ -31,13 +31,18 @@ public class LetterManager {
     private final CourierPrime plugin;
 
     @Getter
+    private LetterSender letterSender;
+
+    @Getter
     private final NamespacedKey key;
 
 
     public LetterManager(CourierPrime plugin){
         this.plugin = plugin;
-        playersInBlockedMode = new ArrayList<>();
-        key =  new NamespacedKey(plugin, "playerName");
+        this.playersInBlockedMode = new ArrayList<>();
+        this.key =  new NamespacedKey(plugin, "playerName");
+
+        this.letterSender = new LetterSender(plugin.getMessageManager());
     }
 
 

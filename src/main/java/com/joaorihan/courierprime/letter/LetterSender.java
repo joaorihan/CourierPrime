@@ -22,7 +22,12 @@ import java.util.*;
  */
 public class LetterSender {
 
-    private static MessageManager messageManager = CourierPrime.getPlugin().getMessageManager();
+    private MessageManager messageManager;
+
+
+    public LetterSender(MessageManager messageManager){
+         this.messageManager = messageManager;
+    }
 
 
     /**
@@ -33,7 +38,7 @@ public class LetterSender {
      * @param sender    player sending the letter
      * @param recipient player(s) to receive the letter
      */
-    public static void send(Player sender, String recipient) {
+    public void send(Player sender, String recipient) {
         if (LetterUtil.isHoldingOwnLetter(sender) &&
                 !LetterUtil.wasAlreadySent(sender.getInventory().getItemInMainHand())) {
 
@@ -66,7 +71,7 @@ public class LetterSender {
         }
     }
 
-    private static List<String> createLetterLore(ItemStack letter) {
+    private List<String> createLetterLore(ItemStack letter) {
         List<String> lore = new ArrayList<>();
         Calendar currentDate = Calendar.getInstance();
         SimpleDateFormat formatter = new SimpleDateFormat(messageManager.getMessage(Message.DATE_TIME_FORMAT));
@@ -86,7 +91,7 @@ public class LetterSender {
         return lore;
     }
 
-    private static Collection<OfflinePlayer> handleAllOnline(Player sender, List<String> lore) {
+    private Collection<OfflinePlayer> handleAllOnline(Player sender, List<String> lore) {
         if (sender.hasPermission("couriernew.post.allonline")) {
             lore.add("§T" + Message.LETTER_TO_ALLONLINE);
             Collection<OfflinePlayer> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
@@ -98,7 +103,7 @@ public class LetterSender {
         }
     }
 
-    private static Collection<OfflinePlayer> handleAll(Player sender, List<String> lore) {
+    private Collection<OfflinePlayer> handleAll(Player sender, List<String> lore) {
         if (sender.hasPermission("couriernew.post.all")) {
             lore.add("§T" + Message.LETTER_TO_ALL);
             Collection<OfflinePlayer> allPlayers = new ArrayList<>(Arrays.asList(Bukkit.getOfflinePlayers()));
@@ -110,7 +115,7 @@ public class LetterSender {
         }
     }
 
-    private static Collection<OfflinePlayer> handleMultipleRecipients(Player sender, String recipient, List<String> lore) {
+    private Collection<OfflinePlayer> handleMultipleRecipients(Player sender, String recipient, List<String> lore) {
         if (sender.hasPermission("couriernew.post.multiple")) {
             Collection<OfflinePlayer> offlinePlayers = new ArrayList<>();
             for (String recipients : recipient.split(",")) {
@@ -130,7 +135,7 @@ public class LetterSender {
         }
     }
 
-    private static Collection<OfflinePlayer> handleSingleRecipient(Player sender, String recipient, List<String> lore) {
+    private Collection<OfflinePlayer> handleSingleRecipient(Player sender, String recipient, List<String> lore) {
         if (sender.hasPermission("couriernew.post.one")) {
             OfflinePlayer op = Bukkit.getOfflinePlayer(recipient);
             if (op == null) {
@@ -146,7 +151,7 @@ public class LetterSender {
         }
     }
 
-    private static void sendLettersToPlayers(Player sender, ItemStack letter, List<String> lore, Collection<OfflinePlayer> offlinePlayers) {
+    private void sendLettersToPlayers(Player sender, ItemStack letter, List<String> lore, Collection<OfflinePlayer> offlinePlayers) {
         BookMeta letterMeta = (BookMeta) letter.getItemMeta();
         letterMeta.setLore(lore);
         letter.setItemMeta(letterMeta);
@@ -167,7 +172,7 @@ public class LetterSender {
         sender.getInventory().getItemInMainHand().setAmount(0);
     }
 
-    private static void handleLetterErrors(Player sender) {
+    private void handleLetterErrors(Player sender) {
         if (LetterUtil.isHoldingOwnLetter(sender)) {
             sender.sendMessage(messageManager.getMessage(Message.ERROR_SENT_BEFORE, true));
         } else if (LetterUtil.isHoldingLetter(sender)) {
@@ -185,7 +190,7 @@ public class LetterSender {
      *
      * @param recipient player receiving the mail
      */
-    public static void receive(Player recipient) {
+    public void receive(Player recipient) {
         if (Outgoing.getOutgoing().containsKey(recipient.getUniqueId()) && Outgoing.getOutgoing().get(recipient.getUniqueId()).size() > 0) {
             LinkedList<ItemStack> letters = Outgoing.getOutgoing().get(recipient.getUniqueId());
 
