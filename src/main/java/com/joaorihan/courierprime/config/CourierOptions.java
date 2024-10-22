@@ -1,9 +1,11 @@
 package com.joaorihan.courierprime.config;
 
+import com.joaorihan.courierprime.CourierPrime;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 
@@ -60,7 +62,7 @@ public class CourierOptions {
      * load config options from the config file
      */
     public static void load() {
-        YamlConfiguration config = Config.getMainConfig().getConfig();
+        FileConfiguration config = CourierPrime.getPlugin().getConfig();
         RECEIVE_DELAY = config.getInt("receive-delay");
         RESEND_DELAY = config.getInt("resend-delay");
         REMOVE_DELAY = config.getInt("remove-delay");

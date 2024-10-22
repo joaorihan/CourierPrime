@@ -29,12 +29,12 @@ public class PostCommand extends AbstractCommand{
                 player.hasPermission("couriernew.post.multiple") ||
                 player.hasPermission("couriernew.post.allonline") ||
                 player.hasPermission("couriernew.post.all"))) {
-            player.sendMessage(Message.ERROR_NO_PERMS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
             return;
         }
 
         if (args.length != 1){
-            player.sendMessage(Message.ERROR_UNKNOWN_ARGS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
             return;
         }
 

@@ -25,12 +25,12 @@ public class AnonymousLetterCommand extends AbstractCommand{
             return;
 
         if (!player.hasPermission("courierprime.letter.anonymous")) {
-            player.sendMessage(Message.ERROR_NO_PERMS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
             return;
         }
 
         if (args.length < 1) {
-            player.sendMessage(Message.ERROR_NO_MSG);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_MSG, true));
             return;
         }
 

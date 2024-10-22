@@ -1,6 +1,7 @@
 package com.joaorihan.courierprime.letter;
 
 
+import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.config.Message;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -30,7 +31,7 @@ public class LetterUtil {
         if (item == null || !item.getType().equals(Material.WRITTEN_BOOK))
             return false;
 
-        return ((BookMeta) item.getItemMeta()).getTitle().contains(Message.LETTER_FROM
+        return ((BookMeta) item.getItemMeta()).getTitle().contains(CourierPrime.getPlugin().getMessageManager().getMessage(Message.LETTER_FROM)
                 .replace("$PLAYER$", ""));
     }
 

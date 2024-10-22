@@ -21,8 +21,8 @@ public class MessageManager {
 
     public String getMessage(Message message, boolean prefix){
         if (prefix)
-            return format(configManager.getLanguageConfig().getString("PREFIX")) + format(configManager.getLanguageConfig().getString(message.toString().toLowerCase()));
-        else return format(configManager.getLanguageConfig().getString(message.toString().toLowerCase()));
+            return format(configManager.getLanguageConfig().getString("PREFIX")) + format(configManager.getLanguageConfig().getString(message.toString()));
+        else return format(configManager.getLanguageConfig().getString(message.toString()));
     }
 
     /**

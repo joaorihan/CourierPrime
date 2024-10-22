@@ -2,6 +2,7 @@ package com.joaorihan.courierprime.command;
 
 import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.config.Message;
+import com.joaorihan.courierprime.config.MessageManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -20,13 +21,18 @@ public abstract class AbstractCommand extends BukkitCommand {
 
     private CourierPrime plugin;
 
+    private MessageManager messageManager;
+
     public AbstractCommand(String command, String[] aliases, String description, String permission) {
         super(command);
+
+        setPlugin(CourierPrime.getPlugin());
+        setMessageManager(getPlugin().getMessageManager());
 
         this.setAliases(Arrays.asList(aliases));
         this.setDescription(description);
         this.setPermission(permission);
-        this.setPermissionMessage(ChatColor.RED + Message.ERROR_NO_PERMS);
+        this.setPermissionMessage(ChatColor.RED + messageManager.getMessage(Message.ERROR_NO_PERMS, true));
 
         try {
             Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
@@ -37,7 +43,7 @@ public abstract class AbstractCommand extends BukkitCommand {
             e.printStackTrace();
         }
 
-        setPlugin(CourierPrime.getPlugin());
+
     }
 
     @Override

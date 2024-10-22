@@ -34,6 +34,9 @@ public class Courier {
     @Getter
     private boolean delivered;
 
+    // Change
+    private static CourierPrime plugin = CourierPrime.getPlugin();
+
     /**
      * create a new courier entity to deliver mail for a player
      *
@@ -52,10 +55,10 @@ public class Courier {
         courier = recipient.getWorld().spawnEntity(loc, CourierOptions.COURIER_ENTITY_TYPE);
         couriers.put(courier, this);
 
-        courier.setCustomName(Message.COURIER_NAME.replace("$PLAYER$", recipient.getName()));
+        courier.setCustomName(plugin.getMessageManager().getMessage(Message.COURIER_NAME).replace("$PLAYER$", recipient.getName()));
         courier.setCustomNameVisible(false);
         courier.setInvulnerable(true);
-        recipient.sendMessage(Message.SUCCESS_COURIER_ARRIVED);
+        recipient.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_COURIER_ARRIVED, true));
         courier.getWorld().playSound(courier.getLocation(), Sound.UI_TOAST_IN, 1, 1);
 
         new BukkitRunnable() {
@@ -77,7 +80,7 @@ public class Courier {
                 if (!courier.isDead()) {
                     remove();
 
-                    if (recipient.isOnline() && !delivered) recipient.sendMessage(Message.SUCCESS_IGNORED);
+                    if (recipient.isOnline() && !delivered) recipient.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_IGNORED, true));
                     courier.getWorld().playSound(courier.getLocation(), Sound.UI_TOAST_OUT, 1, 1);
 
                     new BukkitRunnable() {
@@ -116,7 +119,7 @@ public class Courier {
      */
     public void setDelivered() {
         delivered = true;
-        courier.setCustomName(Message.COURIER_NAME_RECEIVED);
+        courier.setCustomName(plugin.getMessageManager().getMessage(Message.COURIER_NAME_RECEIVED));
     }
 
     /**
@@ -141,14 +144,14 @@ public class Courier {
 
         for (MetadataValue meta : recipient.getMetadata("vanished")) {
             if (meta.asBoolean()) {
-                recipient.sendMessage(Message.ERROR_VANISHED);
+                recipient.sendMessage(plugin.getMessageManager().getMessage(Message.ERROR_VANISHED, true));
                 return false;
             }
         }
 
         if (CourierOptions.BLOCKED_WORLDS.contains(recipient.getWorld()) ||
                 CourierOptions.BLOCKED_GAMEMODES.contains(recipient.getGameMode())) {
-            recipient.sendMessage(Message.ERROR_WORLD);
+            recipient.sendMessage(plugin.getMessageManager().getMessage(Message.ERROR_WORLD, true));
             return false;
         }
 

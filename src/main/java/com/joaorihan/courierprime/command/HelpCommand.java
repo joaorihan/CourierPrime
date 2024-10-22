@@ -25,17 +25,18 @@ public class HelpCommand extends AbstractCommand{
             return;
 
         if (args.length != 1) {
-            player.sendMessage(Message.ERROR_UNKNOWN_ARGS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
             return;
         }
 
         if (args[0].equalsIgnoreCase("help")) {
             if (player.hasPermission("courierprime.help")) {
-                player.sendMessage(getPlugin().getConfigManager().getHelpMessage());
+                player.sendMessage(getMessageManager().getHelpMessage(player));
             } else
-                player.sendMessage(Message.ERROR_NO_PERMS);
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
+
         } else {
-            player.sendMessage(Message.ERROR_UNKNOWN_ARGS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
         }
 
     }

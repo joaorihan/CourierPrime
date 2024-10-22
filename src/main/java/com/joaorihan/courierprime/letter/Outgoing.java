@@ -1,8 +1,8 @@
 package com.joaorihan.courierprime.letter;
 
 import com.joaorihan.courierprime.CourierPrime;
-import com.joaorihan.courierprime.config.Config;
 import lombok.Getter;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
@@ -23,7 +23,7 @@ public class Outgoing {
     /**
      * reference to outgoing config
      */
-    private static Config outgoingConfig = Config.getOutgoingConfig();
+    private static YamlConfiguration outgoingConfig = CourierPrime.getPlugin().getConfigManager().getOutgoingConfig();
 
 
     /**
@@ -33,15 +33,15 @@ public class Outgoing {
      */
     private static void savePlayer(UUID player) {
         if (outgoing.containsKey(player) && outgoing.get(player).size() > 0)
-            outgoingConfig.getConfig().set(player.toString(), outgoing.get(player));
+            outgoingConfig.set(player.toString(), outgoing.get(player));
     }
 
     /**
      * save all outgoing letters to file
      */
     public static void saveAll() {
-        for (String key : outgoingConfig.getConfig().getKeys(false)) {
-            outgoingConfig.getConfig().set(key, null);
+        for (String key : outgoingConfig.getKeys(false)) {
+            outgoingConfig.set(key, null);
         }
         for (UUID player : outgoing.keySet()) {
             savePlayer(player);
@@ -55,14 +55,14 @@ public class Outgoing {
      * @param player player to load data for
      */
     private static void loadPlayer(UUID player) {
-        outgoing.put(player, new LinkedList<>((Collection<ItemStack>) outgoingConfig.getConfig().getList(player.toString())));
+        outgoing.put(player, new LinkedList<>((Collection<ItemStack>) outgoingConfig.getList(player.toString())));
     }
 
     /**
      * load all outgoing letters from file
      */
     public static void loadAll() {
-        for (String key : outgoingConfig.getConfig().getKeys(false)) {
+        for (String key : outgoingConfig.getKeys(false)) {
             loadPlayer(UUID.fromString(key));
         }
     }

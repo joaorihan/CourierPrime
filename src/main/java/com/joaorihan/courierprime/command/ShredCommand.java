@@ -26,12 +26,12 @@ public class ShredCommand extends AbstractCommand{
             return;
 
         if (!player.hasPermission("courierprime.shred")) {
-            player.sendMessage(Message.ERROR_NO_PERMS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
             return;
         }
 
         if (args.length > 1){
-            player.sendMessage(Message.ERROR_UNKNOWN_ARGS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
             return;
         }
 
@@ -44,12 +44,12 @@ public class ShredCommand extends AbstractCommand{
         // Shred all exec
         // Shred all checks
         if (!args[0].equalsIgnoreCase("all")){
-            player.sendMessage(Message.ERROR_UNKNOWN_ARGS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
             return;
         }
 
         if (!player.hasPermission("courierprime.shred.all")) {
-            player.sendMessage(Message.ERROR_NO_PERMS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
             return;
         }
 

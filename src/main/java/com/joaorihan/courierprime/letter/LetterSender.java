@@ -1,5 +1,6 @@
 package com.joaorihan.courierprime.letter;
 
+import com.joaorihan.courierprime.config.MessageManager;
 import org.apache.commons.text.WordUtils;
 import org.bukkit.inventory.meta.BookMeta;
 import com.joaorihan.courierprime.CourierPrime;
@@ -8,7 +9,6 @@ import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.config.CourierOptions;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -20,8 +20,11 @@ import java.util.*;
  *
  * @author Jeremy Noesen
  */
-public class LetterSender implements Listener {
-    
+public class LetterSender {
+
+    private static MessageManager messageManager = CourierPrime.getPlugin().getMessageManager();
+
+
     /**
      * Send a letter to a player. The letter will have the recipient added to the lore, preventing it from being sent
      * again. It also adds it to a yml file of letters to be received. If the player receiving is online, they may
@@ -66,18 +69,18 @@ public class LetterSender implements Listener {
     private static List<String> createLetterLore(ItemStack letter) {
         List<String> lore = new ArrayList<>();
         Calendar currentDate = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat(Message.DATE_TIME_FORMAT);
+        SimpleDateFormat formatter = new SimpleDateFormat(messageManager.getMessage(Message.DATE_TIME_FORMAT));
         String dateNow = formatter.format(currentDate.getTime());
 
         BookMeta letterMeta = (BookMeta) letter.getItemMeta();
-        String wrapped = WordUtils.wrap(Message.unformat(letterMeta.getPage(1)), 30, "<split>", true);
+        String wrapped = WordUtils.wrap(MessageManager.unformat(letterMeta.getPage(1)), 30, "<split>", true);
         String[] lines = wrapped.split("<split>");
         lore.add("");
-        lore.add(Message.PREVIEW_FORMAT + lines[0]);
-        if (lines.length >= 2) lore.add(Message.PREVIEW_FORMAT + lines[1]);
-        if (lines.length >= 3) lore.add(Message.PREVIEW_FORMAT + lines[2]);
+        lore.add(messageManager.getMessage(Message.PREVIEW_FORMAT) + lines[0]);
+        if (lines.length >= 2) lore.add(messageManager.getMessage(Message.PREVIEW_FORMAT) + lines[1]);
+        if (lines.length >= 3) lore.add(messageManager.getMessage(Message.PREVIEW_FORMAT) + lines[2]);
         lore.add("");
-        lore.add(Message.PREVIEW_FOOTER.replace("$DATE$", dateNow)
+        lore.add(messageManager.getMessage(Message.PREVIEW_FOOTER).replace("$DATE$", dateNow)
                 .replace("$PAGES$", Integer.toString(letterMeta.getPages().size())));
 
         return lore;
@@ -87,10 +90,10 @@ public class LetterSender implements Listener {
         if (sender.hasPermission("couriernew.post.allonline")) {
             lore.add("§T" + Message.LETTER_TO_ALLONLINE);
             Collection<OfflinePlayer> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
-            sender.sendMessage(Message.SUCCESS_SENT_ALLONLINE);
+            sender.sendMessage(messageManager.getMessage(Message.SUCCESS_SENT_ALLONLINE, true));
             return onlinePlayers;
         } else {
-            sender.sendMessage(Message.ERROR_NO_PERMS);
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_NO_PERMS, true));
             return null;
         }
     }
@@ -99,10 +102,10 @@ public class LetterSender implements Listener {
         if (sender.hasPermission("couriernew.post.all")) {
             lore.add("§T" + Message.LETTER_TO_ALL);
             Collection<OfflinePlayer> allPlayers = new ArrayList<>(Arrays.asList(Bukkit.getOfflinePlayers()));
-            sender.sendMessage(Message.SUCCESS_SENT_ALL);
+            sender.sendMessage(messageManager.getMessage(Message.SUCCESS_SENT_ALL, true));
             return allPlayers;
         } else {
-            sender.sendMessage(Message.ERROR_NO_PERMS);
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_NO_PERMS, true));
             return null;
         }
     }
@@ -113,16 +116,16 @@ public class LetterSender implements Listener {
             for (String recipients : recipient.split(",")) {
                 OfflinePlayer op = Bukkit.getOfflinePlayer(recipients);
                 if (op == null) {
-                    sender.sendMessage(Message.ERROR_PLAYER_NO_EXIST.replace("$PLAYER$", recipients));
+                    sender.sendMessage(messageManager.getMessage(Message.ERROR_NO_PERMS, true).replace("$PLAYER$", recipients));
                     return null;
                 }
                 offlinePlayers.add(op);
             }
-            lore.add("§T" + Message.LETTER_TO_MULTIPLE);
-            sender.sendMessage(Message.SUCCESS_SENT_MULTIPLE);
+            lore.add("§T" + messageManager.getMessage(Message.LETTER_TO_MULTIPLE));
+            sender.sendMessage(messageManager.getMessage(Message.SUCCESS_SENT_MULTIPLE, true));
             return offlinePlayers;
         } else {
-            sender.sendMessage(Message.ERROR_NO_PERMS);
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_NO_PERMS, true));
             return null;
         }
     }
@@ -131,14 +134,14 @@ public class LetterSender implements Listener {
         if (sender.hasPermission("couriernew.post.one")) {
             OfflinePlayer op = Bukkit.getOfflinePlayer(recipient);
             if (op == null) {
-                sender.sendMessage(Message.ERROR_PLAYER_NO_EXIST.replace("$PLAYER$", recipient));
+                sender.sendMessage(messageManager.getMessage(Message.ERROR_PLAYER_NO_EXIST, true).replace("$PLAYER$", recipient));
                 return null;
             }
-            lore.add("§T" + Message.LETTER_TO_ONE.replace("$PLAYER$", op.getName()));
-            sender.sendMessage(Message.SUCCESS_SENT_ONE.replace("$PLAYER$", op.getName()));
+            lore.add("§T" + messageManager.getMessage(Message.LETTER_TO_ONE).replace("$PLAYER$", op.getName()));
+            sender.sendMessage(messageManager.getMessage(Message.SUCCESS_SENT_ONE, true).replace("$PLAYER$", op.getName()));
             return Collections.singletonList(op);
         } else {
-            sender.sendMessage(Message.ERROR_NO_PERMS);
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_NO_PERMS, true));
             return null;
         }
     }
@@ -166,11 +169,11 @@ public class LetterSender implements Listener {
 
     private static void handleLetterErrors(Player sender) {
         if (LetterUtil.isHoldingOwnLetter(sender)) {
-            sender.sendMessage(Message.ERROR_SENT_BEFORE);
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_SENT_BEFORE, true));
         } else if (LetterUtil.isHoldingLetter(sender)) {
-            sender.sendMessage(Message.ERROR_NOT_YOUR_LETTER);
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_NOT_YOUR_LETTER, true));
         } else {
-            sender.sendMessage(Message.ERROR_NO_LETTER);
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_NO_LETTER, true));
         }
     }
 
@@ -188,7 +191,7 @@ public class LetterSender implements Listener {
 
             while (!letters.isEmpty()) {
                 if (recipient.getInventory().firstEmpty() < 0) {
-                    recipient.sendMessage(Message.ERROR_CANT_HOLD);
+                    recipient.sendMessage(messageManager.getMessage(Message.ERROR_CANT_HOLD, true));
                     break;
                 } else if (recipient.getInventory().getItemInMainHand().getAmount() == 0) {
                     recipient.getInventory().setItemInMainHand(letters.pop());

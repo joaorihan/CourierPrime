@@ -1,6 +1,5 @@
 package com.joaorihan.courierprime.command;
 
-import com.joaorihan.courierprime.config.Config;
 import com.joaorihan.courierprime.config.ConfigManager;
 import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
@@ -31,14 +30,14 @@ public class AdminCommand extends AbstractCommand{
         if (!player.hasPermission("courierprime.admin")) return;
 
         if (args.length == 0) {
-            player.sendMessage(Message.ERROR_UNKNOWN_ARGS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
             return;
         }
 
         if (args[0].equals("reload")){
 
             if (!player.hasPermission("courierprime.reload")) {
-                player.sendMessage(Message.ERROR_NO_PERMS);
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
                 return;
             }
 
@@ -56,8 +55,8 @@ public class AdminCommand extends AbstractCommand{
 
             CourierOptions.load();
             Outgoing.loadAll();
-            Message.reloadMessages();
-            player.sendMessage(Message.SUCCESS_RELOADED);
+//            Message.reloadMessages();
+            player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_RELOADED, true));
 
             return;
         }

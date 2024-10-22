@@ -29,17 +29,17 @@ public class UnreadCommand extends AbstractCommand{
             return;
 
         if (!player.hasPermission("courierprime.unread")) {
-            player.sendMessage(Message.ERROR_NO_PERMS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
             return;
         }
 
         if (!(Outgoing.getOutgoing().containsKey(player.getUniqueId()) && Outgoing.getOutgoing().get(player.getUniqueId()).size() > 0)) {
-            player.sendMessage(Message.ERROR_NO_MAIL);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_MAIL, true));
             return;
         }
 
         // Command exec
-        player.sendMessage(Message.SUCCESS_EXTRA_DELIVERIES);
+        player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_EXTRA_DELIVERIES, true));
 
         Bukkit.getScheduler().runTaskLater(getPlugin(), () -> Courier.spawn(player), CourierOptions.RECEIVE_DELAY);
 

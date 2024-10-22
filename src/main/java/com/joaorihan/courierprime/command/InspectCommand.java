@@ -25,17 +25,18 @@ public class InspectCommand extends AbstractCommand{
         if (!(sender instanceof Player player)) return;
 
         if (args.length != 0){
-            player.sendMessage(Message.ERROR_UNKNOWN_ARGS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
             return;
         }
 
         if (!LetterUtil.isHoldingLetter(player)){
-            player.sendMessage(Message.ERROR_NO_LETTER);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_LETTER, true));
+
             return;
         }
 
         // Command execution
-        player.sendMessage(Message.LETTER_BY.replace("$PLAYER$", LetterUtil.getLetterOwner(player)));
+        player.sendMessage(getMessageManager().getMessage(Message.LETTER_BY, true).replace("$PLAYER$", LetterUtil.getLetterOwner(player)));
 
     }
 

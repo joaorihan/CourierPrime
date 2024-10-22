@@ -3,6 +3,7 @@ package com.joaorihan.courierprime.letter;
 import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.config.Message;
 
+import com.joaorihan.courierprime.config.MessageManager;
 import lombok.Getter;
 import org.apache.commons.text.WordUtils;
 import org.bukkit.Material;
@@ -31,6 +32,8 @@ public class LetterManager {
 
     private static List<Player> playersInBlockedMode = new ArrayList<>();
 
+    private static CourierPrime plugin = CourierPrime.getInstance();
+
     public static void removeBlockedPlayer(Player player){ playersInBlockedMode.remove(player); }
 
     public static boolean addBlockedPlayer(Player player){
@@ -52,7 +55,7 @@ public class LetterManager {
      * @param message the message the player is writing to the letter
      */
     public static void writeBook(Player player, String message, boolean anonymous) {
-        String finalMessage = Message.format(message);
+        String finalMessage = MessageManager.format(message);
         
         ItemStack book = new ItemStack(Material.WRITTEN_BOOK, 1);
         BookMeta bm = (BookMeta) book.getItemMeta();
@@ -60,9 +63,9 @@ public class LetterManager {
         PersistentDataContainer pdc = bm.getPersistentDataContainer();
         pdc.set(key, PersistentDataType.STRING, player.getName());
 
-        String author = anonymous ? Message.ANONYMOUS : player.getName();
+        String author = anonymous ? plugin.getMessageManager().getMessage(Message.ANONYMOUS) : player.getName();
         bm.setAuthor(author);
-        bm.setTitle(Message.LETTER_FROM.replace("$PLAYER$", author));
+        bm.setTitle(plugin.getMessageManager().getMessage(Message.LETTER_FROM).replace("$PLAYER$", author));
 
         ArrayList<String> pages = new ArrayList<>();
         pages.add(finalMessage);
@@ -70,16 +73,16 @@ public class LetterManager {
 
         ArrayList<String> lore = new ArrayList<>();
         Calendar currentDate = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat(Message.DATE_TIME_FORMAT);
+        SimpleDateFormat formatter = new SimpleDateFormat(plugin.getMessageManager().getMessage(Message.DATE_TIME_FORMAT));
         String dateNow = formatter.format(currentDate.getTime());
-        String wrapped = WordUtils.wrap(Message.unformat(message), 30, "<split>", true);
+        String wrapped = WordUtils.wrap(MessageManager.unformat(message), 30, "<split>", true);
         String[] lines = wrapped.split("<split>");
         lore.add("");
         lore.add(Message.PREVIEW_FORMAT + lines[0]);
         if (lines.length >= 2) lore.add(Message.PREVIEW_FORMAT + lines[1]);
         if (lines.length >= 3) lore.add(Message.PREVIEW_FORMAT + lines[2]);
         lore.add("");
-        lore.add(Message.PREVIEW_FOOTER.replace("$DATE$", dateNow)
+        lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FOOTER).replace("$DATE$", dateNow)
                 .replace("$PAGES$", Integer.toString(bm.getPages().size())));
         bm.setLore(lore);
         book.setItemMeta(bm);
@@ -87,13 +90,14 @@ public class LetterManager {
         if (player.getInventory().firstEmpty() < 0) {
             //todo change
             player.getWorld().dropItemNaturally(player.getEyeLocation(), book);
-            player.sendMessage(Message.SUCCESS_CREATED_DROPPED);
+            player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_CREATED_DROPPED, true));
         } else if (player.getInventory().getItemInMainHand().getType() == Material.AIR) {
             player.getInventory().setItemInMainHand(book);
-            player.sendMessage(Message.SUCCESS_CREATED_HAND);
+            player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_CREATED_HAND, true));
         } else {
             player.getInventory().addItem(book);
-            player.sendMessage(Message.SUCCESS_CREATED_ADDED);
+            player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_CREATED_ADDED, true));
+
         }
     }
     
@@ -104,7 +108,7 @@ public class LetterManager {
      * @param message message player is adding to the letter
      */
     public static void editBook(Player player, String message) {
-        String finalMessage = Message.format(message);
+        String finalMessage = MessageManager.format(message);
         
         ItemStack writtenBook = player.getInventory().getItemInMainHand();
         BookMeta wbm = (BookMeta) writtenBook.getItemMeta();
@@ -114,25 +118,25 @@ public class LetterManager {
             String sb = pages.get(pages.size() - 1) +
                     finalMessage;
             pages.set(pages.size() - 1, sb);
-            player.sendMessage(Message.SUCCESS_PAGE_EDITED);
+            player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_PAGE_EDITED, true));
         } else {
             pages.add(finalMessage);
-            player.sendMessage(Message.SUCCESS_PAGE_ADDED);
+            player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_PAGE_ADDED, true));
         }
         wbm.setPages(pages);
 
         ArrayList<String> lore = new ArrayList<>();
         Calendar currentDate = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat(Message.DATE_TIME_FORMAT);
+        SimpleDateFormat formatter = new SimpleDateFormat(plugin.getMessageManager().getMessage(Message.DATE_TIME_FORMAT));
         String dateNow = formatter.format(currentDate.getTime());
-        String wrapped = WordUtils.wrap(Message.unformat(wbm.getPage(1)), 30, "<split>", true);
+        String wrapped = WordUtils.wrap(MessageManager.unformat(wbm.getPage(1)), 30, "<split>", true);
         String[] lines = wrapped.split("<split>");
         lore.add("");
         lore.add(Message.PREVIEW_FORMAT + lines[0]);
         if (lines.length >= 2) lore.add(Message.PREVIEW_FORMAT + lines[1]);
         if (lines.length >= 3) lore.add(Message.PREVIEW_FORMAT + lines[2]);
         lore.add("");
-        lore.add(Message.PREVIEW_FOOTER.replace("$DATE$", dateNow)
+        lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FOOTER).replace("$DATE$", dateNow)
                 .replace("$PAGES$", Integer.toString(wbm.getPages().size())));
         wbm.setLore(lore);
         writtenBook.setItemMeta(wbm);
@@ -148,9 +152,9 @@ public class LetterManager {
     public static void delete(Player player) {
         if (LetterUtil.isHoldingLetter(player)) {
             player.getInventory().getItemInMainHand().setAmount(0);
-            player.sendMessage(Message.SUCCESS_DELETED);
+            player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_DELETED, true));
         } else
-            player.sendMessage(Message.ERROR_NO_LETTER);
+            player.sendMessage(plugin.getMessageManager().getMessage(Message.ERROR_NO_LETTER, true));
     }
     
     /**
@@ -162,6 +166,6 @@ public class LetterManager {
         for (ItemStack item : player.getInventory().getContents()) {
             if (LetterUtil.isValidLetter(item)) item.setAmount(0);
         }
-        player.sendMessage(Message.SUCCESS_DELETED_ALL);
+        player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_DELETED_ALL, true));
     }
 }
