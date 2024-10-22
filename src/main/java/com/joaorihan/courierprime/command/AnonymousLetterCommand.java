@@ -1,6 +1,6 @@
 package com.joaorihan.courierprime.command;
 
-import com.joaorihan.courierprime.Message;
+import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.letter.LetterManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,12 +25,12 @@ public class AnonymousLetterCommand extends AbstractCommand{
             return;
 
         if (!player.hasPermission("courierprime.letter.anonymous")) {
-            player.sendMessage(Message.ERROR_NO_PERMS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
             return;
         }
 
         if (args.length < 1) {
-            player.sendMessage(Message.ERROR_NO_MSG);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_MSG, true));
             return;
         }
 

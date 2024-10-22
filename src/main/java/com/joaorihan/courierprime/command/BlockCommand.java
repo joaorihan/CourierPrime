@@ -1,8 +1,8 @@
 package com.joaorihan.courierprime.command;
 
-import com.joaorihan.courierprime.Message;
+import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.courier.CourierOptions;
+import com.joaorihan.courierprime.config.CourierOptions;
 import com.joaorihan.courierprime.letter.LetterManager;
 import com.joaorihan.courierprime.letter.Outgoing;
 import org.bukkit.Bukkit;
@@ -29,14 +29,14 @@ public class BlockCommand extends AbstractCommand{
         if (!(sender instanceof Player player)) return;
 
         if (args.length != 0){
-            player.sendMessage(Message.ERROR_UNKNOWN_ARGS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
             return;
         }
 
 
         // Command exec
         if (LetterManager.addBlockedPlayer(player)){
-            player.sendMessage(Message.ENABLE_LETTERS);
+            player.sendMessage(getMessageManager().getMessage(Message.DISABLE_LETTERS, true));
 
             // Checks if the player has any pending letters
             if (!(Outgoing.getOutgoing().containsKey(player.getUniqueId()) && Outgoing.getOutgoing().get(player.getUniqueId()).size() > 0)) {
@@ -45,13 +45,13 @@ public class BlockCommand extends AbstractCommand{
 
             // If so, sends a courier
             Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
-                player.sendMessage(Message.SUCCESS_EXTRA_DELIVERIES);
+                player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_EXTRA_DELIVERIES, true));
                 Courier.spawn(player);
             }, CourierOptions.RECEIVE_DELAY);
 
         } else {
             LetterManager.removeBlockedPlayer(player);
-            player.sendMessage(Message.DISABLE_LETTERS);
+            player.sendMessage(getMessageManager().getMessage(Message.ENABLE_LETTERS, true));
         }
 
 

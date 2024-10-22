@@ -1,9 +1,9 @@
 package com.joaorihan.courierprime.command;
 
-import com.joaorihan.courierprime.Config;
-import com.joaorihan.courierprime.Message;
+import com.joaorihan.courierprime.config.ConfigManager;
+import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.courier.CourierOptions;
+import com.joaorihan.courierprime.config.CourierOptions;
 import com.joaorihan.courierprime.letter.Outgoing;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -30,27 +30,33 @@ public class AdminCommand extends AbstractCommand{
         if (!player.hasPermission("courierprime.admin")) return;
 
         if (args.length == 0) {
-            player.sendMessage(Message.ERROR_UNKNOWN_ARGS);
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
             return;
         }
 
         if (args[0].equals("reload")){
 
             if (!player.hasPermission("courierprime.reload")) {
-                player.sendMessage(Message.ERROR_NO_PERMS);
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
                 return;
             }
 
             Outgoing.saveAll();
             Courier.getCouriers().keySet().forEach(Entity::remove);
             Courier.getCouriers().clear();
-            Config.getMainConfig().reloadConfig();
-            Config.getOutgoingConfig().reloadConfig();
-            Config.getMessageConfig().reloadConfig();
+
+//            Config.getMainConfig().reloadConfig();
+//            Config.getOutgoingConfig().reloadConfig();
+//            Config.getMessageConfig().reloadConfig();
+
+            getPlugin().setConfigManager(new ConfigManager(getPlugin()));
+
+
+
             CourierOptions.load();
             Outgoing.loadAll();
-            Message.reloadMessages();
-            player.sendMessage(Message.SUCCESS_RELOADED);
+//            Message.reloadMessages();
+            player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_RELOADED, true));
 
             return;
         }
