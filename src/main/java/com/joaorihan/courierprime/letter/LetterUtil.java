@@ -67,7 +67,7 @@ public class LetterUtil {
     public String getLetterOwner(@NonNull Player player){
         ItemStack book = player.getInventory().getItemInMainHand();
         BookMeta bm = (BookMeta) book.getItemMeta();
-        NamespacedKey key = LetterManager.getKey();
+        NamespacedKey key = CourierPrime.getPlugin().getLetterManager().getKey();
 
         if (bm.getPersistentDataContainer().has(key, PersistentDataType.STRING))
             return bm.getPersistentDataContainer().get(key, PersistentDataType.STRING);

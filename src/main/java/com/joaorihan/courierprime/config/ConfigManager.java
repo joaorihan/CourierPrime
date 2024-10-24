@@ -39,20 +39,29 @@ public class ConfigManager {
 
 
     public void generateLanguageFiles(){
-        new File(this.getPlugin().getDataFolder(), "lang").mkdir();
+        File langFolder = new File(this.getPlugin().getDataFolder(), "lang");
+        if (!langFolder.exists()) {
+            langFolder.mkdir();
+        }
 
-        plugin.saveResource("lang/en-us.yml", false);
-        plugin.saveResource("lang/pt-br.yml", false);
+        File enUSFile = new File(langFolder, "en-us.yml");
+        if (!enUSFile.exists()) {
+            plugin.saveResource("lang/en-us.yml", false);
+        }
 
-        File langFile = new File(getPlugin().getDataFolder(),  "lang/" + getMainConfig().getString("lang") + ".yml");
+        File ptBRFile = new File(langFolder, "pt-br.yml");
+        if (!ptBRFile.exists()) {
+            plugin.saveResource("lang/pt-br.yml", false);
+        }
 
-        if (langFile.exists()){
+        File langFile = new File(langFolder, getMainConfig().getString("lang") + ".yml");
+
+        if (langFile.exists()) {
             setLanguageConfig(YamlConfiguration.loadConfiguration(langFile));
             getPlugin().getLogger().info("Now loading " + getMainConfig().getString("lang") + " language");
         } else {
             getPlugin().getLogger().severe("Error on starting language file. " + getMainConfig().getString("lang") + ".yml was not found!");
         }
-
     }
 
     public void generateOutgoingConfiguration(){

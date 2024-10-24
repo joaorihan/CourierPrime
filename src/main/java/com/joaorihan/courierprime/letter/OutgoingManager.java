@@ -3,6 +3,7 @@ package com.joaorihan.courierprime.letter;
 import com.joaorihan.courierprime.CourierPrime;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
@@ -15,31 +16,37 @@ import java.util.UUID;
  *
  * @author Jeremy Noesen
  */
-public class Outgoing {
+public class OutgoingManager {
 
     @Getter
-    private static HashMap<UUID, LinkedList<ItemStack>> outgoing = new HashMap<>();
+    private HashMap<UUID, LinkedList<ItemStack>> outgoing;
 
     /**
      * reference to outgoing config
      */
-    private static YamlConfiguration outgoingConfig = CourierPrime.getPlugin().getConfigManager().getOutgoingConfig();
+    private final YamlConfiguration outgoingConfig;
+
+
+    public OutgoingManager(CourierPrime plugin){
+        outgoing = new HashMap<>();
+        outgoingConfig = plugin.getConfigManager().getOutgoingConfig();
+    }
 
 
     /**
      * save outgoing letters to file for a player
      *
-     * @param player player to save outgoing data
+     * @param uuid player to save outgoing data
      */
-    private static void savePlayer(UUID player) {
-        if (outgoing.containsKey(player) && outgoing.get(player).size() > 0)
-            outgoingConfig.set(player.toString(), outgoing.get(player));
+    private void savePlayer(UUID uuid) {
+        if (hasPendingLetters(uuid))
+            outgoingConfig.set(uuid.toString(), outgoing.get(uuid));
     }
 
     /**
      * save all outgoing letters to file
      */
-    public static void saveAll() {
+    public void saveAll() {
         for (String key : outgoingConfig.getKeys(false)) {
             outgoingConfig.set(key, null);
         }
@@ -54,17 +61,25 @@ public class Outgoing {
      *
      * @param player player to load data for
      */
-    private static void loadPlayer(UUID player) {
+    private void loadPlayer(UUID player) {
         outgoing.put(player, new LinkedList<>((Collection<ItemStack>) outgoingConfig.getList(player.toString())));
     }
 
     /**
      * load all outgoing letters from file
      */
-    public static void loadAll() {
+    public void loadAll() {
         for (String key : outgoingConfig.getKeys(false)) {
             loadPlayer(UUID.fromString(key));
         }
+    }
+
+    public boolean hasPendingLetters(Player player){
+        return (getOutgoing().containsKey(player.getUniqueId()) && getOutgoing().get(player.getUniqueId()).size() > 0);
+    }
+
+    public boolean hasPendingLetters(UUID uuid){
+        return (getOutgoing().containsKey(uuid) && getOutgoing().get(uuid).size() > 0);
     }
 
 }

@@ -4,7 +4,6 @@ import com.joaorihan.courierprime.config.ConfigManager;
 import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.config.CourierOptions;
-import com.joaorihan.courierprime.letter.Outgoing;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -41,7 +40,7 @@ public class AdminCommand extends AbstractCommand{
                 return;
             }
 
-            Outgoing.saveAll();
+            getPlugin().getOutgoingManager().saveAll();
             Courier.getCouriers().keySet().forEach(Entity::remove);
             Courier.getCouriers().clear();
 
@@ -49,12 +48,13 @@ public class AdminCommand extends AbstractCommand{
 //            Config.getOutgoingConfig().reloadConfig();
 //            Config.getMessageConfig().reloadConfig();
 
+            //todo fix reload messages
             getPlugin().setConfigManager(new ConfigManager(getPlugin()));
 
 
 
             CourierOptions.load();
-            Outgoing.loadAll();
+            getPlugin().getOutgoingManager().loadAll();
 //            Message.reloadMessages();
             player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_RELOADED, true));
 
