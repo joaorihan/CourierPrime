@@ -6,7 +6,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.config.CourierOptions;
+import com.joaorihan.courierprime.config.MainConfig;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -167,7 +167,7 @@ public class LetterSender {
                 public void run() {
                     Courier.spawn((Player) op);
                 }
-            }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RECEIVE_DELAY);
+            }.runTaskLater(CourierPrime.getInstance(), MainConfig.getReceiveDelay());
         }
 
         sender.getInventory().getItemInMainHand().setAmount(0);

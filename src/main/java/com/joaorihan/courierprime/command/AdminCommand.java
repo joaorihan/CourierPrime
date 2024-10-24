@@ -3,7 +3,7 @@ package com.joaorihan.courierprime.command;
 import com.joaorihan.courierprime.config.ConfigManager;
 import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.config.CourierOptions;
+import com.joaorihan.courierprime.config.MainConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -53,7 +53,7 @@ public class AdminCommand extends AbstractCommand{
 
 
 
-            CourierOptions.load();
+            MainConfig.load();
             getPlugin().getOutgoingManager().loadAll();
 //            Message.reloadMessages();
             player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_RELOADED, true));

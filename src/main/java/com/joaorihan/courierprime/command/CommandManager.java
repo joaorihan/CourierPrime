@@ -1,6 +1,6 @@
 package com.joaorihan.courierprime.command;
 
-import com.joaorihan.courierprime.config.CourierOptions;
+import com.joaorihan.courierprime.config.MainConfig;
 
 public class CommandManager {
 
@@ -20,7 +20,7 @@ public class CommandManager {
         new ShredCommand();
         new UnreadCommand();
 
-        if (CourierOptions.isANONYMOUS_LETTERS())
+        if (MainConfig.isAnonymousLetters())
             new AnonymousLetterCommand();
 
     }
