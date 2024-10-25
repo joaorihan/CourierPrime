@@ -148,9 +148,19 @@ public class Courier {
             }
         }
 
-        if (MainConfig.getBlockedWorlds().contains(recipient.getWorld()) ||
-                MainConfig.getBlockedGamemodes().contains(recipient.getGameMode())) {
+        if (MainConfig.getBlockedGamemodes().contains(recipient.getGameMode())) {
+            recipient.sendMessage(plugin.getMessageManager().getMessage(Message.ERROR_GAMEMODE, true));
+            return false;
+        }
+
+        if (MainConfig.getBlockedWorlds().contains(recipient.getWorld())) {
             recipient.sendMessage(plugin.getMessageManager().getMessage(Message.ERROR_WORLD, true));
+            return false;
+        }
+
+
+        if (plugin.getLetterManager().isInBlockedMode(recipient)){
+            recipient.sendMessage(plugin.getMessageManager().getMessage(Message.ERROR_IN_BLOCKED_MODE, true));
             return false;
         }
 

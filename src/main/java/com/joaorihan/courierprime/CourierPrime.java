@@ -50,14 +50,14 @@ public class CourierPrime extends JavaPlugin {
     public void onEnable() {
         plugin = this;
 
+        MainConfig.load();
+
         setConfigManager(new ConfigManager(plugin));
         setMessageManager(new MessageManager(configManager));
 
-        // refactor
         setLetterManager(new LetterManager(plugin));
         setOutgoingManager(new OutgoingManager(plugin));
 
-        MainConfig.load();
 
         getOutgoingManager().loadAll();
 
