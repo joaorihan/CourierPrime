@@ -1,4 +1,4 @@
-PREFIX: "&8&l[&a&lC&2&lN&8&l] "
+PREFIX: "&8&l[&d&lCourier&5&lPrime&8&l] "
 ANONYMOUS: "Anonymous"
 SUCCESS_CREATED_HAND: "&7Letter created!"
 SUCCESS_CREATED_DROPPED: "&7Inventory full! Letter was dropped!"
@@ -28,6 +28,7 @@ ERROR_CANT_HOLD: "&7You do not have enough space to receive any more mail! The c
 ERROR_VANISHED: "&7A courier tried to deliver mail, but you are vanished!"
 ERROR_WORLD: "&7You are not allowed to send and receive letters in this world!"
 ERROR_GAMEMODE: "&7You are not allowed to send and receive letters in this gamemode!"
+ERROR_IN_BLOCKED_MODE: "&7A courier tried to deliver mail, your mailbox is blocked! Try /blockletters to enable"
 COURIER_NAME: "&8&l[&f&l$PLAYER$'s Courier&8&l]"
 COURIER_NAME_RECEIVED: "&8&l[&f&lMail Delivered!&8&l]"
 LETTER_FROM: "&fLetter from &a$PLAYER$"
