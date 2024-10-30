@@ -38,7 +38,7 @@ public class LetterUtil {
     /**
      * Used to check if a player is holding a letter
      * @param player Command sender
-     * @return {@code boolean} item in main hand is a Letter
+     * @return {@code true} if the item in main hand is a Letter
      */
     public boolean isHoldingLetter(@NonNull Player player) {
         return isValidLetter(player.getInventory().getItemInMainHand());
@@ -47,15 +47,16 @@ public class LetterUtil {
     /**
      * Used to check if a player is holding a letter written by them
      * @param player Command sender
-     * @return {@code boolean} item in main hand is a letter written by @player
+     * @return {@code true} if the item in main hand is a letter written by @player
      */
     public boolean isHoldingOwnLetter(@NonNull Player player) {
         return isHoldingLetter(player) && Objects.equals(LetterUtil.getLetterOwner(player), player.getName());
     }
 
     public boolean wasAlreadySent(@NonNull ItemStack letter){
-        return letter.getItemMeta().getLore().toString().contains("Destinatário: ") ||
-                letter.getItemMeta().getLore().toString().contains("Recipient: ");
+        return letter.getItemMeta().getLore().toString().contains("&8To") ||
+                letter.getItemMeta().getLore().toString().contains(CourierPrime.getPlugin().getMessageManager()
+                        .getMessage(Message.LETTER_TO_ONE).replace("$PLAYER$", ""));
     }
 
     /**

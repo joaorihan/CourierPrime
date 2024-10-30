@@ -1,10 +1,5 @@
 package com.joaorihan.courierprime.config;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-
 /**
  * All messages used within the plugin
  *
@@ -40,6 +35,8 @@ public enum Message {
     ERROR_CANT_HOLD,
     ERROR_VANISHED,
     ERROR_WORLD,
+    ERROR_GAMEMODE,
+    ERROR_IN_BLOCKED_MODE,
     COURIER_NAME,
     COURIER_NAME_RECEIVED,
     LETTER_FROM,
@@ -58,7 +55,6 @@ public enum Message {
     HELP_POST,
     HELP_UNREAD,
     HELP_SHRED,
-    HELP_SHREDALL,
     HELP_HELP,
     HELP_RELOAD,
     HELP_FOOTER;

@@ -2,7 +2,7 @@ package com.joaorihan.courierprime.listener;
 
 import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.config.CourierOptions;
+import com.joaorihan.courierprime.config.MainConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
@@ -41,7 +41,7 @@ public class PlayerListener implements Listener {
             public void run() {
                 Courier.spawn(player);
             }
-        }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RECEIVE_DELAY);
+        }.runTaskLater(CourierPrime.getInstance(), MainConfig.getReceiveDelay());
     }
 
     /**
@@ -49,7 +49,7 @@ public class PlayerListener implements Listener {
      */
     @EventHandler
     public void onTeleport(PlayerTeleportEvent e) {
-        Set<World> worlds = CourierOptions.BLOCKED_WORLDS;
+        Set<World> worlds = MainConfig.getBlockedWorlds();
         World to = e.getTo().getWorld();
         World from = e.getFrom().getWorld();
         Player recipient = e.getPlayer();
@@ -60,7 +60,7 @@ public class PlayerListener implements Listener {
                 public void run() {
                     Courier.spawn(recipient);
                 }
-            }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RECEIVE_DELAY);
+            }.runTaskLater(CourierPrime.getInstance(), MainConfig.getReceiveDelay());
         }
     }
 
@@ -69,7 +69,7 @@ public class PlayerListener implements Listener {
      */
     @EventHandler
     public void onGamemode(PlayerGameModeChangeEvent e) {
-        Set<GameMode> modes = CourierOptions.BLOCKED_GAMEMODES;
+        Set<GameMode> modes = MainConfig.getBlockedGamemodes();
         GameMode to = e.getNewGameMode();
         GameMode from = e.getPlayer().getGameMode();
         Player recipient = e.getPlayer();
@@ -79,7 +79,7 @@ public class PlayerListener implements Listener {
                 public void run() {
                     Courier.spawn(recipient);
                 }
-            }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RECEIVE_DELAY);
+            }.runTaskLater(CourierPrime.getInstance(), MainConfig.getReceiveDelay());
         }
     }
 

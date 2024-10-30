@@ -1,10 +1,10 @@
 package com.joaorihan.courierprime.command;
 
 import com.joaorihan.courierprime.config.Message;
-import com.joaorihan.courierprime.letter.LetterManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ShredCommand extends AbstractCommand{
@@ -41,8 +41,6 @@ public class ShredCommand extends AbstractCommand{
             return;
         }
 
-        // Shred all exec
-        // Shred all checks
         if (!args[0].equalsIgnoreCase("all")){
             player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
             return;
@@ -53,12 +51,14 @@ public class ShredCommand extends AbstractCommand{
             return;
         }
 
-        // Shred all exec
         getPlugin().getLetterManager().deleteAll(player);
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        return List.of();
+        if (args.length == 1)
+            return Collections.singletonList("all");
+
+        return null;
     }
 }

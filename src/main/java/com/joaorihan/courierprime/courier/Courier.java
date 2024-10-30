@@ -1,7 +1,7 @@
 package com.joaorihan.courierprime.courier;
 
 import com.joaorihan.courierprime.CourierPrime;
-import com.joaorihan.courierprime.config.CourierOptions;
+import com.joaorihan.courierprime.config.MainConfig;
 import com.joaorihan.courierprime.config.Message;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -50,8 +50,8 @@ public class Courier {
      * spawn the courier entity
      */
     private void spawn() {
-        Location loc = recipient.getLocation().add(recipient.getLocation().getDirection().setY(0).multiply(CourierOptions.SPAWN_DISTANCE));
-        courier = recipient.getWorld().spawnEntity(loc, CourierOptions.COURIER_ENTITY_TYPE);
+        Location loc = recipient.getLocation().add(recipient.getLocation().getDirection().setY(0).multiply(MainConfig.getSpawnDistance()));
+        courier = recipient.getWorld().spawnEntity(loc, MainConfig.getCourierEntityType());
         couriers.put(courier, this);
 
         courier.setCustomName(plugin.getMessageManager().getMessage(Message.COURIER_NAME).replace("$PLAYER$", recipient.getName()));
@@ -87,10 +87,10 @@ public class Courier {
                         public void run() {
                             spawn(recipient);
                         }
-                    }.runTaskLater(CourierPrime.getInstance(), CourierOptions.RESEND_DELAY);
+                    }.runTaskLater(CourierPrime.getInstance(), MainConfig.getResendDelay());
                 }
             }
-        }.runTaskLater(CourierPrime.getInstance(), CourierOptions.REMOVE_DELAY);
+        }.runTaskLater(CourierPrime.getInstance(), MainConfig.getRemoveDelay());
     }
 
     /**
@@ -133,7 +133,7 @@ public class Courier {
             return false;
         }
 
-        double dist = CourierOptions.SPAWN_DISTANCE * 2;
+        double dist = MainConfig.getSpawnDistance() * 2;
         for (Entity entity : recipient.getNearbyEntities(dist, dist, dist)) {
             if (couriers.containsKey(entity) &&
                     couriers.get(entity).getRecipient().equals(recipient)) {
@@ -148,9 +148,19 @@ public class Courier {
             }
         }
 
-        if (CourierOptions.BLOCKED_WORLDS.contains(recipient.getWorld()) ||
-                CourierOptions.BLOCKED_GAMEMODES.contains(recipient.getGameMode())) {
+        if (MainConfig.getBlockedGamemodes().contains(recipient.getGameMode())) {
+            recipient.sendMessage(plugin.getMessageManager().getMessage(Message.ERROR_GAMEMODE, true));
+            return false;
+        }
+
+        if (MainConfig.getBlockedWorlds().contains(recipient.getWorld())) {
             recipient.sendMessage(plugin.getMessageManager().getMessage(Message.ERROR_WORLD, true));
+            return false;
+        }
+
+
+        if (plugin.getLetterManager().isInBlockedMode(recipient)){
+            recipient.sendMessage(plugin.getMessageManager().getMessage(Message.ERROR_IN_BLOCKED_MODE, true));
             return false;
         }
 

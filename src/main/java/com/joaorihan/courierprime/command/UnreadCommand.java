@@ -2,7 +2,7 @@ package com.joaorihan.courierprime.command;
 
 import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.config.CourierOptions;
+import com.joaorihan.courierprime.config.MainConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -40,7 +40,7 @@ public class UnreadCommand extends AbstractCommand{
         // Command exec
         player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_EXTRA_DELIVERIES, true));
 
-        Bukkit.getScheduler().runTaskLater(getPlugin(), () -> Courier.spawn(player), CourierOptions.RECEIVE_DELAY);
+        Bukkit.getScheduler().runTaskLater(getPlugin(), () -> Courier.spawn(player), MainConfig.getReceiveDelay());
 
 
     }

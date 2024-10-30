@@ -2,7 +2,7 @@ package com.joaorihan.courierprime.command;
 
 import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.config.CourierOptions;
+import com.joaorihan.courierprime.config.MainConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -45,7 +45,7 @@ public class BlockCommand extends AbstractCommand{
             Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
                 player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_EXTRA_DELIVERIES, true));
                 Courier.spawn(player);
-            }, CourierOptions.RECEIVE_DELAY);
+            }, MainConfig.getReceiveDelay());
 
         } else {
             getPlugin().getLetterManager().removeBlockedPlayer(player);
