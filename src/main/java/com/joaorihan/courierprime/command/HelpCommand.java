@@ -43,6 +43,6 @@ public class HelpCommand extends AbstractCommand{
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        return List.of();
+        return List.of("help");
     }
 }

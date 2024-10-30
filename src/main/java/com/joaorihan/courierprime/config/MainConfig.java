@@ -73,6 +73,7 @@ public class MainConfig {
      * load config options from the config file
      */
     public static void load() {
+        config = null;
         config = CourierPrime.getPlugin().getConfig();
     }
     

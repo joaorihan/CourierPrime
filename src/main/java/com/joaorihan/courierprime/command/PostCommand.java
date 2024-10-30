@@ -2,9 +2,12 @@ package com.joaorihan.courierprime.command;
 
 import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.letter.LetterSender;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PostCommand extends AbstractCommand{
@@ -45,6 +48,11 @@ public class PostCommand extends AbstractCommand{
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        return List.of();
+        List<String> names = new ArrayList<>();
+
+        for (Player player : Bukkit.getOnlinePlayers()){
+            names.add(player.getName());
+        }
+        return StringUtil.copyPartialMatches(args[1], names, new ArrayList<>());
     }
 }
