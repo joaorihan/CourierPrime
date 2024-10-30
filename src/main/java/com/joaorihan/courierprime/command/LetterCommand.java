@@ -1,7 +1,6 @@
 package com.joaorihan.courierprime.command;
 
 import com.joaorihan.courierprime.config.Message;
-import com.joaorihan.courierprime.letter.LetterManager;
 import com.joaorihan.courierprime.letter.LetterUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

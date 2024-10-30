@@ -1,7 +1,6 @@
 package com.joaorihan.courierprime.config;
 
 import com.joaorihan.courierprime.CourierPrime;
-import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -46,7 +45,7 @@ public class MainConfig {
     /**
      * entity type to use as the courier
      */
-    public EntityType getCourierEntityType(){ return EntityType.valueOf(config.getString("courier-entity-type")); };
+    public EntityType getCourierEntityType(){ return EntityType.valueOf(config.getString("courier-entity-type")); }
     
     /**
      * gamemodes that disallow receiving mail
