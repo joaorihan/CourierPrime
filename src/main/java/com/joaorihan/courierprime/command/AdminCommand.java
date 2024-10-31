@@ -4,6 +4,7 @@ import com.joaorihan.courierprime.config.ConfigManager;
 import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.config.MainConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -33,6 +34,7 @@ public class AdminCommand extends AbstractCommand{
             return;
         }
 
+        // reload
         if (args[0].equals("reload")){
 
             if (!player.hasPermission("courierprime.reload")) {
@@ -57,32 +59,41 @@ public class AdminCommand extends AbstractCommand{
             return;
         }
 
-//        Player target = Bukkit.getPlayer(args[1]);
-//        if (target == null) {
-//            player.sendMessage(Utilities.pullMessage("target-not-found"));
-//            return;
-//        }
-//
-//        if (args[0].equals("block")){
-//
-//            if (getPlugin().getLetterManager().isInBlockedMode(target)){
-//                player.sendMessage(Utilities.pullMessage("error-already-blocked"));
-//                return;
-//            }
-//
-//            getPlugin().getLetterManager().addBlockedPlayer(target);
-//            return;
-//        }
-//
-//        if (args[0].equals("unblock")){
-//            if (!getPlugin().getLetterManager().isInBlockedMode(target)){
-//                player.sendMessage(Utilities.pullMessage("error-already-unblocked"));
-//                return;
-//            }
-//
-//            getPlugin().getLetterManager().removeBlockedPlayer(target);
-//            return;
-//        }
+        // block / unblock
+
+        if (args.length < 2){
+            player.sendMessage(getPlugin().getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
+            return;
+        }
+
+        Player target = Bukkit.getPlayer(args[1]);
+        if (target == null) {
+            player.sendMessage(getPlugin().getMessageManager().getMessage(Message.ERROR_TARGET_NOT_FOUND, true));
+            return;
+        }
+
+        if (args[0].equals("block")){
+
+            if (getPlugin().getLetterManager().isInBlockedMode(target)){
+                player.sendMessage(getPlugin().getMessageManager().getMessage(Message.ERROR_ALREADY_BLOCKED, true));
+                return;
+            }
+
+            getPlugin().getLetterManager().addBlockedPlayer(target);
+            player.sendMessage(getPlugin().getMessageManager().getMessage(Message.SUCCESS_ADD_BLOCKED, true).replace("$PLAYER$", target.getName()));
+            return;
+        }
+
+        if (args[0].equals("unblock")){
+            if (!getPlugin().getLetterManager().isInBlockedMode(target)){
+                player.sendMessage(getPlugin().getMessageManager().getMessage(Message.ERROR_ALREADY_UNBLOCKED, true));
+                return;
+            }
+
+            getPlugin().getLetterManager().removeBlockedPlayer(target);
+            player.sendMessage(getPlugin().getMessageManager().getMessage(Message.SUCCESS_REMOVE_BLOCKED, true).replace("$PLAYER$", target.getName()));
+            return;
+        }
 
     }
 
