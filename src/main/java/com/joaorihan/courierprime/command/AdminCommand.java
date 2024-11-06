@@ -8,7 +8,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AdminCommand extends AbstractCommand{
@@ -101,7 +104,17 @@ public class AdminCommand extends AbstractCommand{
     public List<String> onTabComplete(CommandSender sender, String[] args) {
 
         if (args.length == 1){
-            return List.of("reload");
+            return StringUtil.copyPartialMatches(args[0], Arrays.asList("reload", "block", "unblock"), new ArrayList<>());
+        }
+
+
+        if (args.length == 2){
+            List<String> names = new ArrayList<>();
+
+            for (Player player : Bukkit.getOnlinePlayers()){
+                names.add(player.getName());
+            }
+            return StringUtil.copyPartialMatches(args[1], names, new ArrayList<>());
         }
 
         return List.of();
