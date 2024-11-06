@@ -35,13 +35,20 @@ public class PostCommand extends AbstractCommand{
             return;
         }
 
-        if (args.length != 1){
+        if (args.length < 1){
             player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
             return;
         }
 
         // Command exec
-        getPlugin().getLetterManager().getLetterSender().send(player, args[0]);
+        // Sending for a single player
+        if (args.length == 1){
+            getPlugin().getLetterManager().getLetterSender().send(player, args[0]);
+            return;
+        }
+
+        // Sending for multiple players
+        getPlugin().getLetterManager().getLetterSender().send(player, args);
 
     }
 
@@ -52,6 +59,6 @@ public class PostCommand extends AbstractCommand{
         for (Player player : Bukkit.getOnlinePlayers()){
             names.add(player.getName());
         }
-        return StringUtil.copyPartialMatches(args[1], names, new ArrayList<>());
+        return StringUtil.copyPartialMatches(args[0], names, new ArrayList<>());
     }
 }

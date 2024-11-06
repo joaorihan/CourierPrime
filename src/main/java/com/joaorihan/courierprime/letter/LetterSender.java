@@ -25,6 +25,7 @@ public class LetterSender {
     private final CourierPrime plugin;
     private final MessageManager messageManager;
 
+
     public LetterSender(CourierPrime plugin){
          this.plugin = plugin;
          this.messageManager = plugin.getMessageManager();
@@ -56,11 +57,7 @@ public class LetterSender {
                     offlinePlayers = handleAll(sender, lore);
                     break;
                 default:
-                    if (recipient.contains(",")) {
-                        offlinePlayers = handleMultipleRecipients(sender, recipient, lore);
-                    } else {
-                        offlinePlayers = handleSingleRecipient(sender, recipient, lore);
-                    }
+                    offlinePlayers = handleSingleRecipient(sender, recipient, lore);
             }
 
             if (offlinePlayers != null && !offlinePlayers.isEmpty()) {
@@ -71,6 +68,28 @@ public class LetterSender {
             handleLetterErrors(sender);
         }
     }
+
+
+    public void send(Player sender, String[] recipients) {
+        if (LetterUtil.isHoldingOwnLetter(sender) &&
+                !LetterUtil.wasAlreadySent(sender.getInventory().getItemInMainHand())) {
+
+            ItemStack letter = sender.getInventory().getItemInMainHand();
+            List<String> lore = createLetterLore(letter);
+
+            Collection<OfflinePlayer> offlinePlayers;
+
+            offlinePlayers = handleMultipleRecipients(sender, recipients, lore);
+
+            if (offlinePlayers != null && !offlinePlayers.isEmpty()) {
+                sendLettersToPlayers(sender, letter, lore, offlinePlayers);
+            }
+
+        } else {
+            handleLetterErrors(sender);
+        }
+    }
+
 
     private List<String> createLetterLore(ItemStack letter) {
         List<String> lore = new ArrayList<>();
@@ -116,17 +135,15 @@ public class LetterSender {
         }
     }
 
-    private Collection<OfflinePlayer> handleMultipleRecipients(Player sender, String recipient, List<String> lore) {
+    private Collection<OfflinePlayer> handleMultipleRecipients(Player sender, String[] recipients, List<String> lore) {
         if (sender.hasPermission("couriernew.post.multiple")) {
-            Collection<OfflinePlayer> offlinePlayers = new ArrayList<>();
-            for (String recipients : recipient.split(",")) {
-                OfflinePlayer op = Bukkit.getOfflinePlayer(recipients);
-                if (op == null) {
-                    sender.sendMessage(messageManager.getMessage(Message.ERROR_NO_PERMS, true).replace("$PLAYER$", recipients));
-                    return null;
-                }
+            Set<OfflinePlayer> offlinePlayers = new HashSet<>();
+
+            for (String recipient : recipients) {
+                OfflinePlayer op = Bukkit.getOfflinePlayer(recipient);
                 offlinePlayers.add(op);
             }
+
             lore.add("§T" + messageManager.getMessage(Message.LETTER_TO_MULTIPLE));
             sender.sendMessage(messageManager.getMessage(Message.SUCCESS_SENT_MULTIPLE, true));
             return offlinePlayers;
