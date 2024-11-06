@@ -70,18 +70,6 @@ public class CourierPrime extends JavaPlugin {
         // Register Commands
         new CommandManager();
 
-        pm.addPermission(new Permission("courierprime.letter"));
-        pm.addPermission(new Permission("courierprime.post.one"));
-        pm.addPermission(new Permission("courierprime.post.multiple"));
-        pm.addPermission(new Permission("courierprime.post.allonline"));
-        pm.addPermission(new Permission("courierprime.post.all"));
-        pm.addPermission(new Permission("courierprime.unread"));
-        pm.addPermission(new Permission("courierprime.shred"));
-        pm.addPermission(new Permission("courierprime.shredall"));
-        pm.addPermission(new Permission("courierprime.help"));
-        pm.addPermission(new Permission("courierprime.reload"));
-
-
     }
     
     /**
