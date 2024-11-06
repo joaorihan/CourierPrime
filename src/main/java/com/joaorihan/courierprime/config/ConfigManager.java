@@ -96,7 +96,15 @@ public class ConfigManager {
         Courier.getCouriers().keySet().forEach(Entity::remove);
         getPlugin().getOutgoingManager().saveAll();
 
-        getPlugin().onEnable();
+        try {
+            getPlugin().onEnable();
+        } catch (Exception e) {
+            getPlugin().getLogger().severe("An error occurred while attempting to reload. Check logs");
+            return;
+        }
+
+        getPlugin().getLogger().info("Plugin reloaded successfully");
+
     }
 
 

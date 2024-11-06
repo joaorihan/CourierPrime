@@ -58,10 +58,8 @@ public class CourierPrime extends JavaPlugin {
         setLetterManager(new LetterManager(plugin));
         setOutgoingManager(new OutgoingManager(plugin));
 
-
         getOutgoingManager().loadAll();
 
-        PluginManager pm = Bukkit.getPluginManager();
 
         // Register Listeners
         new LetterListener(plugin);
