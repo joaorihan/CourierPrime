@@ -184,7 +184,7 @@ public class LetterSender {
                 public void run() {
                     Courier.spawn((Player) op);
                 }
-            }.runTaskLater(CourierPrime.getInstance(), MainConfig.getReceiveDelay());
+            }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
         }
 
         sender.getInventory().getItemInMainHand().setAmount(0);

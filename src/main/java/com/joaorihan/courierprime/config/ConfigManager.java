@@ -87,7 +87,7 @@ public class ConfigManager {
         try {
             getOutgoingConfig().save(getOutgoingFile());
         } catch (IOException ex) {
-            CourierPrime.getInstance().getLogger().log(Level.SEVERE, "Outgoing.yml file failed to save!", ex);
+            CourierPrime.getPlugin().getLogger().log(Level.SEVERE, "Outgoing.yml file failed to save!", ex);
         }
     }
 

@@ -9,10 +9,7 @@ import com.joaorihan.courierprime.listener.LetterListener;
 import com.joaorihan.courierprime.listener.PlayerListener;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -21,16 +18,12 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Jeremy Noesen
  */
 public class CourierPrime extends JavaPlugin {
-    
+
     /**
      * plugin instance
      */
     @Getter
     public static CourierPrime plugin;
-
-    public static CourierPrime getInstance() {
-        return plugin;
-    }
 
     @Getter @Setter
     private ConfigManager configManager;
