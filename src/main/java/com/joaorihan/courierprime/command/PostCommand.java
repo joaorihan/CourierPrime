@@ -4,6 +4,7 @@ import com.joaorihan.courierprime.config.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
@@ -16,7 +17,16 @@ public class PostCommand extends AbstractCommand{
         super("post",
                 new String[]{"send"},
                 "Send a letter to a specified player.",
-                "courierprime.post");
+                "courierprime.post.one");
+
+        // placeholder fix for an exception
+        Bukkit.getPluginManager().removePermission("courierprime.post.multiple");
+        Bukkit.getPluginManager().removePermission("courierprime.post.allonline");
+        Bukkit.getPluginManager().removePermission("courierprime.post.all");
+
+        Bukkit.getPluginManager().addPermission(new Permission("courierprime.post.multiple"));
+        Bukkit.getPluginManager().addPermission(new Permission("courierprime.post.allonline"));
+        Bukkit.getPluginManager().addPermission(new Permission("courierprime.post.all"));
     }
 
 

@@ -39,12 +39,6 @@ public class AdminCommand extends AbstractCommand{
 
         // reload
         if (args[0].equals("reload")){
-
-            if (!player.hasPermission("courierprime.reload")) {
-                player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
-                return;
-            }
-
             getPlugin().getConfigManager().reloadConfigurations();
             player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_RELOADED, true));
 

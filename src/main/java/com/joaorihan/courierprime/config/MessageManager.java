@@ -46,7 +46,7 @@ public class MessageManager {
         if (player.hasPermission("courierprime.unread")) help.add(getMessage(Message.HELP_UNREAD));
         if (player.hasPermission("courierprime.shred")) help.add(getMessage(Message.HELP_SHRED));
         if (player.hasPermission("courierprime.help")) help.add(getMessage(Message.HELP_HELP));
-        if (player.hasPermission("courierprime.reload")) help.add(getMessage(Message.HELP_RELOAD));
+        if (player.hasPermission("courierprime.admin")) help.add(getMessage(Message.HELP_RELOAD));
 
         help.add(getMessage(Message.HELP_FOOTER));
         help.add("");
