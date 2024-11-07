@@ -45,18 +45,7 @@ public class AdminCommand extends AbstractCommand{
                 return;
             }
 
-            getPlugin().getOutgoingManager().saveAll();
-            Courier.getCouriers().keySet().forEach(Entity::remove);
-            Courier.getCouriers().clear();
-
-
-            //todo fix reload messages
-            getPlugin().setConfigManager(new ConfigManager(getPlugin()));
-
-
-
-            MainConfig.load();
-            getPlugin().getOutgoingManager().loadAll();
+            getPlugin().getConfigManager().reloadConfigurations();
             player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_RELOADED, true));
 
             return;

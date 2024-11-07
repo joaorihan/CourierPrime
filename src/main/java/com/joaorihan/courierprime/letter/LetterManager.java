@@ -1,6 +1,7 @@
 package com.joaorihan.courierprime.letter;
 
 import com.joaorihan.courierprime.CourierPrime;
+import com.joaorihan.courierprime.config.MainConfig;
 import com.joaorihan.courierprime.config.Message;
 
 import com.joaorihan.courierprime.config.MessageManager;
@@ -97,6 +98,13 @@ public class LetterManager {
         lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FOOTER).replace("$DATE$", dateNow)
                 .replace("$PAGES$", Integer.toString(bm.getPages().size())));
         bm.setLore(lore);
+
+        // Sets the letter custom model data, if enabled in the config
+        if (MainConfig.isCustomModelData()){
+            int modelData = anonymous ? MainConfig.getAnonLetterCustomModelData() : MainConfig.getLetterCustomModelData();
+            bm.setCustomModelData(modelData);
+        }
+
         book.setItemMeta(bm);
         
         if (player.getInventory().firstEmpty() < 0) {

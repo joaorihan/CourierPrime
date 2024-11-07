@@ -11,6 +11,13 @@ blocked-worlds: []
 
 
 letter:
-  anonymous-letters-enabled: true
+  # if the creation of anonymous letters is enabled.
+  anonymous-letters-enabled: true     # default: true
 
-  use-custom-model-data: false
+  # if the letter items will support custom model data
+  use-custom-model-data: false        # default: false
+
+  # custom model data of letter items.
+  # only works if use-custom-model-data is set to true
+  letter-custom-model-data: 0
+  anon-letter-custom-model-data: 0

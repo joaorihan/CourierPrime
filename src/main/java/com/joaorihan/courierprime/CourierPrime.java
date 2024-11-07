@@ -9,10 +9,7 @@ import com.joaorihan.courierprime.listener.LetterListener;
 import com.joaorihan.courierprime.listener.PlayerListener;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -21,16 +18,12 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Jeremy Noesen
  */
 public class CourierPrime extends JavaPlugin {
-    
+
     /**
      * plugin instance
      */
     @Getter
     public static CourierPrime plugin;
-
-    public static CourierPrime getInstance() {
-        return plugin;
-    }
 
     @Getter @Setter
     private ConfigManager configManager;
@@ -58,10 +51,8 @@ public class CourierPrime extends JavaPlugin {
         setLetterManager(new LetterManager(plugin));
         setOutgoingManager(new OutgoingManager(plugin));
 
-
         getOutgoingManager().loadAll();
 
-        PluginManager pm = Bukkit.getPluginManager();
 
         // Register Listeners
         new LetterListener(plugin);
@@ -69,18 +60,6 @@ public class CourierPrime extends JavaPlugin {
 
         // Register Commands
         new CommandManager();
-
-        pm.addPermission(new Permission("courierprime.letter"));
-        pm.addPermission(new Permission("courierprime.post.one"));
-        pm.addPermission(new Permission("courierprime.post.multiple"));
-        pm.addPermission(new Permission("courierprime.post.allonline"));
-        pm.addPermission(new Permission("courierprime.post.all"));
-        pm.addPermission(new Permission("courierprime.unread"));
-        pm.addPermission(new Permission("courierprime.shred"));
-        pm.addPermission(new Permission("courierprime.shredall"));
-        pm.addPermission(new Permission("courierprime.help"));
-        pm.addPermission(new Permission("courierprime.reload"));
-
 
     }
     

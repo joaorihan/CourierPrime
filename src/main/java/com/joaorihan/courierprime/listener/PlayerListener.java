@@ -41,7 +41,7 @@ public class PlayerListener implements Listener {
             public void run() {
                 Courier.spawn(player);
             }
-        }.runTaskLater(CourierPrime.getInstance(), MainConfig.getReceiveDelay());
+        }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
     }
 
     /**
@@ -60,7 +60,7 @@ public class PlayerListener implements Listener {
                 public void run() {
                     Courier.spawn(recipient);
                 }
-            }.runTaskLater(CourierPrime.getInstance(), MainConfig.getReceiveDelay());
+            }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
         }
     }
 
@@ -79,7 +79,7 @@ public class PlayerListener implements Listener {
                 public void run() {
                     Courier.spawn(recipient);
                 }
-            }.runTaskLater(CourierPrime.getInstance(), MainConfig.getReceiveDelay());
+            }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
         }
     }
 

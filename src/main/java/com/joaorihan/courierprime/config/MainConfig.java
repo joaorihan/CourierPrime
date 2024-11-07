@@ -65,14 +65,21 @@ public class MainConfig {
         return worlds;
     }
 
+    public int getLetterCustomModelData() { return config.getInt("letter.letter-custom-model-data");  }
+
+    public int getAnonLetterCustomModelData() { return config.getInt("letter.anon-letter-custom-model-data");  }
+
 
     public boolean isAnonymousLetters(){ return config.getBoolean("letter.anonymous-letters-enabled"); }
-    
+
+    public boolean isCustomModelData(){ return config.getBoolean("letter.use-custom-model-data"); }
+
     /**
      * load config options from the config file
      */
     public static void load() {
         config = null;
+        CourierPrime.getPlugin().reloadConfig();
         config = CourierPrime.getPlugin().getConfig();
     }
     

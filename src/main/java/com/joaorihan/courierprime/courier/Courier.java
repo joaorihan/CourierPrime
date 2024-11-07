@@ -71,7 +71,7 @@ public class Courier {
                 }
                 if (courier.isDead()) this.cancel();
             }
-        }.runTaskTimer(CourierPrime.getInstance(), 0, 1);
+        }.runTaskTimer(CourierPrime.getPlugin(), 0, 1);
 
         new BukkitRunnable() {
             @Override
@@ -87,10 +87,10 @@ public class Courier {
                         public void run() {
                             spawn(recipient);
                         }
-                    }.runTaskLater(CourierPrime.getInstance(), MainConfig.getResendDelay());
+                    }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getResendDelay());
                 }
             }
-        }.runTaskLater(CourierPrime.getInstance(), MainConfig.getRemoveDelay());
+        }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getRemoveDelay());
     }
 
     /**

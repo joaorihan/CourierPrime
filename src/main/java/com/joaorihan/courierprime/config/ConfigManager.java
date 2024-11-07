@@ -1,10 +1,12 @@
 package com.joaorihan.courierprime.config;
 
 import com.joaorihan.courierprime.CourierPrime;
+import com.joaorihan.courierprime.courier.Courier;
 import lombok.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,8 +87,24 @@ public class ConfigManager {
         try {
             getOutgoingConfig().save(getOutgoingFile());
         } catch (IOException ex) {
-            CourierPrime.getInstance().getLogger().log(Level.SEVERE, "Outgoing.yml file failed to save!", ex);
+            CourierPrime.getPlugin().getLogger().log(Level.SEVERE, "Outgoing.yml file failed to save!", ex);
         }
+    }
+
+
+    public void reloadConfigurations(){
+        Courier.getCouriers().keySet().forEach(Entity::remove);
+        getPlugin().getOutgoingManager().saveAll();
+
+        try {
+            getPlugin().onEnable();
+        } catch (Exception e) {
+            getPlugin().getLogger().severe("An error occurred while attempting to reload. Check logs");
+            return;
+        }
+
+        getPlugin().getLogger().info("Plugin reloaded successfully");
+
     }
 
 
