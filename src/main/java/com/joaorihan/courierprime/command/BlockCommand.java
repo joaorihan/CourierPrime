@@ -44,7 +44,7 @@ public class BlockCommand extends AbstractCommand{
             // If so, sends a courier
             Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
                 player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_EXTRA_DELIVERIES, true));
-                Courier.spawn(player);
+                new Courier(player);
             }, MainConfig.getReceiveDelay());
 
         } else {

@@ -182,7 +182,7 @@ public class LetterSender {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    Courier.spawn((Player) op);
+                    new Courier((Player) op);
                 }
             }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
         }

@@ -2,6 +2,7 @@ package com.joaorihan.courierprime;
 
 import com.joaorihan.courierprime.command.CommandManager;
 import com.joaorihan.courierprime.config.*;
+import com.joaorihan.courierprime.courier.CourierManager;
 import com.joaorihan.courierprime.letter.LetterManager;
 import com.joaorihan.courierprime.letter.OutgoingManager;
 import com.joaorihan.courierprime.courier.Courier;
@@ -67,7 +68,7 @@ public class CourierPrime extends JavaPlugin {
      * nullify the plugin instance
      */
     public void onDisable() {
-        Courier.getCouriers().keySet().forEach(Entity::remove);
+        CourierManager.getActiveCouriers().keySet().forEach(Entity::remove);
         getOutgoingManager().saveAll();
 
         plugin = null;

@@ -1,12 +1,8 @@
 package com.joaorihan.courierprime.command;
 
-import com.joaorihan.courierprime.config.ConfigManager;
 import com.joaorihan.courierprime.config.Message;
-import com.joaorihan.courierprime.courier.Courier;
-import com.joaorihan.courierprime.config.MainConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 

@@ -40,7 +40,7 @@ public class UnreadCommand extends AbstractCommand{
         // Command exec
         player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_EXTRA_DELIVERIES, true));
 
-        Bukkit.getScheduler().runTaskLater(getPlugin(), () -> Courier.spawn(player), MainConfig.getReceiveDelay());
+        Bukkit.getScheduler().runTaskLater(getPlugin(), () -> new Courier(player), MainConfig.getReceiveDelay());
 
 
     }

@@ -2,6 +2,7 @@ package com.joaorihan.courierprime.config;
 
 import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.courier.Courier;
+import com.joaorihan.courierprime.courier.CourierManager;
 import lombok.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -15,17 +16,19 @@ import java.util.logging.Level;
 /**
  * Controller for all config and message Files
  */
+@Setter
+@Getter
 public class ConfigManager {
 
-    @Getter @Setter private CourierPrime plugin;
+    private CourierPrime plugin;
 
-    @Getter @Setter private FileConfiguration mainConfig;
+    private FileConfiguration mainConfig;
 
-    @Getter @Setter private File languageFile;
-    @Getter @Setter private YamlConfiguration languageConfig;
+    private File languageFile;
+    private YamlConfiguration languageConfig;
 
-    @Getter @Setter private File outgoingFile;
-    @Getter @Setter private YamlConfiguration outgoingConfig;
+    private File outgoingFile;
+    private YamlConfiguration outgoingConfig;
 
 
     public ConfigManager(CourierPrime plugin){
@@ -93,7 +96,7 @@ public class ConfigManager {
 
 
     public void reloadConfigurations(){
-        Courier.getCouriers().keySet().forEach(Entity::remove);
+        CourierManager.getActiveCouriers().keySet().forEach(Entity::remove);
         getPlugin().getOutgoingManager().saveAll();
 
         try {

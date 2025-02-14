@@ -39,7 +39,7 @@ public class PlayerListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Courier.spawn(player);
+                new Courier(player);
             }
         }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
     }
@@ -58,7 +58,7 @@ public class PlayerListener implements Listener {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    Courier.spawn(recipient);
+                    new Courier(recipient);
                 }
             }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
         }
@@ -77,7 +77,7 @@ public class PlayerListener implements Listener {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    Courier.spawn(recipient);
+                    new Courier(recipient);
                 }
             }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
         }

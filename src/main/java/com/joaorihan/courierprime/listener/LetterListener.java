@@ -2,6 +2,7 @@ package com.joaorihan.courierprime.listener;
 
 import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.courier.Courier;
+import com.joaorihan.courierprime.courier.CourierManager;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
@@ -16,7 +17,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
  */
 public class LetterListener implements Listener {
 
-    private CourierPrime plugin;
+    private final CourierPrime plugin;
 
     public LetterListener(CourierPrime plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -30,20 +31,20 @@ public class LetterListener implements Listener {
     @EventHandler
     public void onEntityInteract(PlayerInteractEntityEvent e) {
         Entity en = e.getRightClicked();
-        if (Courier.getCouriers().containsKey(en)) {
-            if (Courier.getCouriers().get(en).getRecipient().equals(e.getPlayer())
-                    && !Courier.getCouriers().get(en).isDelivered()) {
-                Courier.getCouriers().get(en).setDelivered();
+        if (CourierManager.getActiveCouriers().containsKey(en)) {
+            if (CourierManager.getActiveCouriers().get(en).getRecipient().equals(e.getPlayer())
+                    && !CourierManager.getActiveCouriers().get(en).isDelivered()) {
+                CourierManager.getActiveCouriers().get(en).setDelivered();
                 e.setCancelled(true);
                 plugin.getLetterManager().getLetterSender().receive(e.getPlayer());
                 en.getWorld().playSound(en.getLocation(), Sound.BLOCK_WOOL_BREAK, 1, 1);
                 en.getWorld().spawnParticle(Particle.HAPPY_VILLAGER,
                         en.getLocation().add(0, en.getHeight() / 2, 0), 20,
                         en.getWidth() / 2, en.getHeight() / 2, en.getWidth() / 2);
-            } else if (!Courier.getCouriers().get(en).getRecipient().equals(e.getPlayer())) {
+            } else if (!CourierManager.getActiveCouriers().get(en).getRecipient().equals(e.getPlayer())) {
                 e.setCancelled(true);
                 en.getWorld().playSound(en.getLocation(), Sound.UI_TOAST_OUT, 1, 1);
-            } else if (Courier.getCouriers().get(en).isDelivered()) e.setCancelled(true);
+            } else if (CourierManager.getActiveCouriers().get(en).isDelivered()) e.setCancelled(true);
         }
     }
 
@@ -53,7 +54,7 @@ public class LetterListener implements Listener {
      */
     @EventHandler
     public void onVillagerProfession(VillagerCareerChangeEvent e) {
-        if (Courier.getCouriers().containsKey(e.getEntity())) e.setCancelled(true);
+        if (CourierManager.getActiveCouriers().containsKey(e.getEntity())) e.setCancelled(true);
     }
 
 
