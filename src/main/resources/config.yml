@@ -5,10 +5,9 @@ receive-delay: 100
 resend-delay: 2400
 remove-delay: 200
 spawn-distance: 5
-courier-entity-type: VILLAGER
+default-courier-entity-type: VILLAGER
 blocked-gamemodes: []
 blocked-worlds: []
-
 
 letter:
   # if the creation of anonymous letters is enabled.
@@ -21,3 +20,16 @@ letter:
   # only works if use-custom-model-data is set to true
   letter-custom-model-data: 0
   anon-letter-custom-model-data: 0
+
+# Add any EntityType you'd like your players be able to use as Couriers
+# List of EntityTypes https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
+enabled-courier-types:
+  - COW
+  - SHEEP
+  - PIG
+  - CHICKEN
+  - RABBIT
+  - HORSE
+  - VILLAGER
+  - ALLAY
+  - PARROT

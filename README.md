@@ -112,17 +112,20 @@ letter:
 - `blocked-worlds` - Names of worlds that receiving is blocked in
 - `anonymous-letters-enabled` - Rather or not the `/anonletter` command will be registered by the plugin. Changes to this config option might require a restart to apply
 - `use-custom-model-data` - Rather or not will the plugin apply CustomModelData to the created letters
-- `letter-custom-model-data` - Regular letters' CustomModelData. Only works if `use-custom-model-data` is set to true
-- `anon-letter-custom-model-data` - Anonymous letters' CustomModelData. Only works if `use-custom-model-data` is set to true
+- `letter-custom-model-data` - Regular letters' CustomModelData.
+- `anon-letter-custom-model-data` - Anonymous letters' CustomModelData. 
+
+`letter-custom-model-data` and `anon-letter-custom-model-data` will only work if `use-custom-model-data` is set to true
 
 For the message configuration, you can use color codes. You can also use the placeholder `$PLAYER$` in messages that
-have it by default to replace it with player name(s). The messages and their names should explain what they are used
+have it by default, to replace it with player name(s). The messages and their names should explain what they are used
 for.
 
 You can create a new language yml file, and load it on the config, as long as it contains all messages.
 
 The third configuration file is actually used to store outgoing mail. Don't modify this file unless you know exactly
 what you are doing!
+
 
 ---
 
@@ -187,7 +190,7 @@ We welcome contributions to **CourierPrime**! To get started:
 5. **Commit Your Changes**  
    Commit your changes with a clear and descriptive message:
    ```bash
-   git commit -m "Add your feature or fix"
+   git commit -m "feat: Add your feature or fix"
    ```
 
 6. **Push to Your Fork**  

@@ -1,7 +1,6 @@
 package com.joaorihan.courierprime.config;
 
 import com.joaorihan.courierprime.CourierPrime;
-import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.courier.CourierManager;
 import lombok.*;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -30,6 +29,9 @@ public class ConfigManager {
     private File outgoingFile;
     private YamlConfiguration outgoingConfig;
 
+    private File courierSelectFile;
+    private YamlConfiguration courierSelectConfig;
+
 
     public ConfigManager(CourierPrime plugin){
         setPlugin(plugin);
@@ -40,6 +42,7 @@ public class ConfigManager {
 
         generateOutgoingConfiguration();
         generateLanguageFiles();
+        generateCourierConfiguration();
     }
 
 
@@ -91,6 +94,32 @@ public class ConfigManager {
             getOutgoingConfig().save(getOutgoingFile());
         } catch (IOException ex) {
             CourierPrime.getPlugin().getLogger().log(Level.SEVERE, "Outgoing.yml file failed to save!", ex);
+        }
+    }
+
+
+    public void generateCourierConfiguration(){
+        setCourierSelectFile(new File(this.getPlugin().getDataFolder(),"couriers.yml"));
+        if (!getCourierSelectFile().exists()){
+            this.getPlugin().saveResource("couriers.yml", false);
+        }
+
+        setCourierSelectConfig(new YamlConfiguration());
+        try {
+            getCourierSelectConfig().load(getCourierSelectFile());
+        } catch (IOException | InvalidConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void saveCourierConfig() {
+        if (getCourierSelectConfig() == null || getCourierSelectFile() == null) {
+            return;
+        }
+        try {
+            getCourierSelectConfig().save(getCourierSelectFile());
+        } catch (IOException ex) {
+            CourierPrime.getPlugin().getLogger().log(Level.SEVERE, "couriers.yml file failed to save!", ex);
         }
     }
 

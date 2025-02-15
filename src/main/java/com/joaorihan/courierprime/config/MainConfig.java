@@ -45,7 +45,7 @@ public class MainConfig {
     /**
      * entity type to use as the courier
      */
-    public EntityType getCourierEntityType(){ return EntityType.valueOf(config.getString("courier-entity-type")); }
+    public EntityType getDefaultCourierEntityType(){ return EntityType.valueOf(config.getString("default-courier-entity-type")); }
     
     /**
      * gamemodes that disallow receiving mail
@@ -73,6 +73,14 @@ public class MainConfig {
     public boolean isAnonymousLetters(){ return config.getBoolean("letter.anonymous-letters-enabled"); }
 
     public boolean isCustomModelData(){ return config.getBoolean("letter.use-custom-model-data"); }
+
+    public Set<EntityType> getEnabledCourierTypes() {
+        Set<EntityType> types = new HashSet<>();
+        for (String s : config.getStringList("enabled-courier-types")) {
+            types.add(EntityType.valueOf(s));
+        }
+        return types;
+    }
 
     /**
      * load config options from the config file

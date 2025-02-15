@@ -36,6 +36,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
+
         new BukkitRunnable() {
             @Override
             public void run() {

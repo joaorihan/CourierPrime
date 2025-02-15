@@ -3,9 +3,9 @@ package com.joaorihan.courierprime;
 import com.joaorihan.courierprime.command.CommandManager;
 import com.joaorihan.courierprime.config.*;
 import com.joaorihan.courierprime.courier.CourierManager;
+import com.joaorihan.courierprime.courier.CourierSelectManager;
 import com.joaorihan.courierprime.letter.LetterManager;
 import com.joaorihan.courierprime.letter.OutgoingManager;
-import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.listener.LetterListener;
 import com.joaorihan.courierprime.listener.PlayerListener;
 import lombok.Getter;
@@ -38,6 +38,9 @@ public class CourierPrime extends JavaPlugin {
     @Getter @Setter
     private OutgoingManager outgoingManager;
 
+    @Getter @Setter
+    private CourierSelectManager courierSelectManager;
+
     /**
      * initialize configurations, load messages, register commands and permissions
      */
@@ -51,6 +54,7 @@ public class CourierPrime extends JavaPlugin {
 
         setLetterManager(new LetterManager(plugin));
         setOutgoingManager(new OutgoingManager(plugin));
+        setCourierSelectManager(new CourierSelectManager(configManager));
 
         getOutgoingManager().loadAll();
 

@@ -1,7 +1,6 @@
 package com.joaorihan.courierprime.listener;
 
 import com.joaorihan.courierprime.CourierPrime;
-import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.courier.CourierManager;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;

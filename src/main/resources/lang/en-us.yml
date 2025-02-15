@@ -34,6 +34,7 @@ ERROR_IN_BLOCKED_MODE: "&7A courier tried to deliver mail, your mailbox is block
 ERROR_ALREADY_BLOCKED: "&7This player is already in blocked mode"
 ERROR_ALREADY_UNBLOCKED: "&7This player is not in blocked mode"
 ERROR_TARGET_NOT_FOUND: "&7The specified player was not found."
+ERROR_ENTITY_NOT_FOUND: "&7Invalid entity type! Please provide a valid entity."
 COURIER_NAME: "&8&l[&f&l$PLAYER$'s Courier&8&l]"
 COURIER_NAME_RECEIVED: "&8&l[&f&lMail Delivered!&8&l]"
 LETTER_FROM: "&fLetter from &a$PLAYER$"

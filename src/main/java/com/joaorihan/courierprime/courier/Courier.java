@@ -7,6 +7,7 @@ import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -36,10 +37,21 @@ public class Courier {
      * Spawns the courier entity and sets up its behavior.
      */
     private void spawn() {
+
+        if (!CourierManager.canSpawn(recipient)) return;
+
         // Determine spawn location based on player's location and direction.
         Location loc = recipient.getLocation()
                 .add(recipient.getLocation().getDirection().setY(0).multiply(MainConfig.getSpawnDistance()));
-        courier = recipient.getWorld().spawnEntity(loc, MainConfig.getCourierEntityType());
+
+        EntityType playerActiveCourier = plugin.getCourierSelectManager().getActiveCourier(recipient.getUniqueId());
+
+        // Tries to get the player's active courier type on the config. Spawns default courier type if null
+        if (playerActiveCourier == null){
+            courier = recipient.getWorld().spawnEntity(loc, MainConfig.getDefaultCourierEntityType());
+        } else {
+            courier = recipient.getWorld().spawnEntity(loc, playerActiveCourier);
+        }
 
         // Register this courier in the manager.
         CourierManager.getActiveCouriers().put(courier, this);
@@ -84,7 +96,7 @@ public class Courier {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            CourierManager.spawn(recipient);
+                            new Courier(recipient);
                         }
                     }.runTaskLater(plugin, MainConfig.getResendDelay());
                 }
