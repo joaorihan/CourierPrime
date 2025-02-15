@@ -41,6 +41,7 @@ of keeping the plugin accessible for free, forever.
 - `/shred (all)` - Delete the letter in your hand, or all the letters in your inventory.
 - `/couriernew help` - Show the help message.
 - `/courieradmin <reload/block/unblock>` - Admin utility command
+- `/courier <select/set> <EntityType/player> (EntityType)` - Change the EntityType used for a player's courier.
 
 ---
 
@@ -56,6 +57,7 @@ of keeping the plugin accessible for free, forever.
 - `courierprime.unread` - Allows players to retrieve unread mail
 - `courierprime.shred` - Allows players to shred a letter
 - `courierprime.help` - Allows players to use the help command
+- `courierprime.courier.select` - Allows players to select their currier EntityType
 - `courierprime.admin` - Allows for reloading of configs and other admin commands
 
 ---
@@ -85,7 +87,7 @@ receive-delay: 100
 resend-delay: 2400
 remove-delay: 200
 spawn-distance: 5
-courier-entity-type: VILLAGER
+default-courier-entity-type: VILLAGER
 blocked-gamemodes: []
 blocked-worlds: []
 
@@ -101,6 +103,14 @@ letter:
   # only works if use-custom-model-data is set to true
   letter-custom-model-data: 0
   anon-letter-custom-model-data: 0
+
+# Add any EntityType you'd like your players be able to use as Couriers
+# List of EntityTypes https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
+enabled-courier-types:
+  - COW
+  - SHEEP
+  - PIG
+  ...
 ```
 - `lang` - Name of the language file the plugin will load. Available languages can be foung in the `/lang` directory
 - `receive-delay` - This is the delay, in ticks, for when a letter should be received. This is used on join, after
@@ -108,12 +118,14 @@ letter:
 - `resend-delay` - How long to wait, in ticks, before trying to resend a letter when the mail was not taken
 - `remove-delay` - How long to wait, in ticks, after the courier spawns before removing it
 - `spawn-distance` - How far away to spawn the courier from the player in blocks
+- `default-courier-entity-type` - The entity type used to spawn a courier for a player that hasn't set their priority using `/courier select`
 - `blocked-gamemodes` - Gamemodes that receiving mail isn't allowed in. (SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR)
 - `blocked-worlds` - Names of worlds that receiving is blocked in
-- `anonymous-letters-enabled` - Rather or not the `/anonletter` command will be registered by the plugin. Changes to this config option might require a restart to apply
+- `anonymous-letters-enabled` - Rather or not the `/anonletter` command will be registered by the plugin. Changes to this config option might require a restart to be applied correctly
 - `use-custom-model-data` - Rather or not will the plugin apply CustomModelData to the created letters
 - `letter-custom-model-data` - Regular letters' CustomModelData.
-- `anon-letter-custom-model-data` - Anonymous letters' CustomModelData. 
+- `anon-letter-custom-model-data` - Anonymous letters' CustomModelData.
+- `enabled-courier-types` - A list of EntityTypes accepted by the `/courier select` command.
 
 `letter-custom-model-data` and `anon-letter-custom-model-data` will only work if `use-custom-model-data` is set to true
 
