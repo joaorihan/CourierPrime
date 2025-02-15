@@ -19,24 +19,12 @@ public class CourierManager {
     private static final HashMap<Entity, Courier> activeCouriers = new HashMap<>();
 
     /**
-     * Spawn a courier for the specified recipient if allowed.
-     * This method is analogous to your original Courier.spawn(player).
-     *
-     * @param recipient The player receiving the courier.
-     */
-    public static void spawn(Player recipient) {
-        if (canSpawn(recipient)) {
-            new Courier(recipient); // Constructor spawns the courier
-        }
-    }
-
-    /**
      * Checks whether a courier can be spawned for the given player.
      *
      * @param recipient The player to check.
      * @return true if allowed; false otherwise.
      */
-    private static boolean canSpawn(Player recipient) {
+    public static boolean canSpawn(Player recipient) {
         if (!recipient.isOnline()
                 || !plugin.getOutgoingManager().getOutgoing().containsKey(recipient.getUniqueId())
                 || plugin.getOutgoingManager().getOutgoing().get(recipient.getUniqueId()).isEmpty()) {
