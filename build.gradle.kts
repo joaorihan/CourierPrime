@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.joaorihan"
-version = "1.4.0"
+version = "1.4.1-TEST"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -22,7 +22,8 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
     
-    implementation("org.apache.commons:commons-text:1.12.0")
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-text
+    implementation("org.apache.commons:commons-text:1.10.0")
 }
 
 tasks {
