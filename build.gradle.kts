@@ -1,5 +1,6 @@
 plugins {
     java
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "com.joaorihan"
@@ -29,10 +30,14 @@ tasks {
         options.encoding = "UTF-8"
     }
     
-    jar {
+    shadowJar {
         archiveBaseName.set(project.name)
         archiveClassifier.set("")
         archiveVersion.set(project.version.toString())
+    }
+    
+    build {
+        dependsOn(shadowJar)
     }
     
     processResources {
