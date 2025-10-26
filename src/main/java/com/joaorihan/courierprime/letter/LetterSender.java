@@ -90,6 +90,22 @@ public class LetterSender {
         }
     }
 
+    public void forward(Player sender, String recipient) {
+        ItemStack letter = sender.getInventory().getItemInMainHand();
+        List<String> lore = createLetterLore(letter);
+
+        lore.add("");
+        lore.add(messageManager.getMessage(Message.LETTER_FORWARDED_BY));
+
+        var offlinePlayerRecipient = handleSingleRecipient(sender, recipient, lore);
+
+        if (offlinePlayerRecipient == null || offlinePlayerRecipient.isEmpty()){
+            handleLetterErrors(sender);
+            return;
+        }
+
+        sendLettersToPlayers(sender, letter, lore, offlinePlayerRecipient);
+    }
 
     private List<String> createLetterLore(ItemStack letter) {
         List<String> lore = new ArrayList<>();
