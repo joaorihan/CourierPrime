@@ -37,10 +37,10 @@ public class PostCommand extends AbstractCommand{
         if (!(sender instanceof Player player))
             return;
 
-        if (!(player.hasPermission("couriernew.post.one") ||
-                player.hasPermission("couriernew.post.multiple") ||
-                player.hasPermission("couriernew.post.allonline") ||
-                player.hasPermission("couriernew.post.all"))) {
+        if (!(player.hasPermission("courierprime.post.one") ||
+                player.hasPermission("courierprime.post.multiple") ||
+                player.hasPermission("courierprime.post.allonline") ||
+                player.hasPermission("courierprime.post.all"))) {
             player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
             return;
         }

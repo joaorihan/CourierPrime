@@ -39,7 +39,7 @@ of keeping the plugin accessible for free, forever.
 - `/inspect` - Shows a message containing information about a letter item
 - `/unread` - Retrieve unread mail, if any.
 - `/shred (all)` - Delete the letter in your hand, or all the letters in your inventory.
-- `/couriernew help` - Show the help message.
+- `/courierprime help` - Show the help message.
 - `/courieradmin <reload/block/unblock>` - Admin utility command
 - `/courier <select/set> <EntityType/player> (EntityType)` - Change the EntityType used for a player's courier.
 

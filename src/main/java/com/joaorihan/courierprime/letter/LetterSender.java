@@ -112,7 +112,7 @@ public class LetterSender {
     }
 
     private Collection<OfflinePlayer> handleAllOnline(Player sender, List<String> lore) {
-        if (sender.hasPermission("couriernew.post.allonline")) {
+        if (sender.hasPermission("courierprime.post.allonline")) {
             lore.add("§T" + Message.LETTER_TO_ALLONLINE);
             Collection<OfflinePlayer> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
             sender.sendMessage(messageManager.getMessage(Message.SUCCESS_SENT_ALLONLINE, true));
@@ -124,7 +124,7 @@ public class LetterSender {
     }
 
     private Collection<OfflinePlayer> handleAll(Player sender, List<String> lore) {
-        if (sender.hasPermission("couriernew.post.all")) {
+        if (sender.hasPermission("courierprime.post.all")) {
             lore.add("§T" + Message.LETTER_TO_ALL);
             Collection<OfflinePlayer> allPlayers = new ArrayList<>(Arrays.asList(Bukkit.getOfflinePlayers()));
             sender.sendMessage(messageManager.getMessage(Message.SUCCESS_SENT_ALL, true));
@@ -136,7 +136,7 @@ public class LetterSender {
     }
 
     private Collection<OfflinePlayer> handleMultipleRecipients(Player sender, String[] recipients, List<String> lore) {
-        if (sender.hasPermission("couriernew.post.multiple")) {
+        if (sender.hasPermission("courierprime.post.multiple")) {
             Set<OfflinePlayer> offlinePlayers = new HashSet<>();
 
             for (String recipient : recipients) {
@@ -154,7 +154,7 @@ public class LetterSender {
     }
 
     private Collection<OfflinePlayer> handleSingleRecipient(Player sender, String recipient, List<String> lore) {
-        if (sender.hasPermission("couriernew.post.one")) {
+        if (sender.hasPermission("courierprime.post.one")) {
             OfflinePlayer op = Bukkit.getOfflinePlayer(recipient);
             if (op == null) {
                 sender.sendMessage(messageManager.getMessage(Message.ERROR_PLAYER_NO_EXIST, true).replace("$PLAYER$", recipient));
