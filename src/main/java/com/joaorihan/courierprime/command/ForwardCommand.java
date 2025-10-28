@@ -16,7 +16,7 @@ public class ForwardCommand extends AbstractCommand{
 
     public ForwardCommand(){
         super("forward",
-                new String[]{"encaminhar"},
+                new String[]{"resend"},
                 "Forwards a letter sent to you, to a specific player.",
                 "courierprime.forward");
     }
