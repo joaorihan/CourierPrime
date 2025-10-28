@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.joaorihan"
-version = "1.4.1-TEST"
+version = "1.4.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21

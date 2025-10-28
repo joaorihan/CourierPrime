@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ForwardCommand extends AbstractCommand{
 
-    private LetterSender letterSender = getPlugin().getLetterManager().getLetterSender();
+    private final LetterSender letterSender = getPlugin().getLetterManager().getLetterSender();
 
     public ForwardCommand(){
         super("forward",
