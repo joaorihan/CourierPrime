@@ -91,11 +91,22 @@ public class LetterSender {
     }
 
     public void forward(Player sender, String recipient) {
+        if (!LetterUtil.isHoldingLetter(sender)){
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_NO_LETTER));
+            return;
+        }
+
         ItemStack letter = sender.getInventory().getItemInMainHand();
+
+        if (LetterUtil.wasAlreadyForwarded(letter)){
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_ALREADY_FORWARDED, true));
+            return;
+        }
+
         List<String> lore = createLetterLore(letter);
 
         lore.add("");
-        lore.add(messageManager.getMessage(Message.LETTER_FORWARDED_BY));
+        lore.add(messageManager.getMessage(Message.LETTER_FORWARDED_BY).replace("$PLAYER$", sender.getName()));
 
         var offlinePlayerRecipient = handleSingleRecipient(sender, recipient, lore);
 
