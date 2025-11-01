@@ -14,6 +14,7 @@ public class CommandManager {
         new AdminCommand();
         new BlockCommand();
         new CourierSelectCommand();
+        new ForwardCommand();
         new HelpCommand();
         new InspectCommand();
         new LetterCommand();

@@ -59,6 +59,11 @@ public class LetterUtil {
                         .getMessage(Message.LETTER_TO_ONE).replace("$PLAYER$", ""));
     }
 
+    public boolean wasAlreadyForwarded(@NonNull ItemStack letter){
+        return letter.getItemMeta().getLore().toString().contains(CourierPrime.getPlugin().getMessageManager()
+                .getMessage(Message.LETTER_FORWARDED_BY).replace("$PLAYER$", ""));
+    }
+
     /**
      * Used to get the Player who wrote a Letter
      * @param player command sender
