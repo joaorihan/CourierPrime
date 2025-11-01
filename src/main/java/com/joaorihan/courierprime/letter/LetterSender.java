@@ -61,7 +61,7 @@ public class LetterSender {
             }
 
             if (offlinePlayers != null && !offlinePlayers.isEmpty()) {
-                sendLettersToPlayers(sender, letter, lore, offlinePlayers);
+                sendLettersToPlayers(sender, letter, lore, offlinePlayers, true);
             }
 
         } else {
@@ -82,7 +82,7 @@ public class LetterSender {
             offlinePlayers = handleMultipleRecipients(sender, recipients, lore);
 
             if (offlinePlayers != null && !offlinePlayers.isEmpty()) {
-                sendLettersToPlayers(sender, letter, lore, offlinePlayers);
+                sendLettersToPlayers(sender, letter, lore, offlinePlayers, true);
             }
 
         } else {
@@ -103,6 +103,9 @@ public class LetterSender {
             return;
         }
 
+        BookMeta letterMeta = (BookMeta) letter.getItemMeta();
+        letterMeta.setGeneration(BookMeta.Generation.COPY_OF_ORIGINAL);
+
         List<String> lore = createLetterLore(letter);
 
         lore.add("");
@@ -115,7 +118,7 @@ public class LetterSender {
             return;
         }
 
-        sendLettersToPlayers(sender, letter, lore, offlinePlayerRecipient);
+        sendLettersToPlayers(sender, letter, lore, offlinePlayerRecipient, false);
     }
 
     private List<String> createLetterLore(ItemStack letter) {
@@ -196,7 +199,7 @@ public class LetterSender {
         }
     }
 
-    private void sendLettersToPlayers(Player sender, ItemStack letter, List<String> lore, Collection<OfflinePlayer> offlinePlayers) {
+    private void sendLettersToPlayers(Player sender, ItemStack letter, List<String> lore, Collection<OfflinePlayer> offlinePlayers, boolean shouldRemoveItem) {
         BookMeta letterMeta = (BookMeta) letter.getItemMeta();
         letterMeta.setLore(lore);
         letter.setItemMeta(letterMeta);
@@ -214,7 +217,8 @@ public class LetterSender {
             }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
         }
 
-        sender.getInventory().getItemInMainHand().setAmount(0);
+        if (shouldRemoveItem)
+            sender.getInventory().getItemInMainHand().setAmount(0);
     }
 
     private void handleLetterErrors(Player sender) {
