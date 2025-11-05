@@ -8,6 +8,8 @@ import com.joaorihan.courierprime.letter.LetterManager;
 import com.joaorihan.courierprime.letter.OutgoingManager;
 import com.joaorihan.courierprime.listener.LetterListener;
 import com.joaorihan.courierprime.listener.PlayerListener;
+import com.joaorihan.courierprime.listener.UpdateListener;
+import com.joaorihan.courierprime.updates.UpdateChecker;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Entity;
@@ -41,6 +43,9 @@ public class CourierPrime extends JavaPlugin {
     @Getter @Setter
     private CourierSelectManager courierSelectManager;
 
+    @Getter @Setter
+    private UpdateChecker updateChecker;
+
     /**
      * initialize configurations, load messages, register commands and permissions
      */
@@ -56,12 +61,15 @@ public class CourierPrime extends JavaPlugin {
         setOutgoingManager(new OutgoingManager(plugin));
         setCourierSelectManager(new CourierSelectManager(configManager));
 
+        setUpdateChecker(new UpdateChecker(plugin));
+
         getOutgoingManager().loadAll();
 
 
         // Register Listeners
         new LetterListener(plugin);
         new PlayerListener(plugin);
+        new UpdateListener(plugin);
 
         // Register Commands
         new CommandManager();
