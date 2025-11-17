@@ -10,6 +10,10 @@ import org.bukkit.entity.Entity;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -40,9 +44,13 @@ public class ConfigManager {
         mainConfig.options().copyDefaults();
         plugin.saveDefaultConfig();
 
-        generateOutgoingConfiguration();
+        // Generate configs first
         generateLanguageFiles();
+        generateOutgoingConfiguration();
         generateCourierConfiguration();
+        
+        // Update existing configs to ensure all new keys are added
+        updateConfigurations();
     }
 
 
@@ -65,6 +73,7 @@ public class ConfigManager {
         File langFile = new File(langFolder, getMainConfig().getString("lang") + ".yml");
 
         if (langFile.exists()) {
+            setLanguageFile(langFile);
             setLanguageConfig(YamlConfiguration.loadConfiguration(langFile));
             getPlugin().getLogger().info("Now loading " + getMainConfig().getString("lang") + " language");
         } else {
@@ -137,6 +146,79 @@ public class ConfigManager {
 
         getPlugin().getLogger().info("Plugin reloaded successfully");
 
+    }
+
+    /**
+     * Updates all configuration files to add missing keys from the default resources
+     */
+    private void updateConfigurations() {
+        updateLanguageFiles();
+        
+        // Reload the currently active language config after updating files
+        if (getLanguageFile() != null && getLanguageFile().exists()) {
+            setLanguageConfig(YamlConfiguration.loadConfiguration(getLanguageFile()));
+        }
+    }
+
+    /**
+     * Updates language files to ensure all messages from the enum exist
+     */
+    private void updateLanguageFiles() {
+        File langFolder = new File(this.getPlugin().getDataFolder(), "lang");
+        if (!langFolder.exists()) {
+            return;
+        }
+
+        // Update both language files
+        updateLanguageFile(langFolder, "en-us.yml");
+        updateLanguageFile(langFolder, "pt-br.yml");
+    }
+
+    /**
+     * Updates a specific language file
+     */
+    private void updateLanguageFile(File langFolder, String fileName) {
+        File langFile = new File(langFolder, fileName);
+        if (!langFile.exists()) {
+            return;
+        }
+
+        try {
+            YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(langFile);
+            
+            // Load default language file from resources
+            InputStream defaultStream = this.getPlugin().getResource("lang/" + fileName);
+            if (defaultStream != null) {
+                try {
+                    YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream, StandardCharsets.UTF_8));
+                    updateConfigKeys(existingConfig, defaultConfig);
+                    existingConfig.save(langFile);
+                    getPlugin().getLogger().info("Updated language file: " + fileName);
+                } finally {
+                    defaultStream.close();
+                }
+            }
+        } catch (IOException e) {
+            getPlugin().getLogger().log(Level.WARNING, "Failed to update language file: " + fileName, e);
+        }
+    }
+
+    /**
+     * Recursively copies missing keys from default config to existing config
+     */
+    private void updateConfigKeys(YamlConfiguration existingConfig, YamlConfiguration defaultConfig) {
+        Set<String> defaultKeys = defaultConfig.getKeys(true);
+        
+        for (String key : defaultKeys) {
+            // Skip if the key already exists and is a section
+            if (existingConfig.contains(key)) {
+                continue;
+            }
+            
+            // Add the missing key with its default value
+            Object defaultValue = defaultConfig.get(key);
+            existingConfig.set(key, defaultValue);
+        }
     }
 
 
