@@ -61,7 +61,7 @@ public class LetterSender {
             }
 
             if (offlinePlayers != null && !offlinePlayers.isEmpty()) {
-                sendLettersToPlayers(sender, letter, lore, offlinePlayers);
+                sendLettersToPlayers(sender, letter, lore, offlinePlayers, true);
             }
 
         } else {
@@ -82,7 +82,7 @@ public class LetterSender {
             offlinePlayers = handleMultipleRecipients(sender, recipients, lore);
 
             if (offlinePlayers != null && !offlinePlayers.isEmpty()) {
-                sendLettersToPlayers(sender, letter, lore, offlinePlayers);
+                sendLettersToPlayers(sender, letter, lore, offlinePlayers, true);
             }
 
         } else {
@@ -90,6 +90,36 @@ public class LetterSender {
         }
     }
 
+    public void forward(Player sender, String recipient) {
+        if (!LetterUtil.isHoldingLetter(sender)){
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_NO_LETTER));
+            return;
+        }
+
+        ItemStack letter = sender.getInventory().getItemInMainHand();
+
+        if (LetterUtil.wasAlreadyForwarded(letter)){
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_ALREADY_FORWARDED, true));
+            return;
+        }
+
+        BookMeta letterMeta = (BookMeta) letter.getItemMeta();
+        letterMeta.setGeneration(BookMeta.Generation.COPY_OF_ORIGINAL);
+
+        List<String> lore = createLetterLore(letter);
+
+        lore.add("");
+        lore.add(messageManager.getMessage(Message.LETTER_FORWARDED_BY).replace("$PLAYER$", sender.getName()));
+
+        var offlinePlayerRecipient = handleSingleRecipient(sender, recipient, lore);
+
+        if (offlinePlayerRecipient == null || offlinePlayerRecipient.isEmpty()){
+            handleLetterErrors(sender);
+            return;
+        }
+
+        sendLettersToPlayers(sender, letter, lore, offlinePlayerRecipient, false);
+    }
 
     private List<String> createLetterLore(ItemStack letter) {
         List<String> lore = new ArrayList<>();
@@ -169,7 +199,7 @@ public class LetterSender {
         }
     }
 
-    private void sendLettersToPlayers(Player sender, ItemStack letter, List<String> lore, Collection<OfflinePlayer> offlinePlayers) {
+    private void sendLettersToPlayers(Player sender, ItemStack letter, List<String> lore, Collection<OfflinePlayer> offlinePlayers, boolean shouldRemoveItem) {
         BookMeta letterMeta = (BookMeta) letter.getItemMeta();
         letterMeta.setLore(lore);
         letter.setItemMeta(letterMeta);
@@ -187,7 +217,8 @@ public class LetterSender {
             }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
         }
 
-        sender.getInventory().getItemInMainHand().setAmount(0);
+        if (shouldRemoveItem)
+            sender.getInventory().getItemInMainHand().setAmount(0);
     }
 
     private void handleLetterErrors(Player sender) {
