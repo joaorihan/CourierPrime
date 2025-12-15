@@ -13,6 +13,7 @@ java {
 
 repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven("https://mvn.lumine.io/repository/maven-public/") // MythicMobs & ModelEngine
     mavenCentral()
     gradlePluginPortal()
 }
@@ -21,6 +22,10 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
+    
+    // MythicMobs & ModelEngine (soft dependencies)
+    compileOnly("io.lumine:Mythic-Dist:5.6.1")
+    compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.6")
     
     // https://mvnrepository.com/artifact/org.apache.commons/commons-text
     implementation("org.apache.commons:commons-text:1.10.0")

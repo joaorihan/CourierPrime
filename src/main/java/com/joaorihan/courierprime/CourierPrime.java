@@ -4,6 +4,7 @@ import com.joaorihan.courierprime.command.CommandManager;
 import com.joaorihan.courierprime.config.*;
 import com.joaorihan.courierprime.courier.CourierManager;
 import com.joaorihan.courierprime.courier.CourierSelectManager;
+import com.joaorihan.courierprime.integration.CustomEntityManager;
 import com.joaorihan.courierprime.letter.LetterManager;
 import com.joaorihan.courierprime.letter.OutgoingManager;
 import com.joaorihan.courierprime.listener.LetterListener;
@@ -46,6 +47,9 @@ public class CourierPrime extends JavaPlugin {
     @Getter @Setter
     private UpdateChecker updateChecker;
 
+    @Getter @Setter
+    private CustomEntityManager customEntityManager;
+
     /**
      * initialize configurations, load messages, register commands and permissions
      */
@@ -62,6 +66,10 @@ public class CourierPrime extends JavaPlugin {
         setCourierSelectManager(new CourierSelectManager(configManager));
 
         setUpdateChecker(new UpdateChecker(plugin));
+
+        // Initialize custom entity support (MythicMobs/ModelEngine)
+        setCustomEntityManager(new CustomEntityManager());
+        getCustomEntityManager().initialize();
 
         getOutgoingManager().loadAll();
 

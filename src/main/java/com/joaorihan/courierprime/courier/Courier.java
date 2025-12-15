@@ -44,13 +44,23 @@ public class Courier {
         Location loc = recipient.getLocation()
                 .add(recipient.getLocation().getDirection().setY(0).multiply(MainConfig.getSpawnDistance()));
 
-        EntityType playerActiveCourier = plugin.getCourierSelectManager().getActiveCourier(recipient.getUniqueId());
 
-        // Tries to get the player's active courier type on the config. Spawns default courier type if null
-        if (playerActiveCourier == null){
-            courier = recipient.getWorld().spawnEntity(loc, MainConfig.getDefaultCourierEntityType());
-        } else {
-            courier = recipient.getWorld().spawnEntity(loc, playerActiveCourier);
+
+        // Try to spawn a custom entity first (MythicMobs/ModelEngine)
+        if (plugin.getCustomEntityManager().isEnabled()) {
+            courier = plugin.getCustomEntityManager().spawnCustomEntity(loc);
+        }
+
+        // Fall back to vanilla entity if custom entity spawning failed or is disabled
+        if (courier == null) {
+            EntityType playerActiveCourier = plugin.getCourierSelectManager().getActiveCourier(recipient.getUniqueId());
+
+            // Tries to get the player's active courier type on the config. Spawns default courier type if null
+            if (playerActiveCourier == null) {
+                courier = recipient.getWorld().spawnEntity(loc, MainConfig.getDefaultCourierEntityType());
+            } else {
+                courier = recipient.getWorld().spawnEntity(loc, playerActiveCourier);
+            }
         }
 
         // Register this courier in the manager.

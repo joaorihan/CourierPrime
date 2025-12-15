@@ -9,6 +9,23 @@ default-courier-entity-type: VILLAGER
 blocked-gamemodes: []
 blocked-worlds: []
 
+# Custom Entity Support (MythicMobs / ModelEngine)
+custom-entities:
+  # Enable custom entity plugins for courier spawning
+  enabled: false
+  
+  # The custom entity/mob ID to spawn
+  # For MythicMobs: The mob ID defined in your MythicMobs config
+  # For ModelEngine: The model ID to attach to the courier
+  entity-id: "Courier"
+  
+  # Which plugin to use: AUTO, MYTHICMOBS, or MODELENGINE
+  # AUTO: MythicMobs takes priority if both are installed
+  preferred-plugin: "AUTO"
+  
+  # Base entity type for ModelEngine (only used when ModelEngine is the active plugin)
+  modelengine-base-entity: "ARMOR_STAND"
+
 letter:
   # if the creation of anonymous letters is enabled.
   anonymous-letters-enabled: true     # default: true

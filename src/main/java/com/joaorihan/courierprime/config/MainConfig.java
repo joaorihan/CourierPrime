@@ -82,6 +82,36 @@ public class MainConfig {
         return types;
     }
 
+    // Custom Entity Support (MythicMobs / ModelEngine)
+    
+    /**
+     * Whether custom entity spawning is enabled
+     */
+    public boolean isCustomEntitiesEnabled() {
+        return config.getBoolean("custom-entities.enabled", false);
+    }
+
+    /**
+     * The custom entity/mob ID to spawn
+     */
+    public String getCustomEntityId() {
+        return config.getString("custom-entities.entity-id", "Courier");
+    }
+
+    /**
+     * Which plugin to use: AUTO, MYTHICMOBS, or MODELENGINE
+     */
+    public String getPreferredPlugin() {
+        return config.getString("custom-entities.preferred-plugin", "AUTO");
+    }
+
+    /**
+     * Base entity type for ModelEngine
+     */
+    public EntityType getModelEngineBaseEntity() {
+        return EntityType.valueOf(config.getString("custom-entities.modelengine-base-entity", "ARMOR_STAND"));
+    }
+
     /**
      * load config options from the config file
      */
