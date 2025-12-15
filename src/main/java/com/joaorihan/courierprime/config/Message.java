@@ -65,6 +65,7 @@ public enum Message {
     HELP_SHRED,
     HELP_HELP,
     HELP_RELOAD,
-    HELP_FOOTER
+    HELP_FOOTER,
+    NEW_VERSION_AVAILABLE
 
 }
