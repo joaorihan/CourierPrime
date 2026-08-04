@@ -3,6 +3,7 @@ package com.joaorihan.courierprime.courier;
 import com.joaorihan.courierprime.config.ConfigManager;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class CourierSelectManager {
@@ -17,20 +18,53 @@ public class CourierSelectManager {
     }
 
     protected void loadActiveCouriers(){
-        activeCourierTypes.clear();
-        configManager.getCourierSelectConfig().getValues(false).forEach((s, o) -> {
-            CourierType type = CourierType.parse(o.toString());
+        if (configManager == null || configManager.getCourierSelectConfig() == null) {
+            return;
+        }
+
+        Map<String, Object> storedCouriers;
+        try {
+            storedCouriers = configManager.getCourierSelectConfig().getValues(false);
+        } catch (RuntimeException e) {
+            configManager.getPlugin().getLogger().warning(
+                    "Unable to read couriers.yml entries; keeping the file unchanged and using defaults."
+            );
+            return;
+        }
+
+        HashMap<UUID, CourierType> loadedCouriers = new HashMap<>();
+        storedCouriers.forEach((playerId, storedValue) -> {
+            if (storedValue == null) {
+                configManager.getPlugin().getLogger().warning(
+                        "Ignoring empty courier type for player " + playerId + " in couriers.yml."
+                );
+                return;
+            }
+
+            CourierType type;
+            try {
+                type = CourierType.parse(storedValue.toString());
+            } catch (RuntimeException e) {
+                type = null;
+            }
             if (type == null) {
-                configManager.getPlugin().getLogger().warning("Invalid courier type for player " + s + ": " + o);
+                configManager.getPlugin().getLogger().warning(
+                        "Invalid courier type for player " + playerId + ": " + storedValue
+                );
                 return;
             }
 
             try {
-                activeCourierTypes.put(UUID.fromString(s), type);
+                loadedCouriers.put(UUID.fromString(playerId), type);
             } catch (IllegalArgumentException e) {
-                configManager.getPlugin().getLogger().warning("Invalid player UUID in couriers.yml: " + s);
+                configManager.getPlugin().getLogger().warning(
+                        "Invalid player UUID in couriers.yml: " + playerId
+                );
             }
         });
+
+        activeCourierTypes.clear();
+        activeCourierTypes.putAll(loadedCouriers);
     }
 
     public CourierType getActiveCourier(UUID player){
@@ -38,6 +72,9 @@ public class CourierSelectManager {
     }
 
     public void setActiveCourier(UUID player, CourierType courierType){
+        if (player == null || courierType == null) {
+            return;
+        }
         configManager.getCourierSelectConfig().set(String.valueOf(player), courierType.toString());
         activeCourierTypes.put(player, courierType);
         configManager.saveCourierConfig();

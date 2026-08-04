@@ -4,6 +4,8 @@ import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.courier.CourierManager;
 import lombok.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -69,13 +71,21 @@ public class ConfigManager {
 
         if (langFile.exists()) {
             setLanguageConfig(YamlConfiguration.loadConfiguration(langFile));
-            getPlugin().getLogger().info("Now loading " + getMainConfig().getString("lang") + " language");
+            getPlugin().getComponentLogger().info(
+                    Component.text("Now loading ", NamedTextColor.GRAY)
+                            .append(Component.text(getMainConfig().getString("lang"), NamedTextColor.AQUA))
+                            .append(Component.text(" language", NamedTextColor.GRAY))
+            );
         } else {
             File fallbackFile = new File(langFolder, "en-us.yml");
             if (fallbackFile.exists()) {
                 setLanguageConfig(YamlConfiguration.loadConfiguration(fallbackFile));
-                getPlugin().getLogger().warning(
-                        "Language file " + getMainConfig().getString("lang") + ".yml was not found; falling back to en-us."
+                getPlugin().getComponentLogger().warn(
+                        Component.text("Language file ", NamedTextColor.YELLOW)
+                                .append(Component.text(getMainConfig().getString("lang") + ".yml", NamedTextColor.GOLD))
+                                .append(Component.text(" was not found; falling back to ", NamedTextColor.YELLOW))
+                                .append(Component.text("en-us", NamedTextColor.AQUA))
+                                .append(Component.text(".", NamedTextColor.YELLOW))
                 );
             } else {
                 throw new IllegalStateException("No language file is available");

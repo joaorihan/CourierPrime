@@ -24,7 +24,9 @@ letter:
   letter-custom-model-data: 0
   anon-letter-custom-model-data: 0
 
-# Courier types that players can select with /courier select
+# Courier types that players can select with /courier select.
+# /courier set is administrator-only, accepts any spawnable vanilla type, and
+# also accepts valid configured mm:/meg: values when their provider is present.
 # Supports three formats:
 #   - Vanilla EntityTypes: VILLAGER, COW, SHEEP, etc.
 #     (List: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html)

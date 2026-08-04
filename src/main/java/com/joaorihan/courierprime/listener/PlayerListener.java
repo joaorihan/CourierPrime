@@ -12,7 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Set;
 
@@ -35,14 +34,7 @@ public class PlayerListener implements Listener {
      */
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        Player player = e.getPlayer();
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                new Courier(player);
-            }
-        }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
+        scheduleCourier(e.getPlayer());
     }
 
     /**
@@ -51,17 +43,15 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onTeleport(PlayerTeleportEvent e) {
         Set<World> worlds = MainConfig.getBlockedWorlds();
+        if (e.getTo() == null) {
+            return;
+        }
         World to = e.getTo().getWorld();
         World from = e.getFrom().getWorld();
         Player recipient = e.getPlayer();
 
         if (worlds.contains(from) && !worlds.contains(to)) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    new Courier(recipient);
-                }
-            }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
+            scheduleCourier(recipient);
         }
     }
 
@@ -75,13 +65,24 @@ public class PlayerListener implements Listener {
         GameMode from = e.getPlayer().getGameMode();
         Player recipient = e.getPlayer();
         if (modes.contains(from) && !modes.contains(to)) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    new Courier(recipient);
-                }
-            }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
+            scheduleCourier(recipient);
         }
+    }
+
+    private void scheduleCourier(Player recipient) {
+        CourierPrime plugin = CourierPrime.getPlugin();
+        if (plugin == null || recipient == null) {
+            return;
+        }
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (!recipient.isOnline() || plugin.getOutgoingManager() == null
+                    || plugin.getOutgoingManager().getOutgoing() == null
+                    || plugin.getOutgoingManager().getOutgoing().get(recipient.getUniqueId()) == null
+                    || plugin.getOutgoingManager().getOutgoing().get(recipient.getUniqueId()).isEmpty()) {
+                return;
+            }
+            new Courier(recipient);
+        }, Math.max(0L, MainConfig.getReceiveDelay()));
     }
 
 
