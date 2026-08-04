@@ -11,6 +11,7 @@ import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -51,6 +52,9 @@ public class MainConfig {
      */
     public EntityType getDefaultCourierEntityType(){
         String configuredType = config.getString("default-courier-entity-type", "VILLAGER");
+        if (configuredType == null) {
+            configuredType = "VILLAGER";
+        }
         try {
             EntityType entityType = EntityType.valueOf(configuredType.trim().toUpperCase(Locale.ROOT));
             if (entityType.isSpawnable()) {
@@ -126,7 +130,38 @@ public class MainConfig {
      * @return List of courier type strings
      */
     public List<String> getEnabledCourierTypeStrings() {
-        return config.getStringList("enabled-courier-types");
+        LinkedHashSet<String> types = new LinkedHashSet<>();
+        for (CourierType type : getEnabledCourierTypes()) {
+            types.add(type.toString());
+        }
+        return new ArrayList<>(types);
+    }
+
+    /**
+     * Checks the normal player-selection allow-list using parsed values, so
+     * case and provider-prefix normalization are handled consistently.
+     */
+    public boolean isCourierTypeEnabled(CourierType courierType) {
+        return courierType != null && getEnabledCourierTypes().contains(courierType);
+    }
+
+    /**
+     * Gets every spawnable vanilla value and every valid custom value present
+     * in the configuration. This is intended for administrator completion;
+     * administrators may assign vanilla types that are not enabled for normal
+     * player selection.
+     */
+    public List<String> getAllSpawnableCourierTypeStrings() {
+        LinkedHashSet<String> types = new LinkedHashSet<>();
+        for (EntityType entityType : EntityType.values()) {
+            if (entityType.isSpawnable()) {
+                types.add(entityType.name());
+            }
+        }
+        for (CourierType type : getEnabledCourierTypes()) {
+            types.add(type.toString());
+        }
+        return new ArrayList<>(types);
     }
 
     /**
@@ -137,6 +172,9 @@ public class MainConfig {
         if (configuredType == null) {
             // Keep the setting from the earlier custom-entities configuration layout.
             configuredType = config.getString("custom-entities.modelengine-base-entity", "ARMOR_STAND");
+        }
+        if (configuredType == null) {
+            configuredType = "ARMOR_STAND";
         }
 
         try {

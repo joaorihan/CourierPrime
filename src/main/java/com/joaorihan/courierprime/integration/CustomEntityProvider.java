@@ -21,6 +21,16 @@ public interface CustomEntityProvider {
     boolean isAvailable();
 
     /**
+     * Checks whether a provider-side identifier exists before a spawn is
+     * attempted. Providers should override this with their native registry
+     * lookup; the default keeps third-party implementations source-compatible
+     * while still refusing an empty identifier.
+     */
+    default boolean hasEntity(String entityId) {
+        return entityId != null && !entityId.trim().isEmpty();
+    }
+
+    /**
      * Spawns a custom entity at the given location
      * @param entityId The custom entity/mob ID
      * @param location The spawn location
@@ -29,4 +39,3 @@ public interface CustomEntityProvider {
     Entity spawnEntity(String entityId, Location location);
 
 }
-
