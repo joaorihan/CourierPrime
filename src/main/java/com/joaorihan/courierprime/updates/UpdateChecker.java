@@ -13,41 +13,77 @@ import java.util.Scanner;
 
 public class UpdateChecker {
 
-    private final CourierPrime plugin;
-    private final String RESOURCE_ID = "122626";
-    @Getter private volatile String latestVersion;
+    private static final String RESOURCE_ID = "122626";
 
-    public UpdateChecker(CourierPrime plugin){
+    private final CourierPrime plugin;
+    @Getter
+    private volatile String latestVersion;
+    private volatile boolean active = true;
+
+    public UpdateChecker(CourierPrime plugin) {
         this.plugin = plugin;
         fetchLatestVersion();
     }
 
     /**
-     * Asynchronously fetches the latest version string from the Spigot API
-     * and stores it in the 'latestVersion' field.
+     * Marks this checker as obsolete. The scheduler cancellation performed by
+     * the plugin lifecycle stops queued work; the active flag also protects a
+     * request that is already blocked in network I/O from publishing into a
+     * reloaded or disabled plugin state.
+     */
+    public void shutdown() {
+        active = false;
+    }
+
+    /**
+     * Restarts checking after a failed reload has restored this checker as the
+     * active runtime manager.
+     */
+    public synchronized void restart() {
+        if (active) {
+            return;
+        }
+        active = true;
+        fetchLatestVersion();
+    }
+
+    /**
+     * Asynchronously fetches the latest version string from the Spigot API.
      */
     private void fetchLatestVersion() {
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
-            try (InputStream is = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.RESOURCE_ID + "/~").openStream();
-                 Scanner scanner = new Scanner(is)) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            if (!isCurrent()) {
+                return;
+            }
+
+            try (InputStream inputStream = new URL(
+                    "https://api.spigotmc.org/legacy/update.php?resource=" + RESOURCE_ID + "/~"
+            ).openStream();
+                 Scanner scanner = new Scanner(inputStream)) {
 
                 if (scanner.hasNext()) {
-                    this.latestVersion = scanner.next();
+                    String fetchedVersion = scanner.next();
+                    if (isCurrent()) {
+                        latestVersion = fetchedVersion;
+                    }
                 }
-            } catch (IOException e) {
-                plugin.getLogger().info("Unable to check for updates: " + e.getMessage());
+            } catch (IOException | RuntimeException exception) {
+                if (isCurrent()) {
+                    plugin.getLogger().info("Unable to check for updates: " + exception.getMessage());
+                }
             }
         });
     }
 
     /**
      * Checks if the plugin's current version matches the cached latest version.
-     * @return true if versions match or if the latest version isn't fetched yet.
+     *
+     * @return true if versions match or if the latest version isn't fetched yet
      */
     private boolean isLatestVersion() {
         String latest = getLatestVersion();
 
-        // Just to avoid errors in case the fetch hasn't yet finished
+        // Avoid reporting an update while the asynchronous request is pending.
         if (latest == null) {
             return true;
         }
@@ -57,15 +93,24 @@ public class UpdateChecker {
 
     /**
      * Sends an update message to the player if a new version is available.
-     * @param player The player to send the message to.
+     *
+     * @param player the player to send the message to
      */
-    public void showUpdateMessage(Player player){
-        if (isLatestVersion()){
+    public void showUpdateMessage(Player player) {
+        if (!isCurrent() || !plugin.isEnabled() || isLatestVersion()) {
+            return;
+        }
+
+        String latest = getLatestVersion();
+        if (latest == null || plugin.getMessageManager() == null) {
             return;
         }
 
         player.sendMessage(plugin.getMessageManager().getMessage(Message.NEW_VERSION_AVAILABLE, true)
-                .replace("%NEW_VERSION%", getLatestVersion()));
+                .replace("%NEW_VERSION%", latest));
     }
 
+    private boolean isCurrent() {
+        return active && plugin == CourierPrime.getPlugin();
+    }
 }

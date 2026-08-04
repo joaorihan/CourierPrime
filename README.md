@@ -9,7 +9,7 @@
 
 ### About
 
-CourierPrime is a physical mail system for Spigot/Paper Minecraft servers that allows users to send letters in the form of books
+CourierPrime is a physical mail system for Paper Minecraft servers that allows users to send letters in the form of books
 and receive them through couriers. Admins can use this to send letters to all players at once as a way of sending a
 message that people will be sure to see.
 
@@ -39,10 +39,16 @@ of keeping the plugin accessible for free, forever.
 - `/inspect` - Shows a message containing information about a letter item
 - `/unread` - Retrieve unread mail, if any.
 - `/shred (all)` - Delete the letter in your hand, or all the letters in your inventory.
+- `/blockletters` - Toggle courier deliveries for yourself.
 - `/courierprime help` - Show the help message.
 - `/courieradmin <reload/block/unblock>` - Admin utility command
 - `/courier select <CourierType>` - Change your courier. Vanilla entity types use names such as `VILLAGER`; MythicMobs and ModelEngine types use `mm:<mob-id>` and `meg:<model-id>`.
-- `/courier set <player> <CourierType>` - Admin command to set another online player's courier, even when the type is not enabled for player selection.
+- `/courier set <player> <CourierType>` - Admin command to set a player's courier, including online or previously known offline players, even when the type is not enabled for player selection.
+
+`/anonymousletter <message>` (alias `/anonletter`) is registered only when
+`letter.anonymous-letters-enabled` is `true`. The `/post` command accepts one
+player, comma-separated players, `*` for all online players, or `**` for all
+players who have joined before.
 
 ---
 
@@ -57,16 +63,23 @@ of keeping the plugin accessible for free, forever.
 - `courierprime.inspect` - Allows the player to get information about a letter
 - `courierprime.unread` - Allows players to retrieve unread mail
 - `courierprime.shred` - Allows players to shred a letter
+- `courierprime.shred.all` - Allows players to shred all letters in their inventory
+- `courierprime.block` - Allows players to toggle courier deliveries
 - `courierprime.help` - Allows players to use the help command
 - `courierprime.courier.select` - Allows players to select their currier EntityType
 - `courierprime.admin` - Allows for reloading of configs and other admin commands
 
 ---
 
-### Requirements
+### Platform policy
 
-- Paper 26.2
-- Java 25 or higher
+- Paper **26.2** only; the plugin descriptor uses API version `26.2`.
+- Java **25** is required. This project intentionally does not target Java 21
+  or Spigot compatibility.
+- MythicMobs and ModelEngine are optional soft dependencies. Their APIs are
+  compile-only and are not bundled in the plugin jar; the corresponding
+  `mm:<mob-id>` and `meg:<model-id>` courier formats are available only when
+  the integration is installed and enabled.
 
 
 ### Installation
@@ -140,8 +153,23 @@ for.
 
 You can create a new language yml file, and load it on the config, as long as it contains all messages.
 
-The third configuration file is actually used to store outgoing mail. Don't modify this file unless you know exactly
-what you are doing!
+The plugin uses four YAML file types:
+
+- `config.yml` contains settings such as delays, blocked worlds/gamemodes,
+  enabled courier types, and the selected language.
+- `lang/en-us.yml` and `lang/pt-br.yml` contain the bundled messages. A missing,
+  unsafe, or malformed selected language falls back to `en-us` with a warning.
+- `couriers.yml` stores player UUID-to-courier-type selections. Values are
+  vanilla entity names, `mm:<mob-id>`, or `meg:<model-id>`.
+- `outgoing.yml` is plugin-managed serialized pending mail. Do not edit it
+  manually. If `outgoing.yml` or `couriers.yml` is syntactically malformed,
+  CourierPrime starts with an empty in-memory data set and quarantines the
+  original before writing a replacement.
+
+`/courieradmin reload` cancels old CourierPrime tasks, removes active couriers,
+saves pending mail, rebuilds the configuration/message/mail/courier-selection,
+update, and optional-integration managers, and reschedules pending online mail.
+Listeners and commands are registered only once during plugin enable.
 
 
 ---
@@ -176,7 +204,16 @@ Courier not spawning?
    ./gradlew build
    ```
 
-3. Find the shaded `.jar` file in the `build/libs` directory and place it in your server's `plugins` folder.
+3. Find the unclassified shaded jar at
+   `build/libs/CourierPrime-1.4.1.jar` and place it in your server's `plugins`
+   folder. MythicMobs and ModelEngine are compile-only optional APIs; they are
+   not shaded into this jar. Apache Commons Text is the runtime library owned by
+   CourierPrime and is shaded into it.
+
+The Gradle wrapper is pinned to Gradle 9.6.1 and the Java toolchain is pinned to
+Java 25. `./gradlew test` currently reports `NO-SOURCE`; runtime behavior should
+be verified on a Paper 26.2 server with the optional integrations installed as
+needed.
 
 To launch a local Paper server for development, run:
 

@@ -1,7 +1,55 @@
 name: CourierPrime
 version: '${version}'
-description: A unique mail system
+description: A physical mail system with configurable courier entities
 authors: [Jeremaster101, Sentimentos]
+website: https://github.com/joaorihan/CourierPrime
 main: com.joaorihan.courierprime.CourierPrime
 api-version: '26.2'
 softdepend: [MythicMobs, ModelEngine]
+
+permissions:
+  courierprime.admin:
+    description: Use CourierPrime administrative tools
+    default: op
+  courierprime.block:
+    description: Block or re-enable courier deliveries
+    default: true
+  courierprime.forward:
+    description: Forward received letters
+    default: true
+  courierprime.help:
+    description: View CourierPrime help
+    default: true
+  courierprime.inspect:
+    description: Inspect letters
+    default: true
+  courierprime.letter:
+    description: Compose and edit letters
+    default: true
+  courierprime.letter.anonymous:
+    description: Compose anonymous letters when enabled in config
+    default: op
+  courierprime.post.one:
+    description: Send a letter to one player
+    default: true
+  courierprime.post.multiple:
+    description: Send a letter to multiple players
+    default: op
+  courierprime.post.allonline:
+    description: Send a letter to all online players
+    default: op
+  courierprime.post.all:
+    description: Send a letter to every known player
+    default: op
+  courierprime.courier.select:
+    description: Select your courier entity
+    default: true
+  courierprime.shred:
+    description: Delete a letter
+    default: true
+  courierprime.shred.all:
+    description: Delete all letters from your inventory
+    default: op
+  courierprime.unread:
+    description: Retrieve unread mail
+    default: true
