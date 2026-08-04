@@ -5,6 +5,7 @@ import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.config.Message;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -29,16 +31,32 @@ public class LetterUtil {
      * @return if the item was a valid plugin Letter or not
      */
     public boolean isValidLetter(ItemStack item){
-        if (item == null || !item.getType().equals(Material.WRITTEN_BOOK))
+        if (item == null || item.getType() != Material.WRITTEN_BOOK)
             return false;
 
-        if (!(item.getItemMeta() instanceof BookMeta bookMeta) || bookMeta.getTitle() == null) {
+        if (!(item.getItemMeta() instanceof BookMeta bookMeta)) {
             return false;
         }
 
-        String letterTitle = CourierPrime.getPlugin().getMessageManager().getMessage(Message.LETTER_FROM)
-                .replace("$PLAYER$", "");
-        return bookMeta.getTitle().contains(letterTitle);
+        CourierPrime plugin = CourierPrime.getPlugin();
+        if (plugin == null || plugin.getLetterManager() == null) {
+            return false;
+        }
+
+        NamespacedKey ownerKey = plugin.getLetterManager().getOwnerKey();
+        String ownerUuid = readPersistentString(bookMeta, ownerKey);
+        if (hasPersistentKey(bookMeta, ownerKey) || ownerUuid != null) {
+            return normalizeUuid(ownerUuid) != null;
+        }
+
+        String ownerName = readPersistentString(bookMeta, plugin.getLetterManager().getKey());
+        if (ownerName != null && !ownerName.isBlank()) {
+            return true;
+        }
+
+        // Very old delivered copies did not retain the PDC. Keep a strict presentation
+        // fallback, but never accept a title merely because it contains a phrase.
+        return hasLegacyLetterPresentation(bookMeta, plugin);
     }
 
     /**
@@ -60,38 +78,57 @@ public class LetterUtil {
             return false;
         }
 
-        String ownerUuid = getLetterOwnerUuid(player);
-        if (ownerUuid != null) {
-            return ownerUuid.equals(player.getUniqueId().toString());
+        if (hasLetterOwnerUuid(player)) {
+            String ownerUuid = getLetterOwnerUuid(player);
+            return ownerUuid != null && ownerUuid.equals(player.getUniqueId().toString());
         }
 
         // Preserve compatibility with letters created before UUID ownership was stored.
         return Objects.equals(getLetterOwner(player), player.getName());
     }
 
-    public boolean wasAlreadySent(@NonNull ItemStack letter){
-        if (!(letter.getItemMeta() instanceof BookMeta bookMeta) || bookMeta.getLore() == null) {
+    public boolean wasAlreadySent(ItemStack letter){
+        BookMeta bookMeta = getBookMeta(letter);
+        if (bookMeta == null) {
             return false;
         }
 
-        String lore = String.join("\n", bookMeta.getLore());
-        String destinationMarker = CourierPrime.getPlugin().getMessageManager()
-                .getMessage(Message.LETTER_TO_ONE).replace("$PLAYER$", "");
-        return lore.contains("&8To")
-                || lore.contains(destinationMarker)
-                || lore.contains(CourierPrime.getPlugin().getMessageManager().getMessage(Message.LETTER_TO_MULTIPLE))
-                || lore.contains(CourierPrime.getPlugin().getMessageManager().getMessage(Message.LETTER_TO_ALL))
-                || lore.contains(CourierPrime.getPlugin().getMessageManager().getMessage(Message.LETTER_TO_ALLONLINE));
+        if (bookMeta.getGeneration() == BookMeta.Generation.COPY_OF_ORIGINAL) {
+            return true;
+        }
+
+        if (bookMeta.getLore() == null) {
+            return false;
+        }
+
+        for (String loreLine : bookMeta.getLore()) {
+            if (isSentMarker(loreLine)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public boolean wasAlreadyForwarded(@NonNull ItemStack letter){
-        if (!(letter.getItemMeta() instanceof BookMeta bookMeta) || bookMeta.getLore() == null) {
+    public boolean wasAlreadyForwarded(ItemStack letter){
+        BookMeta bookMeta = getBookMeta(letter);
+        if (bookMeta == null) {
             return false;
         }
 
-        String marker = CourierPrime.getPlugin().getMessageManager()
-                .getMessage(Message.LETTER_FORWARDED_BY).replace("$PLAYER$", "");
-        return String.join("\n", bookMeta.getLore()).contains(marker);
+        if (bookMeta.getGeneration() == BookMeta.Generation.COPY_OF_ORIGINAL) {
+            return true;
+        }
+
+        if (bookMeta.getLore() == null) {
+            return false;
+        }
+
+        for (String loreLine : bookMeta.getLore()) {
+            if (isForwardedMarker(loreLine)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -101,43 +138,181 @@ public class LetterUtil {
      * might need to be changed to OfflinePlayer, in case of player name change issues
      */
     public String getLetterOwner(@NonNull Player player){
-        ItemStack book = player.getInventory().getItemInMainHand();
-        if (!(book.getItemMeta() instanceof BookMeta bm)) {
+        BookMeta bookMeta = getHoldingBookMeta(player);
+        CourierPrime plugin = CourierPrime.getPlugin();
+        if (bookMeta == null || plugin == null || plugin.getLetterManager() == null) {
             return null;
         }
-        NamespacedKey key = CourierPrime.getPlugin().getLetterManager().getKey();
-
-        if (bm.getPersistentDataContainer().has(key, PersistentDataType.STRING))
-            return bm.getPersistentDataContainer().get(key, PersistentDataType.STRING);
-
-        return null;
+        return readPersistentString(bookMeta, plugin.getLetterManager().getKey());
     }
 
     public String getLetterAuthor(@NonNull Player player) {
-        ItemStack book = player.getInventory().getItemInMainHand();
-        if (!(book.getItemMeta() instanceof BookMeta bookMeta)) {
-            return null;
-        }
-        return bookMeta.getAuthor();
+        BookMeta bookMeta = getHoldingBookMeta(player);
+        return bookMeta == null ? null : bookMeta.getAuthor();
     }
 
     private String getLetterOwnerUuid(@NonNull Player player) {
-        ItemStack book = player.getInventory().getItemInMainHand();
-        if (!(book.getItemMeta() instanceof BookMeta bookMeta)) {
+        BookMeta bookMeta = getHoldingBookMeta(player);
+        CourierPrime plugin = CourierPrime.getPlugin();
+        if (bookMeta == null || plugin == null || plugin.getLetterManager() == null) {
             return null;
         }
 
-        NamespacedKey ownerKey = CourierPrime.getPlugin().getLetterManager().getOwnerKey();
-        String ownerUuid = bookMeta.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
-        if (ownerUuid == null) {
+        return normalizeUuid(readPersistentString(bookMeta, plugin.getLetterManager().getOwnerKey()));
+    }
+
+    private BookMeta getBookMeta(ItemStack item) {
+        if (item == null || !(item.getItemMeta() instanceof BookMeta bookMeta)) {
+            return null;
+        }
+        return bookMeta;
+    }
+
+    private BookMeta getHoldingBookMeta(Player player) {
+        if (player == null || player.getInventory() == null) {
+            return null;
+        }
+        return getBookMeta(player.getInventory().getItemInMainHand());
+    }
+
+    private String readPersistentString(BookMeta bookMeta, NamespacedKey key) {
+        if (bookMeta == null || key == null || bookMeta.getPersistentDataContainer() == null) {
             return null;
         }
 
         try {
-            return UUID.fromString(ownerUuid).toString();
-        } catch (IllegalArgumentException e) {
+            return bookMeta.getPersistentDataContainer().get(key, PersistentDataType.STRING);
+        } catch (RuntimeException ignored) {
             return null;
         }
+    }
+
+    private boolean hasPersistentKey(BookMeta bookMeta, NamespacedKey key) {
+        if (bookMeta == null || key == null || bookMeta.getPersistentDataContainer() == null) {
+            return false;
+        }
+
+        try {
+            return bookMeta.getPersistentDataContainer().has(key);
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
+
+    private boolean hasLetterOwnerUuid(@NonNull Player player) {
+        BookMeta bookMeta = getHoldingBookMeta(player);
+        CourierPrime plugin = CourierPrime.getPlugin();
+        if (plugin == null || plugin.getLetterManager() == null) {
+            return false;
+        }
+
+        NamespacedKey ownerKey = plugin.getLetterManager().getOwnerKey();
+        return hasPersistentKey(bookMeta, ownerKey) || readPersistentString(bookMeta, ownerKey) != null;
+    }
+
+    private String normalizeUuid(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        try {
+            return UUID.fromString(value).toString();
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
+    private boolean hasLegacyLetterPresentation(BookMeta bookMeta, CourierPrime plugin) {
+        String title = bookMeta.getTitle();
+        String author = bookMeta.getAuthor();
+        if (title == null || title.isBlank() || author == null || author.isBlank()
+                || bookMeta.getPageCount() <= 0 || plugin.getMessageManager() == null) {
+            return false;
+        }
+
+        String titlePattern = plugin.getMessageManager().getMessage(Message.LETTER_FROM);
+        String titlePrefix = titlePattern == null ? "" : titlePattern.replace("$PLAYER$", "");
+        return !titlePrefix.isBlank() && title.equals(titlePrefix + author);
+    }
+
+    private boolean isSentMarker(String loreLine) {
+        if (loreLine == null || loreLine.isBlank()) {
+            return false;
+        }
+
+        // §T is the current stable destination marker, including multiple/all variants.
+        if (loreLine.startsWith("§T") || loreLine.startsWith("&T")) {
+            return true;
+        }
+
+        // Keep the raw and formatted legacy English marker used by older versions.
+        if (loreLine.contains("&8To") || loreLine.contains("§8To")) {
+            return true;
+        }
+
+        CourierPrime plugin = CourierPrime.getPlugin();
+        boolean legacyDestinationStyle = loreLine.startsWith("§8") || loreLine.startsWith("&8");
+        if (plugin != null && plugin.getMessageManager() != null) {
+            for (Message message : new Message[]{
+                    Message.LETTER_TO_ONE,
+                    Message.LETTER_TO_MULTIPLE,
+                    Message.LETTER_TO_ALL,
+                    Message.LETTER_TO_ALLONLINE
+            }) {
+                String marker = plugin.getMessageManager().getMessage(message);
+                marker = marker == null ? "" : marker.replace("$PLAYER$", "");
+                if (legacyDestinationStyle && !marker.isBlank() && loreLine.contains(marker)) {
+                    return true;
+                }
+
+                String normalizedMarker = normalizeText(marker);
+                if (legacyDestinationStyle && !normalizedMarker.isBlank()
+                        && normalizeText(loreLine).startsWith(normalizedMarker)) {
+                    return true;
+                }
+            }
+        }
+
+        // The shipped Portuguese locale is also used by legacy letters when the server locale changes.
+        if (!legacyDestinationStyle) {
+            return false;
+        }
+        String normalized = normalizeText(loreLine).toLowerCase(Locale.ROOT);
+        return normalized.startsWith("to ") || normalized.startsWith("para ");
+    }
+
+    private boolean isForwardedMarker(String loreLine) {
+        if (loreLine == null || loreLine.isBlank()) {
+            return false;
+        }
+
+        boolean forwardedStyle = loreLine.startsWith("§7") || loreLine.startsWith("&7");
+        if (!forwardedStyle) {
+            return false;
+        }
+
+        CourierPrime plugin = CourierPrime.getPlugin();
+        if (plugin != null && plugin.getMessageManager() != null) {
+            String marker = plugin.getMessageManager().getMessage(Message.LETTER_FORWARDED_BY);
+            marker = marker == null ? "" : marker.replace("$PLAYER$", "");
+            if ((!marker.isBlank() && loreLine.contains(marker))
+                    || (!normalizeText(marker).isBlank()
+                    && normalizeText(loreLine).contains(normalizeText(marker)))) {
+                return true;
+            }
+        }
+
+        String normalized = normalizeText(loreLine).toLowerCase(Locale.ROOT);
+        return normalized.contains("forwarded") || normalized.contains("encaminhad");
+    }
+
+    private String normalizeText(String text) {
+        if (text == null) {
+            return "";
+        }
+        String translated = ChatColor.translateAlternateColorCodes('&', text);
+        String stripped = ChatColor.stripColor(translated);
+        return stripped == null ? "" : stripped.trim();
     }
 
 

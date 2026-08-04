@@ -2,9 +2,12 @@ package com.joaorihan.courierprime.command;
 
 import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.letter.LetterSender;
+import com.joaorihan.courierprime.letter.LetterUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
@@ -37,6 +40,18 @@ public class ForwardCommand extends AbstractCommand{
             return;
         }
 
+        ItemStack letter = player.getInventory().getItemInMainHand();
+        if (LetterUtil.isHoldingLetter(player) && !LetterUtil.wasAlreadyForwarded(letter)) {
+            if (!player.hasPermission("courierprime.post.one")) {
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
+                return;
+            }
+
+            if (!isResolvableRecipient(player, args[0])) {
+                return;
+            }
+        }
+
         // Command exec
         getPlugin().getLetterManager().getLetterSender().forward(player, args[0]);
 
@@ -49,6 +64,19 @@ public class ForwardCommand extends AbstractCommand{
         for (Player player : Bukkit.getOnlinePlayers()){
             names.add(player.getName());
         }
-        return StringUtil.copyPartialMatches(args[0], names, new ArrayList<>());
+        String partial = args.length == 0 ? "" : args[0];
+        return StringUtil.copyPartialMatches(partial, names, new ArrayList<>());
+    }
+
+    private boolean isResolvableRecipient(Player sender, String recipient) {
+        String trimmedRecipient = recipient == null ? "" : recipient.trim();
+        OfflinePlayer target = trimmedRecipient.isEmpty() ? null : Bukkit.getOfflinePlayer(trimmedRecipient);
+        if (target == null || target.getName() == null
+                || (!target.isOnline() && !target.hasPlayedBefore())) {
+            sender.sendMessage(getMessageManager().getMessage(Message.ERROR_PLAYER_NO_EXIST, true)
+                    .replace("$PLAYER$", trimmedRecipient));
+            return false;
+        }
+        return true;
     }
 }
