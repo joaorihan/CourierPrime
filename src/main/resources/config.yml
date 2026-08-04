@@ -9,22 +9,8 @@ default-courier-entity-type: VILLAGER
 blocked-gamemodes: []
 blocked-worlds: []
 
-# Custom Entity Support (MythicMobs / ModelEngine)
-custom-entities:
-  # Enable custom entity plugins for courier spawning
-  enabled: false
-  
-  # The custom entity/mob ID to spawn
-  # For MythicMobs: The mob ID defined in your MythicMobs config
-  # For ModelEngine: The model ID to attach to the courier
-  entity-id: "Courier"
-  
-  # Which plugin to use: AUTO, MYTHICMOBS, or MODELENGINE
-  # AUTO: MythicMobs takes priority if both are installed
-  preferred-plugin: "AUTO"
-  
-  # Base entity type for ModelEngine (only used when ModelEngine is the active plugin)
-  modelengine-base-entity: "ARMOR_STAND"
+# ModelEngine base entity type (used when spawning meg: couriers)
+modelengine-base-entity: "ARMOR_STAND"
 
 letter:
   # if the creation of anonymous letters is enabled.
@@ -38,8 +24,12 @@ letter:
   letter-custom-model-data: 0
   anon-letter-custom-model-data: 0
 
-# Add any EntityType you'd like your players be able to use as Couriers
-# List of EntityTypes https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
+# Courier types that players can select with /courier select
+# Supports three formats:
+#   - Vanilla EntityTypes: VILLAGER, COW, SHEEP, etc.
+#     (List: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html)
+#   - MythicMobs: mm:MOB_ID (e.g., mm:WITHER_SOLDIER, mm:CustomCourier)
+#   - ModelEngine: meg:MODEL_ID (e.g., meg:ALPINE_COW, meg:courier_dragon)
 enabled-courier-types:
   - COW
   - SHEEP
@@ -50,3 +40,8 @@ enabled-courier-types:
   - VILLAGER
   - ALLAY
   - PARROT
+  # Examples for custom entities (uncomment to enable):
+  # - mm:CourierOwl
+  # - mm:FancyHorse
+  # - meg:courier_model
+  # - meg:delivery_dragon

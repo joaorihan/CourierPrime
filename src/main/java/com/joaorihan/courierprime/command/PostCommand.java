@@ -8,7 +8,9 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PostCommand extends AbstractCommand{
 
@@ -51,14 +53,25 @@ public class PostCommand extends AbstractCommand{
         }
 
         // Command exec
+        List<String> recipients = Arrays.stream(args)
+                .flatMap(argument -> Arrays.stream(argument.split(",")))
+                .map(String::trim)
+                .filter(recipient -> !recipient.isEmpty())
+                .collect(Collectors.toList());
+
+        if (recipients.isEmpty()) {
+            player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
+            return;
+        }
+
         // Sending for a single player
-        if (args.length == 1){
-            getPlugin().getLetterManager().getLetterSender().send(player, args[0]);
+        if (recipients.size() == 1){
+            getPlugin().getLetterManager().getLetterSender().send(player, recipients.get(0));
             return;
         }
 
         // Sending for multiple players
-        getPlugin().getLetterManager().getLetterSender().send(player, args);
+        getPlugin().getLetterManager().getLetterSender().send(player, recipients.toArray(String[]::new));
 
     }
 

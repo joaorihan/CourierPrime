@@ -1,6 +1,7 @@
 package com.joaorihan.courierprime.config;
 
 import com.joaorihan.courierprime.CourierPrime;
+import com.joaorihan.courierprime.courier.CourierType;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -8,7 +9,10 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -45,14 +49,35 @@ public class MainConfig {
     /**
      * entity type to use as the courier
      */
-    public EntityType getDefaultCourierEntityType(){ return EntityType.valueOf(config.getString("default-courier-entity-type")); }
+    public EntityType getDefaultCourierEntityType(){
+        String configuredType = config.getString("default-courier-entity-type", "VILLAGER");
+        try {
+            EntityType entityType = EntityType.valueOf(configuredType.trim().toUpperCase(Locale.ROOT));
+            if (entityType.isSpawnable()) {
+                return entityType;
+            }
+        } catch (IllegalArgumentException ignored) {
+            // Fall through to the safe default below.
+        }
+
+        CourierPrime.getPlugin().getLogger().warning(
+                "Invalid default courier entity type '" + configuredType + "'; using VILLAGER."
+        );
+        return EntityType.VILLAGER;
+    }
     
     /**
      * gamemodes that disallow receiving mail
      */
     public Set<GameMode> getBlockedGamemodes(){
         Set<GameMode> gameModes = new HashSet<>();
-        for(String s : config.getStringList("blocked-gamemodes")) gameModes.add(GameMode.valueOf(s));
+        for (String s : config.getStringList("blocked-gamemodes")) {
+            try {
+                gameModes.add(GameMode.valueOf(s.trim().toUpperCase(Locale.ROOT)));
+            } catch (IllegalArgumentException e) {
+                CourierPrime.getPlugin().getLogger().warning("Invalid blocked gamemode in config: " + s);
+            }
+        }
         return gameModes;
     }
     
@@ -61,7 +86,12 @@ public class MainConfig {
      */
     public Set<World> getBlockedWorlds(){
         Set<World> worlds = new HashSet<>();
-        for(String s : config.getStringList("blocked-worlds")) worlds.add(Bukkit.getWorld(s));
+        for (String s : config.getStringList("blocked-worlds")) {
+            World world = Bukkit.getWorld(s);
+            if (world != null) {
+                worlds.add(world);
+            }
+        }
         return worlds;
     }
 
@@ -74,42 +104,54 @@ public class MainConfig {
 
     public boolean isCustomModelData(){ return config.getBoolean("letter.use-custom-model-data"); }
 
-    public Set<EntityType> getEnabledCourierTypes() {
-        Set<EntityType> types = new HashSet<>();
+    /**
+     * Gets all enabled courier types (vanilla and custom)
+     * @return List of CourierType objects
+     */
+    public List<CourierType> getEnabledCourierTypes() {
+        List<CourierType> types = new ArrayList<>();
         for (String s : config.getStringList("enabled-courier-types")) {
-            types.add(EntityType.valueOf(s));
+            CourierType type = CourierType.parse(s);
+            if (type != null) {
+                types.add(type);
+            } else {
+                CourierPrime.getPlugin().getLogger().warning("Invalid courier type in config: " + s);
+            }
         }
         return types;
     }
 
-    // Custom Entity Support (MythicMobs / ModelEngine)
-    
     /**
-     * Whether custom entity spawning is enabled
+     * Gets a list of enabled courier type strings for tab completion
+     * @return List of courier type strings
      */
-    public boolean isCustomEntitiesEnabled() {
-        return config.getBoolean("custom-entities.enabled", false);
+    public List<String> getEnabledCourierTypeStrings() {
+        return config.getStringList("enabled-courier-types");
     }
 
     /**
-     * The custom entity/mob ID to spawn
-     */
-    public String getCustomEntityId() {
-        return config.getString("custom-entities.entity-id", "Courier");
-    }
-
-    /**
-     * Which plugin to use: AUTO, MYTHICMOBS, or MODELENGINE
-     */
-    public String getPreferredPlugin() {
-        return config.getString("custom-entities.preferred-plugin", "AUTO");
-    }
-
-    /**
-     * Base entity type for ModelEngine
+     * Base entity type for ModelEngine couriers
      */
     public EntityType getModelEngineBaseEntity() {
-        return EntityType.valueOf(config.getString("custom-entities.modelengine-base-entity", "ARMOR_STAND"));
+        String configuredType = config.getString("modelengine-base-entity");
+        if (configuredType == null) {
+            // Keep the setting from the earlier custom-entities configuration layout.
+            configuredType = config.getString("custom-entities.modelengine-base-entity", "ARMOR_STAND");
+        }
+
+        try {
+            EntityType entityType = EntityType.valueOf(configuredType.trim().toUpperCase(Locale.ROOT));
+            if (entityType.isSpawnable()) {
+                return entityType;
+            }
+        } catch (IllegalArgumentException ignored) {
+            // Fall through to the safe default below.
+        }
+
+        CourierPrime.getPlugin().getLogger().warning(
+                "Invalid ModelEngine base entity type '" + configuredType + "'; using ARMOR_STAND."
+        );
+        return EntityType.ARMOR_STAND;
     }
 
     /**

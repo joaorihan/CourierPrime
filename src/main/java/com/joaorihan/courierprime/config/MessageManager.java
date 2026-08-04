@@ -20,9 +20,12 @@ public class MessageManager {
     }
 
     public String getMessage(Message message, boolean prefix){
-        if (prefix)
-            return format(configManager.getLanguageConfig().getString("PREFIX")) + format(configManager.getLanguageConfig().getString(message.toString()));
-        else return format(configManager.getLanguageConfig().getString(message.toString()));
+        String messageValue = configManager.getLanguageConfig().getString(message.toString(), message.toString());
+        if (prefix) {
+            String prefixValue = configManager.getLanguageConfig().getString("PREFIX", "");
+            return format(prefixValue) + format(messageValue);
+        }
+        return format(messageValue);
     }
 
     /**

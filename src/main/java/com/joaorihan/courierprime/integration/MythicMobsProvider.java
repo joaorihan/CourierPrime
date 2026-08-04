@@ -28,6 +28,18 @@ public class MythicMobsProvider implements CustomEntityProvider {
         return Bukkit.getPluginManager().isPluginEnabled(PLUGIN_NAME);
     }
 
+    public boolean hasEntity(String entityId) {
+        if (!isAvailable()) {
+            return false;
+        }
+
+        try {
+            return MythicProvider.get().getMobManager().getMythicMob(entityId).isPresent();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @Override
     public Entity spawnEntity(String entityId, Location location) {
         if (!isAvailable()) {
@@ -54,4 +66,3 @@ public class MythicMobsProvider implements CustomEntityProvider {
         }
     }
 }
-

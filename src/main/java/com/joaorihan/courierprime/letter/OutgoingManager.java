@@ -6,9 +6,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -62,7 +62,16 @@ public class OutgoingManager {
      * @param player player to load data for
      */
     private void loadPlayer(UUID player) {
-        outgoing.put(player, new LinkedList<>((Collection<ItemStack>) outgoingConfig.getList(player.toString())));
+        List<?> storedLetters = outgoingConfig.getList(player.toString());
+        LinkedList<ItemStack> letters = new LinkedList<>();
+        if (storedLetters != null) {
+            for (Object storedLetter : storedLetters) {
+                if (storedLetter instanceof ItemStack itemStack) {
+                    letters.add(itemStack);
+                }
+            }
+        }
+        outgoing.put(player, letters);
     }
 
     /**
@@ -70,7 +79,11 @@ public class OutgoingManager {
      */
     public void loadAll() {
         for (String key : outgoingConfig.getKeys(false)) {
-            loadPlayer(UUID.fromString(key));
+            try {
+                loadPlayer(UUID.fromString(key));
+            } catch (IllegalArgumentException e) {
+                CourierPrime.getPlugin().getLogger().warning("Ignoring invalid recipient UUID in outgoing.yml: " + key);
+            }
         }
     }
 

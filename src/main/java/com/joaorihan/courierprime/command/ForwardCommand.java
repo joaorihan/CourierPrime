@@ -12,8 +12,6 @@ import java.util.List;
 
 public class ForwardCommand extends AbstractCommand{
 
-    private final LetterSender letterSender = getPlugin().getLetterManager().getLetterSender();
-
     public ForwardCommand(){
         super("forward",
                 new String[]{"resend"},
@@ -40,7 +38,7 @@ public class ForwardCommand extends AbstractCommand{
         }
 
         // Command exec
-        letterSender.forward(player, args[0]);
+        getPlugin().getLetterManager().getLetterSender().forward(player, args[0]);
 
     }
 

@@ -28,6 +28,8 @@ import java.util.List;
  */
 public class LetterManager {
 
+    private static final int MAX_BOOK_PAGE_LENGTH = 256;
+
     private final List<Player> playersInBlockedMode;
     private final CourierPrime plugin;
 
@@ -37,11 +39,15 @@ public class LetterManager {
     @Getter
     private final NamespacedKey key;
 
+    @Getter
+    private final NamespacedKey ownerKey;
+
 
     public LetterManager(CourierPrime plugin){
         this.plugin = plugin;
         this.playersInBlockedMode = new ArrayList<>();
         this.key =  new NamespacedKey(plugin, "playerName");
+        this.ownerKey = new NamespacedKey(plugin, "playerUuid");
 
         this.letterSender = new LetterSender(plugin);
     }
@@ -75,13 +81,14 @@ public class LetterManager {
 
         PersistentDataContainer pdc = bm.getPersistentDataContainer();
         pdc.set(key, PersistentDataType.STRING, player.getName());
+        pdc.set(ownerKey, PersistentDataType.STRING, player.getUniqueId().toString());
 
         String author = anonymous ? plugin.getMessageManager().getMessage(Message.ANONYMOUS) : player.getName();
         bm.setAuthor(author);
         bm.setTitle(plugin.getMessageManager().getMessage(Message.LETTER_FROM).replace("$PLAYER$", author));
 
         ArrayList<String> pages = new ArrayList<>();
-        pages.add(finalMessage);
+        pages.addAll(splitIntoPages(finalMessage));
         bm.setPages(pages);
 
         ArrayList<String> lore = new ArrayList<>();
@@ -134,13 +141,17 @@ public class LetterManager {
         BookMeta wbm = (BookMeta) writtenBook.getItemMeta();
         
         ArrayList<String> pages = new ArrayList<>(wbm.getPages());
-        if (pages.get(pages.size() - 1).length() < 256 && pages.get(pages.size() - 1).length() > 0) {
+        if (pages.isEmpty()) {
+            pages.add("");
+        }
+        if (pages.get(pages.size() - 1).length() > 0
+                && pages.get(pages.size() - 1).length() + finalMessage.length() <= MAX_BOOK_PAGE_LENGTH) {
             String sb = pages.get(pages.size() - 1) +
                     finalMessage;
             pages.set(pages.size() - 1, sb);
             player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_PAGE_EDITED, true));
         } else {
-            pages.add(finalMessage);
+            pages.addAll(splitIntoPages(finalMessage));
             player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_PAGE_ADDED, true));
         }
         wbm.setPages(pages);
@@ -162,6 +173,19 @@ public class LetterManager {
         writtenBook.setItemMeta(wbm);
         
         player.getInventory().setItemInMainHand(writtenBook);
+    }
+
+    private List<String> splitIntoPages(String message) {
+        ArrayList<String> pages = new ArrayList<>();
+        if (message.isEmpty()) {
+            pages.add("");
+            return pages;
+        }
+
+        for (int start = 0; start < message.length(); start += MAX_BOOK_PAGE_LENGTH) {
+            pages.add(message.substring(start, Math.min(start + MAX_BOOK_PAGE_LENGTH, message.length())));
+        }
+        return pages;
     }
     
     /**

@@ -15,7 +15,7 @@ public class UpdateChecker {
 
     private final CourierPrime plugin;
     private final String RESOURCE_ID = "122626";
-    @Getter private String latestVersion;
+    @Getter private volatile String latestVersion;
 
     public UpdateChecker(CourierPrime plugin){
         this.plugin = plugin;

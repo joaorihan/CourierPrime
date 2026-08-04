@@ -25,10 +25,12 @@ hs_err_pid*
 .idea/
 *.iml
 out/
+/bin/
 
 # Gradle
 .gradle/
 build/
+run/
 gradle-app.setting
 !gradle-wrapper.jar
 !gradle-wrapper.properties

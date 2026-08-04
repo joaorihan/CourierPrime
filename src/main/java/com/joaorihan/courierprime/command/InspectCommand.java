@@ -36,7 +36,9 @@ public class InspectCommand extends AbstractCommand{
         }
 
         // Command execution
-        player.sendMessage(getMessageManager().getMessage(Message.LETTER_BY, true).replace("$PLAYER$", LetterUtil.getLetterOwner(player)));
+        String author = LetterUtil.getLetterAuthor(player);
+        player.sendMessage(getMessageManager().getMessage(Message.LETTER_BY, true)
+                .replace("$PLAYER$", author == null ? "Unknown" : author));
 
     }
 

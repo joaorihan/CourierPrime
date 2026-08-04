@@ -3,5 +3,5 @@ version: '${version}'
 description: A unique mail system
 authors: [Jeremaster101, Sentimentos]
 main: com.joaorihan.courierprime.CourierPrime
-api-version: 1.21
+api-version: '26.2'
 softdepend: [MythicMobs, ModelEngine]

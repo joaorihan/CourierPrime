@@ -56,6 +56,22 @@ public class CourierPrime extends JavaPlugin {
     public void onEnable() {
         plugin = this;
 
+        reloadState();
+
+        // Register Listeners
+        new LetterListener(plugin);
+        new PlayerListener(plugin);
+        new UpdateListener(plugin);
+
+        // Register Commands
+        new CommandManager();
+    }
+
+    /**
+     * Reloads configuration-backed managers without registering duplicate listeners or commands.
+     */
+    public void reloadState() {
+
         MainConfig.load();
 
         setConfigManager(new ConfigManager(plugin));
@@ -72,16 +88,6 @@ public class CourierPrime extends JavaPlugin {
         getCustomEntityManager().initialize();
 
         getOutgoingManager().loadAll();
-
-
-        // Register Listeners
-        new LetterListener(plugin);
-        new PlayerListener(plugin);
-        new UpdateListener(plugin);
-
-        // Register Commands
-        new CommandManager();
-
     }
     
     /**
@@ -89,7 +95,10 @@ public class CourierPrime extends JavaPlugin {
      */
     public void onDisable() {
         CourierManager.getActiveCouriers().keySet().forEach(Entity::remove);
-        getOutgoingManager().saveAll();
+        CourierManager.getActiveCouriers().clear();
+        if (getOutgoingManager() != null) {
+            getOutgoingManager().saveAll();
+        }
 
         plugin = null;
     }

@@ -16,12 +16,16 @@ import java.util.Arrays;
 import java.util.List;
 
 @Setter
-@Getter
 public abstract class AbstractCommand extends BukkitCommand {
 
+    @Getter
     private CourierPrime plugin;
 
     private MessageManager messageManager;
+
+    public MessageManager getMessageManager() {
+        return getPlugin().getMessageManager();
+    }
 
     public AbstractCommand(String command, String[] aliases, String description, String permission) {
         super(command);
@@ -49,7 +53,7 @@ public abstract class AbstractCommand extends BukkitCommand {
     @Override
     public boolean execute(CommandSender commandSender, String s, String[] strings) {
         execute(commandSender, strings);
-        return false;
+        return true;
     }
 
     public abstract void execute(CommandSender sender, String[] args);

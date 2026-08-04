@@ -28,15 +28,20 @@ public class ModelEngineProvider implements CustomEntityProvider {
         return Bukkit.getPluginManager().isPluginEnabled(PLUGIN_NAME);
     }
 
+    public boolean hasEntity(String entityId) {
+        return isAvailable() && ModelEngineAPI.getBlueprint(entityId) != null;
+    }
+
     @Override
     public Entity spawnEntity(String entityId, Location location) {
         if (!isAvailable()) {
             return null;
         }
 
+        Entity baseEntity = null;
         try {
             // Spawn the base entity first
-            Entity baseEntity = location.getWorld().spawnEntity(location, MainConfig.getModelEngineBaseEntity());
+            baseEntity = location.getWorld().spawnEntity(location, MainConfig.getModelEngineBaseEntity());
 
             // Create and attach the model
             ActiveModel model = ModelEngineAPI.createActiveModel(entityId);
@@ -54,10 +59,12 @@ public class ModelEngineProvider implements CustomEntityProvider {
             return baseEntity;
 
         } catch (Exception e) {
+            if (baseEntity != null && !baseEntity.isDead()) {
+                baseEntity.remove();
+            }
             CourierPrime.getPlugin().getLogger().log(Level.WARNING,
                 "Failed to spawn ModelEngine entity '" + entityId + "': " + e.getMessage(), e);
             return null;
         }
     }
 }
-

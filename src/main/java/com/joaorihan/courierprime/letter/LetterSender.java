@@ -105,6 +105,7 @@ public class LetterSender {
 
         BookMeta letterMeta = (BookMeta) letter.getItemMeta();
         letterMeta.setGeneration(BookMeta.Generation.COPY_OF_ORIGINAL);
+        letter.setItemMeta(letterMeta);
 
         List<String> lore = createLetterLore(letter);
 
@@ -114,7 +115,6 @@ public class LetterSender {
         var offlinePlayerRecipient = handleSingleRecipient(sender, recipient, lore);
 
         if (offlinePlayerRecipient == null || offlinePlayerRecipient.isEmpty()){
-            handleLetterErrors(sender);
             return;
         }
 
@@ -128,7 +128,8 @@ public class LetterSender {
         String dateNow = formatter.format(currentDate.getTime());
 
         BookMeta letterMeta = (BookMeta) letter.getItemMeta();
-        String wrapped = WordUtils.wrap(MessageManager.unformat(letterMeta.getPage(1)), 30, "<split>", true);
+        String firstPage = letterMeta.getPageCount() > 0 ? letterMeta.getPage(1) : "";
+        String wrapped = WordUtils.wrap(MessageManager.unformat(firstPage), 30, "<split>", true);
         String[] lines = wrapped.split("<split>");
         lore.add("");
         lore.add(messageManager.getMessage(Message.PREVIEW_FORMAT) + lines[0]);
@@ -167,11 +168,18 @@ public class LetterSender {
 
     private Collection<OfflinePlayer> handleMultipleRecipients(Player sender, String[] recipients, List<String> lore) {
         if (sender.hasPermission("courierprime.post.multiple")) {
-            Set<OfflinePlayer> offlinePlayers = new HashSet<>();
+            Set<OfflinePlayer> offlinePlayers = new LinkedHashSet<>();
 
             for (String recipient : recipients) {
-                OfflinePlayer op = Bukkit.getOfflinePlayer(recipient);
+                OfflinePlayer op = resolveRecipient(sender, recipient);
+                if (op == null) {
+                    return null;
+                }
                 offlinePlayers.add(op);
+            }
+
+            if (offlinePlayers.isEmpty()) {
+                return null;
             }
 
             lore.add("§T" + messageManager.getMessage(Message.LETTER_TO_MULTIPLE));
@@ -185,9 +193,8 @@ public class LetterSender {
 
     private Collection<OfflinePlayer> handleSingleRecipient(Player sender, String recipient, List<String> lore) {
         if (sender.hasPermission("courierprime.post.one")) {
-            OfflinePlayer op = Bukkit.getOfflinePlayer(recipient);
+            OfflinePlayer op = resolveRecipient(sender, recipient);
             if (op == null) {
-                sender.sendMessage(messageManager.getMessage(Message.ERROR_PLAYER_NO_EXIST, true).replace("$PLAYER$", recipient));
                 return null;
             }
             lore.add("§T" + messageManager.getMessage(Message.LETTER_TO_ONE).replace("$PLAYER$", op.getName()));
@@ -197,6 +204,23 @@ public class LetterSender {
             sender.sendMessage(messageManager.getMessage(Message.ERROR_NO_PERMS, true));
             return null;
         }
+    }
+
+    private OfflinePlayer resolveRecipient(Player sender, String name) {
+        String trimmedName = name == null ? "" : name.trim();
+        if (trimmedName.isEmpty()) {
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_PLAYER_NO_EXIST, true)
+                    .replace("$PLAYER$", String.valueOf(name)));
+            return null;
+        }
+
+        OfflinePlayer player = Bukkit.getOfflinePlayer(trimmedName);
+        if (player.getName() == null || (!player.isOnline() && !player.hasPlayedBefore())) {
+            sender.sendMessage(messageManager.getMessage(Message.ERROR_PLAYER_NO_EXIST, true)
+                    .replace("$PLAYER$", trimmedName));
+            return null;
+        }
+        return player;
     }
 
     private void sendLettersToPlayers(Player sender, ItemStack letter, List<String> lore, Collection<OfflinePlayer> offlinePlayers, boolean shouldRemoveItem) {
@@ -209,13 +233,20 @@ public class LetterSender {
 
             plugin.getOutgoingManager().getOutgoing().computeIfAbsent(op.getUniqueId(), k -> new LinkedList<>()).add(new ItemStack(letter));
 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    new Courier((Player) op);
-                }
-            }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
+            Player onlineRecipient = op.getPlayer();
+            if (onlineRecipient != null && onlineRecipient.isOnline()) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (onlineRecipient.isOnline()) {
+                            new Courier(onlineRecipient);
+                        }
+                    }
+                }.runTaskLater(CourierPrime.getPlugin(), MainConfig.getReceiveDelay());
+            }
         }
+
+        plugin.getOutgoingManager().saveAll();
 
         if (shouldRemoveItem)
             sender.getInventory().getItemInMainHand().setAmount(0);
@@ -244,17 +275,25 @@ public class LetterSender {
             LinkedList<ItemStack> letters = plugin.getOutgoingManager().getOutgoing().get(recipient.getUniqueId());
 
             while (!letters.isEmpty()) {
-                if (recipient.getInventory().firstEmpty() < 0) {
+                ItemStack letter = letters.pop();
+                if (recipient.getInventory().getItemInMainHand().getAmount() == 0) {
+                    recipient.getInventory().setItemInMainHand(letter);
+                } else if (recipient.getInventory().firstEmpty() < 0) {
+                    letters.push(letter);
                     recipient.sendMessage(messageManager.getMessage(Message.ERROR_CANT_HOLD, true));
                     break;
-                } else if (recipient.getInventory().getItemInMainHand().getAmount() == 0) {
-                    recipient.getInventory().setItemInMainHand(letters.pop());
                 } else {
-                    recipient.getInventory().addItem(letters.pop());
+                    Map<Integer, ItemStack> leftovers = recipient.getInventory().addItem(letter);
+                    if (!leftovers.isEmpty()) {
+                        letters.push(letter);
+                        recipient.sendMessage(messageManager.getMessage(Message.ERROR_CANT_HOLD, true));
+                        break;
+                    }
                 }
             }
             
             recipient.updateInventory();
+            plugin.getOutgoingManager().saveAll();
         }
     }
     

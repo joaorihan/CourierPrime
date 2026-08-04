@@ -31,10 +31,13 @@ public class CourierManager {
             return false;
         }
 
-        double dist = MainConfig.getSpawnDistance() * 2;
-        for (Entity entity : recipient.getNearbyEntities(dist, dist, dist)) {
-            if (activeCouriers.containsKey(entity)
-                    && activeCouriers.get(entity).getRecipient().equals(recipient)) {
+        activeCouriers.entrySet().removeIf(entry -> entry.getKey() == null
+                || entry.getValue() == null
+                || entry.getKey().isDead());
+        for (Courier courier : activeCouriers.values()) {
+            if (courier.getRecipient().getUniqueId().equals(recipient.getUniqueId())
+                    && courier.getCourier() != null
+                    && !courier.getCourier().isDead()) {
                 return false;
             }
         }

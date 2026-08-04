@@ -41,7 +41,8 @@ of keeping the plugin accessible for free, forever.
 - `/shred (all)` - Delete the letter in your hand, or all the letters in your inventory.
 - `/courierprime help` - Show the help message.
 - `/courieradmin <reload/block/unblock>` - Admin utility command
-- `/courier <select/set> <EntityType/player> (EntityType)` - Change the EntityType used for a player's courier.
+- `/courier select <CourierType>` - Change your courier. Vanilla entity types use names such as `VILLAGER`; MythicMobs and ModelEngine types use `mm:<mob-id>` and `meg:<model-id>`.
+- `/courier set <player> <CourierType>` - Admin command to set another online player's courier, even when the type is not enabled for player selection.
 
 ---
 
@@ -64,8 +65,8 @@ of keeping the plugin accessible for free, forever.
 
 ### Requirements
 
-- Spigot or Paper 1.21
-- Java 21 or higher
+- Paper 26.2
+- Java 25 or higher
 
 
 ### Installation
@@ -90,6 +91,7 @@ spawn-distance: 5
 default-courier-entity-type: VILLAGER
 blocked-gamemodes: []
 blocked-worlds: []
+modelengine-base-entity: ARMOR_STAND
 
 
 letter:
@@ -109,7 +111,9 @@ letter:
 enabled-courier-types:
   - COW
   - SHEEP
-  - PIG
+  - VILLAGER
+  # - mm:CourierOwl
+  # - meg:delivery_dragon
   ...
 ```
 - `lang` - Name of the language file the plugin will load. Available languages can be foung in the `/lang` directory
@@ -125,7 +129,8 @@ enabled-courier-types:
 - `use-custom-model-data` - Rather or not will the plugin apply CustomModelData to the created letters
 - `letter-custom-model-data` - Regular letters' CustomModelData.
 - `anon-letter-custom-model-data` - Anonymous letters' CustomModelData.
-- `enabled-courier-types` - A list of EntityTypes accepted by the `/courier select` command.
+- `enabled-courier-types` - A list of vanilla EntityTypes or prefixed custom types accepted by `/courier select`.
+- `modelengine-base-entity` - The vanilla entity used as the host when spawning a `meg:<model-id>` courier. Existing configurations may also use the legacy `custom-entities.modelengine-base-entity` path.
 
 `letter-custom-model-data` and `anon-letter-custom-model-data` will only work if `use-custom-model-data` is set to true
 
@@ -168,10 +173,16 @@ Courier not spawning?
 
 2. Build the plugin:
    ```bash
-   mvn clean package
+   ./gradlew build
    ```
 
-3. Find the `.jar` file in the `target` directory and place it in your server's `plugins` folder.
+3. Find the shaded `.jar` file in the `build/libs` directory and place it in your server's `plugins` folder.
+
+To launch a local Paper server for development, run:
+
+```bash
+./gradlew runServer
+```
 
 
 ---

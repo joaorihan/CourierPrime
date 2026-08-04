@@ -2,16 +2,15 @@ package com.joaorihan.courierprime.command;
 
 import com.joaorihan.courierprime.config.MainConfig;
 import com.joaorihan.courierprime.config.Message;
+import com.joaorihan.courierprime.courier.CourierType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CourierSelectCommand extends AbstractCommand{
 
@@ -20,7 +19,7 @@ public class CourierSelectCommand extends AbstractCommand{
         super("courier",
                 new String[]{},
                 "Change a player's currently selected courier",
-                "courierprime.courier.select");
+                null);
     }
 
     @Override
@@ -30,7 +29,8 @@ public class CourierSelectCommand extends AbstractCommand{
         if (!(sender instanceof Player player))
             return;
 
-        if (!player.hasPermission("courierprime.courier.select")) {
+        boolean isAdmin = player.hasPermission("courierprime.admin");
+        if (!isAdmin && !player.hasPermission("courierprime.courier.select")) {
             player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
             return;
         }
@@ -42,50 +42,103 @@ public class CourierSelectCommand extends AbstractCommand{
 
         // /courier select <entity>
         if (args[0].equalsIgnoreCase("select")) {
-            EntityType courierType;
-            try {
-                courierType = EntityType.valueOf(args[1].toUpperCase());
-            } catch (IllegalArgumentException e) {
+            if (!player.hasPermission("courierprime.courier.select")) {
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
+                return;
+            }
+
+            CourierType courierType = CourierType.parse(args[1]);
+
+            if (courierType == null) {
                 player.sendMessage(getMessageManager().getMessage(Message.ERROR_ENTITY_NOT_FOUND, true));
                 return;
             }
 
-            // if the courier selected is not enabled on the config
-            if (!MainConfig.getEnabledCourierTypes().contains(courierType)){
+            // Check if the courier type is enabled in config
+            boolean isEnabled = MainConfig.getEnabledCourierTypes().stream()
+                    .anyMatch(type -> type.toString().equalsIgnoreCase(args[1]));
+
+            if (!isEnabled) {
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_ENTITY_NOT_FOUND, true));
+                return;
+            }
+
+            // Check if custom entity plugin is available
+            if (courierType.isMythicMobs() && !getPlugin().getCustomEntityManager().isMythicMobsAvailable()) {
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_PLUGIN_NOT_AVAILABLE, true)
+                        .replace("$PLUGIN$", "MythicMobs"));
+                return;
+            }
+
+            if (courierType.isModelEngine() && !getPlugin().getCustomEntityManager().isModelEngineAvailable()) {
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_PLUGIN_NOT_AVAILABLE, true)
+                        .replace("$PLUGIN$", "ModelEngine"));
+                return;
+            }
+
+            if (!getPlugin().getCustomEntityManager().isEntityAvailable(courierType)) {
                 player.sendMessage(getMessageManager().getMessage(Message.ERROR_ENTITY_NOT_FOUND, true));
                 return;
             }
 
             getPlugin().getCourierSelectManager().setActiveCourier(player.getUniqueId(), courierType);
+            player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_COURIER_SELECTED, true)
+                    .replace("$COURIER$", courierType.getDisplayName()));
+            return;
         }
 
         // /courier set <player> <entity>
         // THIS BYPASSES THE ENABLED COURIERS CONFIG
         if (args[0].equalsIgnoreCase("set")){
-            if (player.hasPermission("courierprime.admin")) {
+            if (!isAdmin) {
                 player.sendMessage(getMessageManager().getMessage(Message.ERROR_NO_PERMS, true));
                 return;
             }
 
-            EntityType courierType;
+            if (args.length < 3) {
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
+                return;
+            }
+
             Player target = Bukkit.getPlayer(args[1]);
 
             if (target == null) {
-                player.sendMessage(getMessageManager().getMessage(Message.ERROR_PLAYER_NO_EXIST));
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_PLAYER_NO_EXIST, true));
                 return;
             }
 
-            try {
-                courierType = EntityType.valueOf(args[2].toUpperCase());
-            } catch (IllegalArgumentException e) {
+            CourierType courierType = CourierType.parse(args[2]);
+
+            if (courierType == null) {
                 player.sendMessage(getMessageManager().getMessage(Message.ERROR_ENTITY_NOT_FOUND, true));
                 return;
             }
+
+            if (courierType.isMythicMobs() && !getPlugin().getCustomEntityManager().isMythicMobsAvailable()) {
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_PLUGIN_NOT_AVAILABLE, true)
+                        .replace("$PLUGIN$", "MythicMobs"));
+                return;
+            }
+
+            if (courierType.isModelEngine() && !getPlugin().getCustomEntityManager().isModelEngineAvailable()) {
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_PLUGIN_NOT_AVAILABLE, true)
+                        .replace("$PLUGIN$", "ModelEngine"));
+                return;
+            }
+
+            if (!getPlugin().getCustomEntityManager().isEntityAvailable(courierType)) {
+                player.sendMessage(getMessageManager().getMessage(Message.ERROR_ENTITY_NOT_FOUND, true));
+                return;
+            }
+
             getPlugin().getCourierSelectManager().setActiveCourier(target.getUniqueId(), courierType);
+            player.sendMessage(getMessageManager().getMessage(Message.SUCCESS_COURIER_SET, true)
+                    .replace("$PLAYER$", target.getName())
+                    .replace("$COURIER$", courierType.getDisplayName()));
+            return;
         }
 
-
-
+        player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
     }
 
     @Override
@@ -96,16 +149,16 @@ public class CourierSelectCommand extends AbstractCommand{
 
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("select")) {
-                return MainConfig.getEnabledCourierTypes().stream().map(Enum::name).collect(Collectors.toList());
+                return StringUtil.copyPartialMatches(args[1], MainConfig.getEnabledCourierTypeStrings(), new ArrayList<>());
             }
 
             if (args[0].equalsIgnoreCase("set")) {
-                return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+                return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
             }
         }
 
-        if (args.length == 3) {
-            return MainConfig.getEnabledCourierTypes().stream().map(Enum::name).collect(Collectors.toList());
+        if (args.length == 3 && args[0].equalsIgnoreCase("set")) {
+            return StringUtil.copyPartialMatches(args[2], MainConfig.getEnabledCourierTypeStrings(), new ArrayList<>());
         }
 
         return List.of();

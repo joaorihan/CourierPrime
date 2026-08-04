@@ -1,12 +1,15 @@
 package com.joaorihan.courierprime.config;
 
 import com.joaorihan.courierprime.CourierPrime;
+import com.joaorihan.courierprime.courier.Courier;
 import com.joaorihan.courierprime.courier.CourierManager;
 import lombok.*;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +52,7 @@ public class ConfigManager {
     public void generateLanguageFiles(){
         File langFolder = new File(this.getPlugin().getDataFolder(), "lang");
         if (!langFolder.exists()) {
-            langFolder.mkdir();
+            langFolder.mkdirs();
         }
 
         File enUSFile = new File(langFolder, "en-us.yml");
@@ -68,7 +71,15 @@ public class ConfigManager {
             setLanguageConfig(YamlConfiguration.loadConfiguration(langFile));
             getPlugin().getLogger().info("Now loading " + getMainConfig().getString("lang") + " language");
         } else {
-            getPlugin().getLogger().severe("Error on starting language file. " + getMainConfig().getString("lang") + ".yml was not found!");
+            File fallbackFile = new File(langFolder, "en-us.yml");
+            if (fallbackFile.exists()) {
+                setLanguageConfig(YamlConfiguration.loadConfiguration(fallbackFile));
+                getPlugin().getLogger().warning(
+                        "Language file " + getMainConfig().getString("lang") + ".yml was not found; falling back to en-us."
+                );
+            } else {
+                throw new IllegalStateException("No language file is available");
+            }
         }
     }
 
@@ -126,12 +137,25 @@ public class ConfigManager {
 
     public void reloadConfigurations(){
         CourierManager.getActiveCouriers().keySet().forEach(Entity::remove);
-        getPlugin().getOutgoingManager().saveAll();
+        CourierManager.getActiveCouriers().clear();
+        Bukkit.getScheduler().cancelTasks(getPlugin());
+
+        if (getPlugin().getOutgoingManager() != null) {
+            getPlugin().getOutgoingManager().saveAll();
+        }
 
         try {
-            getPlugin().onEnable();
+            getPlugin().reloadState();
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (getPlugin().getOutgoingManager().hasPendingLetters(player)) {
+                    Bukkit.getScheduler().runTaskLater(getPlugin(),
+                            () -> new Courier(player),
+                            MainConfig.getReceiveDelay());
+                }
+            }
         } catch (Exception e) {
-            getPlugin().getLogger().severe("An error occurred while attempting to reload. Check logs");
+            getPlugin().getLogger().log(Level.SEVERE,
+                    "An error occurred while attempting to reload. Check logs", e);
             return;
         }
 
@@ -141,4 +165,3 @@ public class ConfigManager {
 
 
 }
-

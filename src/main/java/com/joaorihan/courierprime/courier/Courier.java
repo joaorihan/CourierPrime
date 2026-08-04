@@ -44,23 +44,25 @@ public class Courier {
         Location loc = recipient.getLocation()
                 .add(recipient.getLocation().getDirection().setY(0).multiply(MainConfig.getSpawnDistance()));
 
+        // Get player's selected courier type
+        CourierType courierType = plugin.getCourierSelectManager().getActiveCourier(recipient.getUniqueId());
 
-
-        // Try to spawn a custom entity first (MythicMobs/ModelEngine)
-        if (plugin.getCustomEntityManager().isEnabled()) {
-            courier = plugin.getCustomEntityManager().spawnCustomEntity(loc);
+        if (courierType != null && !courierType.isVanilla()) {
+            // Try to spawn custom entity (MythicMobs/ModelEngine)
+            courier = plugin.getCustomEntityManager().spawnEntity(courierType, loc);
         }
 
-        // Fall back to vanilla entity if custom entity spawning failed or is disabled
+        // Fall back to vanilla entity if custom entity spawning failed or no custom type selected
         if (courier == null) {
-            EntityType playerActiveCourier = plugin.getCourierSelectManager().getActiveCourier(recipient.getUniqueId());
+            EntityType vanillaType = (courierType != null && courierType.isVanilla())
+                    ? courierType.getVanillaType()
+                    : MainConfig.getDefaultCourierEntityType();
+            courier = recipient.getWorld().spawnEntity(loc, vanillaType);
+        }
 
-            // Tries to get the player's active courier type on the config. Spawns default courier type if null
-            if (playerActiveCourier == null) {
-                courier = recipient.getWorld().spawnEntity(loc, MainConfig.getDefaultCourierEntityType());
-            } else {
-                courier = recipient.getWorld().spawnEntity(loc, playerActiveCourier);
-            }
+        if (courier == null) {
+            plugin.getLogger().warning("Unable to spawn a courier for " + recipient.getName());
+            return;
         }
 
         // Register this courier in the manager.
@@ -78,14 +80,20 @@ public class Courier {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (courier.isDead()) {
+                    CourierManager.getActiveCouriers().remove(courier);
+                    scheduleReplacement();
+                    cancel();
+                    return;
+                }
+
                 courier.setFallDistance(0);
                 if (courier.isOnGround() && courier.getWorld() == recipient.getWorld()) {
                     courier.teleport(courier.getLocation().setDirection(
                             recipient.getLocation().subtract(courier.getLocation()).toVector()));
-                    ((LivingEntity) courier).setAI(false);
-                }
-                if (courier.isDead()) {
-                    cancel();
+                    if (courier instanceof LivingEntity livingEntity) {
+                        livingEntity.setAI(false);
+                    }
                 }
             }
         }.runTaskTimer(plugin, 0, 1);
@@ -103,21 +111,26 @@ public class Courier {
                     courier.getWorld().playSound(courier.getLocation(), Sound.UI_TOAST_OUT, 1, 1);
 
                     // Schedule a new courier spawn after a resend delay.
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            new Courier(recipient);
-                        }
-                    }.runTaskLater(plugin, MainConfig.getResendDelay());
+                    scheduleReplacement();
                 }
             }
         }.runTaskLater(plugin, MainConfig.getRemoveDelay());
+    }
+
+    private void scheduleReplacement() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                new Courier(recipient);
+            }
+        }.runTaskLater(plugin, MainConfig.getResendDelay());
     }
 
     /**
      * Removes the courier entity from the world and unregisters it.
      */
     public void remove() {
+        if (courier == null) return;
         CourierManager.getActiveCouriers().remove(courier);
         courier.remove();
     }
