@@ -35,6 +35,9 @@ gradle-app.setting
 !gradle-wrapper.jar
 !gradle-wrapper.properties
 
+# Runtime backups created when malformed plugin data is quarantined
+*.yml.corrupt-*
+
 # Maven (legacy)
 /target/
 /dependency-reduced-pom.xml

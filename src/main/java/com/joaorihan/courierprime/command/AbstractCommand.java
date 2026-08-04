@@ -24,7 +24,11 @@ public abstract class AbstractCommand extends BukkitCommand {
     private MessageManager messageManager;
 
     public MessageManager getMessageManager() {
-        return getPlugin().getMessageManager();
+        CourierPrime currentPlugin = CourierPrime.getPlugin();
+        if (currentPlugin != null && currentPlugin.getMessageManager() != null) {
+            return currentPlugin.getMessageManager();
+        }
+        return messageManager;
     }
 
     public AbstractCommand(String command, String[] aliases, String description, String permission) {
@@ -36,18 +40,57 @@ public abstract class AbstractCommand extends BukkitCommand {
         this.setAliases(Arrays.asList(aliases));
         this.setDescription(description);
         this.setPermission(permission);
-        this.setPermissionMessage(ChatColor.RED + messageManager.getMessage(Message.ERROR_NO_PERMS, true));
+        this.setPermissionMessage(buildPermissionMessage());
 
         try {
             Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             field.setAccessible(true);
             CommandMap map = (CommandMap) field.get(Bukkit.getServer());
+            // This is the single command registration strategy. plugin.yml keeps
+            // general metadata and permissions only; CommandManager constructs
+            // these implementations once during onEnable.
             map.register(command, "courierprime", this);
         } catch (NoSuchFieldException | IllegalAccessException e){
             e.printStackTrace();
         }
 
 
+    }
+
+    /**
+     * Bukkit calls this method when it builds the automatic permission failure
+     * response. Resolve it dynamically so a reload cannot leave the command
+     * holding the old language's localized text.
+     */
+    @Override
+    public String getPermissionMessage() {
+        return buildPermissionMessage();
+    }
+
+    /**
+     * Paper stores the automatic permission message as an Adventure component,
+     * so merely overriding the legacy String getter is not enough on newer
+     * APIs. Route the failure path through the current localized manager too.
+     */
+    @Override
+    public boolean testPermission(org.bukkit.command.CommandSender target) {
+        if (testPermissionSilent(target)) {
+            return true;
+        }
+
+        String permissionMessage = buildPermissionMessage();
+        if (permissionMessage != null && !permissionMessage.isEmpty()) {
+            target.sendMessage(permissionMessage);
+        }
+        return false;
+    }
+
+    private String buildPermissionMessage() {
+        MessageManager currentMessageManager = getMessageManager();
+        if (currentMessageManager == null) {
+            return super.getPermissionMessage();
+        }
+        return ChatColor.RED + currentMessageManager.getMessage(Message.ERROR_NO_PERMS, true);
     }
 
     @Override

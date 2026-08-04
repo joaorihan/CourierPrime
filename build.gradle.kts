@@ -44,6 +44,12 @@ tasks {
     compileJava {
         options.encoding = "UTF-8"
     }
+
+    // Publish only the shaded artifact. The runtime jar is intentionally
+    // unclassified: build/libs/CourierPrime-${project.version}.jar.
+    jar {
+        enabled = false
+    }
     
     shadowJar {
         archiveBaseName.set(project.name)
