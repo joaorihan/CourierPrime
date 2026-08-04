@@ -10,7 +10,6 @@ import org.bukkit.util.StringUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PostCommand extends AbstractCommand{
 
@@ -53,11 +52,16 @@ public class PostCommand extends AbstractCommand{
         }
 
         // Command exec
-        List<String> recipients = Arrays.stream(args)
-                .flatMap(argument -> Arrays.stream(argument.split(",")))
-                .map(String::trim)
-                .filter(recipient -> !recipient.isEmpty())
-                .collect(Collectors.toList());
+        List<String> recipients = new ArrayList<>();
+        for (String argument : args) {
+            if (argument == null) {
+                continue;
+            }
+            recipients.addAll(Arrays.stream(argument.split("[,\\s]+"))
+                    .map(String::trim)
+                    .filter(recipient -> !recipient.isEmpty())
+                    .toList());
+        }
 
         if (recipients.isEmpty()) {
             player.sendMessage(getMessageManager().getMessage(Message.ERROR_UNKNOWN_ARGS, true));
