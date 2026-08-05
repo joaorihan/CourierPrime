@@ -168,10 +168,10 @@ Courier not spawning?
 
 2. Build the plugin:
    ```bash
-   mvn clean package
+   ./gradlew build
    ```
 
-3. Find the `.jar` file in the `target` directory and place it in your server's `plugins` folder.
+3. Find the shaded `.jar` file in the `build/libs` directory and place it in your server's `plugins` folder.
 
 
 ---
