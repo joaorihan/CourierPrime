@@ -32,19 +32,23 @@ public class Courier {
     private BukkitTask replacementTask;
 
     public Courier(Player recipient) {
+        this(recipient, null);
+    }
+
+    Courier(Player recipient, Courier replacementOwner) {
         this.recipient = recipient;
         this.delivered = false;
         this.deliveryInProgress = false;
-        spawn();
+        spawn(replacementOwner);
     }
 
     /**
      * Spawns the selected courier and sets up its behavior. Entity work is
      * performed synchronously on the Bukkit thread.
      */
-    private void spawn() {
+    private void spawn(Courier replacementOwner) {
         CourierPrime plugin = CourierPrime.getPlugin();
-        if (plugin == null || !CourierManager.canSpawn(recipient)) {
+        if (plugin == null || !CourierManager.canSpawn(recipient, replacementOwner)) {
             return;
         }
 
@@ -286,16 +290,35 @@ public class Courier {
         if (plugin == null) {
             return;
         }
+        if (!CourierManager.reserveReplacement(recipient.getUniqueId(), this)) {
+            return;
+        }
 
-        replacementTask = new BukkitRunnable() {
-            @Override
-            public void run() {
-                replacementTask = null;
-                if (!recipient.isOnline() || !hasPendingMail()) {
-                    return;
+        try {
+            replacementTask = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (!recipient.isOnline() || !hasPendingMail()) {
+                            return;
+                        }
+                        if (CourierPrime.getPlugin() == null) {
+                            return;
+                        }
+                        // Keep the reservation through construction so a
+                        // re-entrant trigger cannot race this handoff.
+                        new Courier(recipient, Courier.this);
+                    } finally {
+                        replacementTask = null;
+                        CourierManager.clearReplacementReservation(
+                                recipient.getUniqueId(), Courier.this);
+                    }
                 }
-                new Courier(recipient);
-            }
-        }.runTaskLater(plugin, Math.max(0L, MainConfig.getResendDelay()));
+            }.runTaskLater(plugin, Math.max(0L, MainConfig.getResendDelay()));
+        } catch (RuntimeException e) {
+            CourierManager.clearReplacementReservation(recipient.getUniqueId(), this);
+            plugin.getLogger().log(Level.WARNING,
+                    "Unable to schedule a replacement courier for " + recipient.getName() + ".", e);
+        }
     }
 }

@@ -12,12 +12,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class CourierManager {
 
+    // A replacement reservation prevents a second trigger from spawning a
+    // courier while the scheduled retry is still waiting to run.
+    private static final HashMap<UUID, Courier> replacementReservations = new HashMap<>();
+
     // Tracks active courier instances (keyed by the spawned entity).
     @Getter
-    private static final HashMap<Entity, Courier> activeCouriers = new HashMap<>();
+    private static final HashMap<Entity, Courier> activeCouriers = new HashMap<>() {
+        @Override
+        public void clear() {
+            super.clear();
+            // Reload and shutdown already clear this existing public map;
+            // make that lifecycle boundary clear delayed retry reservations too.
+            replacementReservations.clear();
+        }
+    };
 
     /**
      * Checks whether a courier can be spawned for the given player. All calls
@@ -25,8 +38,20 @@ public class CourierManager {
      * and the active map is cleaned here.
      */
     public static boolean canSpawn(Player recipient) {
+        return canSpawn(recipient, null);
+    }
+
+    /**
+     * Checks whether a courier can spawn, optionally as the owner of a pending
+     * replacement reservation. The owner exception is package-private so only
+     * Courier's scheduled handoff can use it.
+     */
+    static boolean canSpawn(Player recipient, Courier replacementOwner) {
         CourierPrime plugin = CourierPrime.getPlugin();
-        if (recipient == null || plugin == null || !recipient.isOnline()) {
+        if (recipient == null) {
+            return false;
+        }
+        if (plugin == null || !recipient.isOnline()) {
             return false;
         }
 
@@ -34,6 +59,12 @@ public class CourierManager {
 
         if (plugin.getOutgoingManager() == null
                 || !hasPendingMail(plugin, recipient.getUniqueId())) {
+            clearReplacementReservation(recipient.getUniqueId(), null);
+            return false;
+        }
+
+        Courier reservedBy = replacementReservations.get(recipient.getUniqueId());
+        if (reservedBy != null && reservedBy != replacementOwner) {
             return false;
         }
 
@@ -72,6 +103,25 @@ public class CourierManager {
         }
 
         return true;
+    }
+
+    static boolean reserveReplacement(UUID recipient, Courier courier) {
+        if (recipient == null || courier == null) {
+            return false;
+        }
+        Courier existing = replacementReservations.putIfAbsent(recipient, courier);
+        return existing == null || existing == courier;
+    }
+
+    static void clearReplacementReservation(UUID recipient, Courier courier) {
+        if (recipient == null) {
+            return;
+        }
+        if (courier == null) {
+            replacementReservations.remove(recipient);
+        } else {
+            replacementReservations.remove(recipient, courier);
+        }
     }
 
     /**
