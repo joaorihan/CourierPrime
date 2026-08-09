@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.bukkit.entity.EntityType;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Represents a courier type that can be either a vanilla EntityType or a custom entity
@@ -11,6 +12,9 @@ import java.util.Locale;
  */
 @Getter
 public class CourierType {
+
+    private static final Pattern CUSTOM_IDENTIFIER =
+            Pattern.compile("[A-Za-z0-9][A-Za-z0-9_.-]*");
 
     public enum Provider {
         VANILLA,
@@ -53,14 +57,14 @@ public class CourierType {
         // MythicMobs format: mm:MOB_ID
         if (lower.startsWith("mm:")) {
             String mobId = normalized.substring(3).trim();
-            if (mobId.isEmpty()) return null;
+            if (!isValidCustomIdentifier(mobId)) return null;
             return new CourierType(Provider.MYTHICMOBS, mobId, null);
         }
 
         // ModelEngine format: meg:MODEL_ID
         if (lower.startsWith("meg:")) {
             String modelId = normalized.substring(4).trim();
-            if (modelId.isEmpty()) return null;
+            if (!isValidCustomIdentifier(modelId)) return null;
             return new CourierType(Provider.MODELENGINE, modelId, null);
         }
 
@@ -75,6 +79,16 @@ public class CourierType {
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+
+    /**
+     * Checks whether an identifier is safe to pass to an optional entity
+     * provider. Provider identifiers are deliberately kept narrower than a
+     * free-form command argument so malformed configuration cannot become an
+     * API lookup or spawn request.
+     */
+    public static boolean isValidCustomIdentifier(String identifier) {
+        return identifier != null && CUSTOM_IDENTIFIER.matcher(identifier.trim()).matches();
     }
 
     /**
