@@ -187,6 +187,15 @@ public class Courier {
     }
 
     /**
+     * Retires a courier whose entity was already removed externally. The
+     * manager calls this outside its map iteration so the pending retry is
+     * scheduled once and the old movement task cannot schedule a duplicate.
+     */
+    void retireAfterExternalRemoval() {
+        retire(false, true);
+    }
+
+    /**
      * Marks the delivery as completed. A completed courier is only cleaned up
      * by its timeout and can never emit the ignored message or schedule a
      * replacement.

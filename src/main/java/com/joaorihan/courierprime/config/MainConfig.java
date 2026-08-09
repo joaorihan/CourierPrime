@@ -25,6 +25,7 @@ import java.util.Set;
 public class MainConfig {
 
     private FileConfiguration config;
+    private final Set<String> warnedBlockedWorldValues = new HashSet<>();
 
     /**
      * delay between sending a letter, joining the server, switching out of a blocked gamemode, or coming from a blocked
@@ -75,11 +76,14 @@ public class MainConfig {
      */
     public Set<GameMode> getBlockedGamemodes(){
         Set<GameMode> gameModes = new HashSet<>();
-        for (String s : config.getStringList("blocked-gamemodes")) {
+        for (String configuredGamemode : config.getStringList("blocked-gamemodes")) {
+            String gamemodeName = configuredGamemode == null ? "" : configuredGamemode.trim();
             try {
-                gameModes.add(GameMode.valueOf(s.trim().toUpperCase(Locale.ROOT)));
+                gameModes.add(GameMode.valueOf(gamemodeName.toUpperCase(Locale.ROOT)));
             } catch (IllegalArgumentException e) {
-                CourierPrime.getPlugin().getLogger().warning("Invalid blocked gamemode in config: " + s);
+                CourierPrime.getPlugin().getLogger().warning(
+                        "Invalid blocked gamemode in config: " + configuredGamemode
+                );
             }
         }
         return gameModes;
@@ -90,13 +94,36 @@ public class MainConfig {
      */
     public Set<World> getBlockedWorlds(){
         Set<World> worlds = new HashSet<>();
-        for (String s : config.getStringList("blocked-worlds")) {
-            World world = Bukkit.getWorld(s);
+        for (String configuredWorld : config.getStringList("blocked-worlds")) {
+            if (configuredWorld == null || configuredWorld.trim().isEmpty()) {
+                warnInvalidBlockedWorld(configuredWorld);
+                continue;
+            }
+
+            String worldName = configuredWorld.trim();
+            World world = Bukkit.getWorld(worldName);
             if (world != null) {
                 worlds.add(world);
+            } else {
+                warnInvalidBlockedWorld(configuredWorld);
             }
         }
         return worlds;
+    }
+
+    private void warnInvalidBlockedWorld(String configuredWorld) {
+        String warningKey = configuredWorld == null ? "<null>" : configuredWorld.trim();
+        if (!warnedBlockedWorldValues.add(warningKey)) {
+            return;
+        }
+
+        CourierPrime plugin = CourierPrime.getPlugin();
+        if (plugin != null) {
+            plugin.getLogger().warning(
+                    "Ignoring invalid blocked world '" + configuredWorld
+                            + "' in config; the world is not loaded."
+            );
+        }
     }
 
     public int getLetterCustomModelData() { return config.getInt("letter.letter-custom-model-data");  }
@@ -196,6 +223,7 @@ public class MainConfig {
      * load config options from the config file
      */
     public static void load() {
+        warnedBlockedWorldValues.clear();
         config = null;
         CourierPrime.getPlugin().reloadConfig();
         config = CourierPrime.getPlugin().getConfig();

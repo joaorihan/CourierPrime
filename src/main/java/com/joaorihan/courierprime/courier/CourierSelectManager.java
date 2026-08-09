@@ -32,8 +32,22 @@ public class CourierSelectManager {
             return;
         }
 
+        if (storedCouriers == null) {
+            configManager.getPlugin().getLogger().warning(
+                    "Unable to read couriers.yml entries; keeping the file unchanged and using defaults."
+            );
+            return;
+        }
+
         HashMap<UUID, CourierType> loadedCouriers = new HashMap<>();
         storedCouriers.forEach((playerId, storedValue) -> {
+            if (playerId == null || playerId.trim().isEmpty()) {
+                configManager.getPlugin().getLogger().warning(
+                        "Ignoring an empty player UUID entry in couriers.yml."
+                );
+                return;
+            }
+
             if (storedValue == null) {
                 configManager.getPlugin().getLogger().warning(
                         "Ignoring empty courier type for player " + playerId + " in couriers.yml."

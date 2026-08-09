@@ -8,8 +8,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class CourierManager {
@@ -82,14 +83,21 @@ public class CourierManager {
     }
 
     private static void cleanupStaleCouriers() {
-        Iterator<Map.Entry<Entity, Courier>> iterator = activeCouriers.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Entity, Courier> entry = iterator.next();
+        List<Map.Entry<Entity, Courier>> staleEntries = new ArrayList<>();
+        for (Map.Entry<Entity, Courier> entry : activeCouriers.entrySet()) {
             Entity entity = entry.getKey();
             Courier courier = entry.getValue();
             if (courier == null || !isLiveEntity(entity)) {
-                iterator.remove();
+                staleEntries.add(entry);
             }
+        }
+
+        for (Map.Entry<Entity, Courier> entry : staleEntries) {
+            Courier courier = entry.getValue();
+            if (courier != null) {
+                courier.retireAfterExternalRemoval();
+            }
+            activeCouriers.remove(entry.getKey());
         }
     }
 
