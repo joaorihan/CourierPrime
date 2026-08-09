@@ -49,6 +49,7 @@ public class ForwardCommand extends AbstractCommand{
         for (Player player : Bukkit.getOnlinePlayers()){
             names.add(player.getName());
         }
-        return StringUtil.copyPartialMatches(args[0], names, new ArrayList<>());
+        String partial = args.length == 0 ? "" : args[0];
+        return StringUtil.copyPartialMatches(partial, names, new ArrayList<>());
     }
 }

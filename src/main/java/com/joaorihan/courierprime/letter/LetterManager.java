@@ -7,6 +7,7 @@ import com.joaorihan.courierprime.config.Message;
 import com.joaorihan.courierprime.config.MessageManager;
 import lombok.Getter;
 import org.apache.commons.text.WordUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -74,10 +75,16 @@ public class LetterManager {
      * @param message the message the player is writing to the letter
      */
     public void writeBook(Player player, String message, boolean anonymous) {
-        String finalMessage = MessageManager.format(message);
+        String sourceMessage = message == null ? "" : message;
+        String finalMessage = MessageManager.format(sourceMessage);
+        if (finalMessage == null) {
+            finalMessage = "";
+        }
         
         ItemStack book = new ItemStack(Material.WRITTEN_BOOK, 1);
-        BookMeta bm = (BookMeta) book.getItemMeta();
+        if (!(book.getItemMeta() instanceof BookMeta bm)) {
+            return;
+        }
 
         PersistentDataContainer pdc = bm.getPersistentDataContainer();
         pdc.set(key, PersistentDataType.STRING, player.getName());
@@ -91,20 +98,7 @@ public class LetterManager {
         pages.addAll(splitIntoPages(finalMessage));
         bm.setPages(pages);
 
-        ArrayList<String> lore = new ArrayList<>();
-        Calendar currentDate = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat(plugin.getMessageManager().getMessage(Message.DATE_TIME_FORMAT));
-        String dateNow = formatter.format(currentDate.getTime());
-        String wrapped = WordUtils.wrap(MessageManager.unformat(message), 30, "<split>", true);
-        String[] lines = wrapped.split("<split>");
-        lore.add("");
-        lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[0]);
-        if (lines.length >= 2) lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[1]);
-        if (lines.length >= 3) lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[2]);
-        lore.add("");
-        lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FOOTER).replace("$DATE$", dateNow)
-                .replace("$PAGES$", Integer.toString(bm.getPages().size())));
-        bm.setLore(lore);
+        bm.setLore(createPreviewLore(sourceMessage, pages.size()));
 
         // Sets the letter custom model data, if enabled in the config
         if (MainConfig.isCustomModelData()){
@@ -135,41 +129,38 @@ public class LetterManager {
      * @param message message player is adding to the letter
      */
     public void editBook(Player player, String message) {
-        String finalMessage = MessageManager.format(message);
+        if (player == null) {
+            return;
+        }
+
+        String sourceMessage = message == null ? "" : message;
+        String finalMessage = MessageManager.format(sourceMessage);
+        if (finalMessage == null) {
+            finalMessage = "";
+        }
         
         ItemStack writtenBook = player.getInventory().getItemInMainHand();
-        BookMeta wbm = (BookMeta) writtenBook.getItemMeta();
-        
-        ArrayList<String> pages = new ArrayList<>(wbm.getPages());
+        if (writtenBook == null || !(writtenBook.getItemMeta() instanceof BookMeta wbm)) {
+            return;
+        }
+
+        ArrayList<String> pages = normalizePages(wbm.getPages());
         if (pages.isEmpty()) {
             pages.add("");
         }
-        if (pages.get(pages.size() - 1).length() > 0
-                && pages.get(pages.size() - 1).length() + finalMessage.length() <= MAX_BOOK_PAGE_LENGTH) {
-            String sb = pages.get(pages.size() - 1) +
-                    finalMessage;
-            pages.set(pages.size() - 1, sb);
-            player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_PAGE_EDITED, true));
-        } else {
-            pages.addAll(splitIntoPages(finalMessage));
+
+        trimTrailingEmptyPages(pages);
+        int pageCountBeforeEdit = pages.size();
+        boolean addedPage = appendToPages(pages, finalMessage);
+        if (addedPage || pages.size() > pageCountBeforeEdit) {
             player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_PAGE_ADDED, true));
+        } else {
+            player.sendMessage(plugin.getMessageManager().getMessage(Message.SUCCESS_PAGE_EDITED, true));
         }
         wbm.setPages(pages);
 
-        ArrayList<String> lore = new ArrayList<>();
-        Calendar currentDate = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat(plugin.getMessageManager().getMessage(Message.DATE_TIME_FORMAT));
-        String dateNow = formatter.format(currentDate.getTime());
-        String wrapped = WordUtils.wrap(MessageManager.unformat(wbm.getPage(1)), 30, "<split>", true);
-        String[] lines = wrapped.split("<split>");
-        lore.add("");
-        lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[0]);
-        if (lines.length >= 2) lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[1]);
-        if (lines.length >= 3) lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[2]);
-        lore.add("");
-        lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FOOTER).replace("$DATE$", dateNow)
-                .replace("$PAGES$", Integer.toString(wbm.getPages().size())));
-        wbm.setLore(lore);
+        String firstPage = pages.isEmpty() ? "" : pages.get(0);
+        wbm.setLore(createPreviewLore(firstPage, pages.size()));
         writtenBook.setItemMeta(wbm);
         
         player.getInventory().setItemInMainHand(writtenBook);
@@ -177,15 +168,89 @@ public class LetterManager {
 
     private List<String> splitIntoPages(String message) {
         ArrayList<String> pages = new ArrayList<>();
-        if (message.isEmpty()) {
+        String safeMessage = message == null ? "" : message;
+        if (safeMessage.isEmpty()) {
             pages.add("");
             return pages;
         }
 
-        for (int start = 0; start < message.length(); start += MAX_BOOK_PAGE_LENGTH) {
-            pages.add(message.substring(start, Math.min(start + MAX_BOOK_PAGE_LENGTH, message.length())));
+        for (int start = 0; start < safeMessage.length(); start += MAX_BOOK_PAGE_LENGTH) {
+            pages.add(safeMessage.substring(start, Math.min(start + MAX_BOOK_PAGE_LENGTH, safeMessage.length())));
         }
         return pages;
+    }
+
+    private ArrayList<String> normalizePages(List<String> existingPages) {
+        ArrayList<String> pages = new ArrayList<>();
+        if (existingPages == null) {
+            return pages;
+        }
+
+        for (String page : existingPages) {
+            pages.addAll(splitIntoPages(page == null ? "" : page));
+        }
+        return pages;
+    }
+
+    private void trimTrailingEmptyPages(List<String> pages) {
+        while (pages.size() > 1 && pages.get(pages.size() - 1).isEmpty()) {
+            pages.remove(pages.size() - 1);
+        }
+    }
+
+    private boolean appendToPages(List<String> pages, String message) {
+        if (message == null || message.isEmpty()) {
+            return false;
+        }
+
+        if (pages.isEmpty()) {
+            pages.add("");
+        }
+
+        int lastPageIndex = pages.size() - 1;
+        String lastPage = pages.get(lastPageIndex);
+        if (lastPage == null) {
+            lastPage = "";
+        }
+
+        int remainingCapacity = Math.max(0, MAX_BOOK_PAGE_LENGTH - lastPage.length());
+        int firstPageLength = Math.min(remainingCapacity, message.length());
+        if (firstPageLength > 0) {
+            pages.set(lastPageIndex, lastPage + message.substring(0, firstPageLength));
+        }
+
+        if (firstPageLength == message.length()) {
+            return false;
+        }
+
+        pages.addAll(splitIntoPages(message.substring(firstPageLength)));
+        return true;
+    }
+
+    private ArrayList<String> createPreviewLore(String content, int pageCount) {
+        ArrayList<String> lore = new ArrayList<>();
+        Calendar currentDate = Calendar.getInstance();
+        SimpleDateFormat formatter = new SimpleDateFormat(plugin.getMessageManager().getMessage(Message.DATE_TIME_FORMAT));
+        String dateNow = formatter.format(currentDate.getTime());
+
+        String safeContent = content == null ? "" : content;
+        String preview = ChatColor.stripColor(MessageManager.unformat(safeContent));
+        if (preview == null) {
+            preview = "";
+        }
+        String wrapped = WordUtils.wrap(preview, 30, "<split>", true);
+        if (wrapped == null) {
+            wrapped = "";
+        }
+        String[] lines = wrapped.isEmpty() ? new String[]{""} : wrapped.split("<split>", -1);
+        lore.add("");
+        lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[0]);
+        if (lines.length >= 2) lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[1]);
+        if (lines.length >= 3) lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FORMAT) + lines[2]);
+        lore.add("");
+        lore.add(plugin.getMessageManager().getMessage(Message.PREVIEW_FOOTER).replace("$DATE$", dateNow)
+                .replace("$PAGES$", Integer.toString(pageCount)));
+        return lore;
     }
     
     /**
