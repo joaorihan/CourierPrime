@@ -2,6 +2,8 @@ package com.joaorihan.courierprime.integration;
 
 import com.joaorihan.courierprime.CourierPrime;
 import com.joaorihan.courierprime.courier.CourierType;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
@@ -23,13 +25,27 @@ public class CustomEntityManager {
      */
     public void initialize() {
         if (mythicMobsProvider.isAvailable()) {
-            CourierPrime.getPlugin().getLogger().info("MythicMobs detected - custom mm: couriers enabled!");
+            CourierPrime.getPlugin().getComponentLogger().info(
+                    Component.text("Hooked into ", NamedTextColor.GRAY)
+                            .append(Component.text("MythicMobs", NamedTextColor.GOLD))
+                            .append(Component.text(" - custom ", NamedTextColor.GRAY))
+                            .append(Component.text("mm:", NamedTextColor.GOLD))
+                            .append(Component.text(" couriers enabled!", NamedTextColor.GREEN))
+            );
         }
         if (modelEngineProvider.isAvailable()) {
-            CourierPrime.getPlugin().getLogger().info("ModelEngine detected - custom meg: couriers enabled!");
+            CourierPrime.getPlugin().getComponentLogger().info(
+                    Component.text("Hooked into ", NamedTextColor.GRAY)
+                            .append(Component.text("ModelEngine", NamedTextColor.AQUA))
+                            .append(Component.text(" - custom ", NamedTextColor.GRAY))
+                            .append(Component.text("meg:", NamedTextColor.AQUA))
+                            .append(Component.text(" couriers enabled!", NamedTextColor.GREEN))
+            );
         }
         if (!mythicMobsProvider.isAvailable() && !modelEngineProvider.isAvailable()) {
-            CourierPrime.getPlugin().getLogger().info("No custom entity plugins detected. Only vanilla couriers available.");
+            CourierPrime.getPlugin().getComponentLogger().info(
+                    Component.text("No custom courier plugins hooked; vanilla couriers only.", NamedTextColor.GRAY)
+            );
         }
     }
 
